@@ -1,0 +1,27 @@
+{
+	"Glide": {
+		"name": "3dfx Glide License",
+		"url": "http://www.users.on.net/~triforce/glidexp/COPYING.txt",
+		"osiApproved": false
+	},
+	"Abstyles": {
+		"name": "Abstyles License",
+		"url": "https://fedoraproject.org/wiki/Licensing/Abstyles",
+		"osiApproved": false
+	},
+	"AFL-1.1": {
+		"name": "Academic Free License v1.1",
+		"url": "http://opensource.linux-mirror.org/licenses/afl-1.1.txt",
+		"osiApproved": true
+	},
+	"AFL-1.2": {
+		"name": "Academic Free License v1.2",
+		"url": "http://opensource.linux-mirror.org/licenses/afl-1.2.txt",
+		"osiApproved": true
+	},
+	"ZPL-2.1": {
+		"name": "Zope Public License 2.1",
+		"url": "http://old.zope.org/Resources/ZPL/",
+		"osiApproved": false
+	}
+}
