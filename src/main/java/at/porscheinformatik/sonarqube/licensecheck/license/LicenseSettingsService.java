@@ -43,7 +43,7 @@ public class LicenseSettingsService
         this.settings = persistentSettings.getSettings();
         this.licenseService = licenseService;
         this.dependencySettingsService = dependencySettingsService;
-        initSpdxLicences();
+        // initSpdxLicences();
     }
 
     public String getLicensesForTable()
