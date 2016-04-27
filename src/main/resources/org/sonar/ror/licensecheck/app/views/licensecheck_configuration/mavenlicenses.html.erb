@@ -1,0 +1,51 @@
+<h1 class="admin-page-title">License Check Configuration</h1>
+&nbsp;
+<ul class="tabs">
+	<li><a 
+		href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Licenses</a>
+	</li>
+	<li><a
+		href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavendependency">Maven Dependency Mapping</a>
+	</li>
+	<li><a class="selected"
+		href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenlicenses">Maven License Mapping</a>
+	</li>
+</ul>
+&nbsp;
+
+<table class="data zebra" id="allowedLibraryTable">
+	<caption>This table shows the license names and license key.</caption>
+	<thead>
+		<tr>
+			<th>License Name (Regex)</th>
+			<th>License Key</th>
+		</tr>
+		<tr class="top">
+			<% form_tag :action => 'add_license_regex' do %>
+			<td><%= text_field_tag :license_name, nil, :placeholder=> 'License name regex',
+				:size=> 20, :required=>'required' %></td>
+			<td><select name="license" id="license">
+					<option>Select license identifier</option> <%
+					@licensesIdentifier.split(/;/).each do |identifier| %>
+					<option><%= identifier -%></option> <% end %>
+			</select></td>
+			<td><%= submit_tag "Add License"%></td>
+			<% end %>
+		</tr>
+	</thead>
+	<% if @licensesregex && !@licensesregex.blank? %>
+	<tbody>
+		<% @licensesregex.split(/;/).each do |license| %>
+		<tr>
+			<% license.split(/~/).each do |col| %>
+			<td><%= col -%></td> <% end %><% form_tag :action =>
+			'delete_license_regex' do %>
+			<td><%= hidden_field_tag :licensesregex_tag,
+				license %> <input name="commit" type="submit"
+				value="Delete" style="border-color: #DF0101; color: #DF0101">
+			</td> <% end %>
+		</tr>
+		<% end %>
+	</tbody>
+	<% end %>
+</table>

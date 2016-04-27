@@ -1,0 +1,113 @@
+<h1 class="admin-page-title">License Check Configuration</h1>
+&nbsp;
+<ul class="tabs">
+    <li>
+        <a class="selected" href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Licenses</a>
+    </li>
+    <li>
+        <a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavendependency">Maven Dependency Mapping</a>
+    </li>
+    	<li><a
+		href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenlicenses">Maven License Mapping</a>
+	</li>
+</ul>
+&nbsp;
+
+<table class="data zebra" id="allowedLibraryTable">
+	<caption>This table shows all allowed licenses.</caption>
+	<thead>
+		<tr>
+			<th>Identifier</th>
+			<th>Name</th>
+			<th>Allowed</th>
+		</tr>
+
+		<tr class="top">
+			<% form_tag :action => 'add_licenses' do %>
+			<td><%= text_field_tag :identifier, nil, :placeholder=>
+				'Shortage of the License title', :size=> 20, :required=>'required'
+				%></td>
+			<td><%= text_field_tag :name, nil, :placeholder=> 'Title of the allowed license', :size=> 35, :required=>'required'%></td>
+			<td><%= select_tag :status, options_for_select([false, true]) %></td>
+			<td><%= submit_tag "Add License"%></td> <% end %>
+		</tr>
+	</thead>
+	<tbody>
+		<% @licenses.split(/;/).each do |license| %>
+		<tr>
+			<% license.split(/~/).each do |col| %>
+			<td><%= col -%></td> <% end %>
+			<td><div style="float: left"><input type="button" class="opener" value="Edit" /></div>
+			<% form_tag :action => 'delete_licenses' do %>
+			<%= hidden_field_tag :license_tag, license %>
+			<div style="float:left"> &nbsp; <input name="commit" type="submit" value="Delete" style="border-color: #DF0101; color: #DF0101"></div></td>
+			<% end %>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+<div id="dialog-1" title="Update License">
+	<div class="modal-head">
+		<h2>Edit License</h2>
+	</div>
+	<div class="modal-body">
+		<form id="licenseForm">
+			<div class="modal-field">
+				<label for="licensename">License Name</label>
+				<input type"text" name="licensename" size="38" id="licensename" />
+			</div>
+			<div class="modal-field">
+				<label for="selectID">Allowed</label>
+				<select id="selectID">
+					<option value="true">true</option>
+					<option value="false">false</option>
+				</select>
+			</div>
+			<input type="hidden" name="identifier" id="licenseid" />
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	(function($) {
+		function updatelicense() {
+			var name = $("#licensename").val();
+			var status = $("#selectID").val();
+			var identfier = $( "#licenseid" ).val();
+
+			$.post('update_licenses', 'id='+ identfier +'&name=' +name+ '&status=' +status, function() {
+			  location.reload();
+			});
+
+			$(this).dialog("close");
+		}
+      
+         $(function() {
+            $("#dialog-1").dialog({
+               	autoOpen: false,
+               	width: 500,
+               	buttons: {
+               		Update: updatelicense,
+                  	Close: function() {$(this).dialog("close");}
+               },
+            });
+
+            $('.opener').click(function() {
+            	var tr = $(this).closest('tr');
+            	var identifier = $(tr).find('td').eq(0).text();
+            	var name = $(tr).find('td').eq(1).text();
+            	var status = $(tr).find('td').eq(2).text();
+
+            	$("#licenseid").val(identifier);
+            	$("#licensename").val(name);
+            	$("#selectID").val(status);
+
+               	$("#dialog-1").dialog( "open" );
+            });
+         });
+	}(jQuery));
+</script>
+
+
+
+
+

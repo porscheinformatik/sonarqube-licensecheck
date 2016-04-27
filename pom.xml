@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+
+ <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
+ <artifactId>sonarqube-licensecheck-plugin</artifactId>
+ <version>1.1-SNAPSHOT</version>
+ <name>SonarQube License Check Plugin</name>
+ <packaging>sonar-plugin</packaging>
+
+ <dependencies>
+  <dependency>
+   <groupId>org.glassfish</groupId>
+   <artifactId>javax.json</artifactId>
+   <version>1.0.2</version>
+  </dependency>
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>4.11</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.sonarsource.sonarqube</groupId>
+   <artifactId>sonar-plugin-api</artifactId>
+   <version>5.2</version>
+   <scope>provided</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.sonarsource.sonarqube</groupId>
+   <artifactId>sonar-server</artifactId>
+   <version>5.2-RC4</version>
+   <scope>provided</scope>
+   <exclusions>
+    <exclusion>
+     <groupId>org.sonarsource.sonarqube</groupId>
+     <artifactId>sonar-views-bridge</artifactId>
+    </exclusion>
+   </exclusions>
+  </dependency>
+  <dependency>
+   <groupId>org.slf4j</groupId>
+   <artifactId>slf4j-log4j13</artifactId>
+   <version>1.0.1</version>
+  </dependency>
+  <dependency>
+   <groupId>xpp3</groupId>
+   <artifactId>xpp3</artifactId>
+   <version>1.1.4c</version>
+  </dependency>
+  <dependency>
+   <groupId>org.apache.maven</groupId>
+   <artifactId>maven-model</artifactId>
+   <version>3.3.9</version>
+  </dependency>
+ </dependencies>
+
+ <scm>
+  <connection>scm:git:https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin</connection>
+  <developerConnection>
+   scm:git:[fetch=]https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin[push=]https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin
+  </developerConnection>
+  <url>https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin</url>
+  <tag>HEAD</tag>
+ </scm>
+
+ <contributors>
+  <contributor>
+   <name>Stephanie Kaschnitz</name>
+  </contributor>
+ </contributors>
+
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
+    <artifactId>sonar-packaging-maven-plugin</artifactId>
+    <version>1.15</version>
+    <extensions>true</extensions>
+    <configuration>
+     <pluginKey>licensecheck</pluginKey>
+     <!-- the entry-point class that extends org.sonar.api.SonarPlugin -->
+     <pluginClass>at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPlugin</pluginClass>
+     <pluginDescription>License and Dependendy Check</pluginDescription>
+     <!-- advanced properties can be set here. See paragraph "Advanced Build Properties". -->
+    </configuration>
+   </plugin>
+
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.3</version>
+    <configuration>
+     <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+     <source>1.7</source>
+     <target>1.7</target>
+    </configuration>
+   </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-release-plugin</artifactId>
+    <version>2.5.3</version>
+   </plugin>
+  </plugins>
+ </build>
+
+ <distributionManagement>
+  <repository>
+   <id>inhouse</id>
+   <name>Inhouse Repository</name>
+   <url>${inhouse.maven.repository}</url>
+  </repository>
+  <snapshotRepository>
+   <id>inhouse_snapshot</id>
+   <name>Inhouse Snapshot Repository</name>
+   <url>${inhouse_snapshot.maven.repository}</url>
+  </snapshotRepository>
+ </distributionManagement>
+
+</project>

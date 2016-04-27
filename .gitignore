@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings/
+target/
+node_modules/
+package.json
+spdc_license_list.json
