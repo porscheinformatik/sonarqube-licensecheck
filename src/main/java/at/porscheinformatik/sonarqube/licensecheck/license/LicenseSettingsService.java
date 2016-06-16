@@ -1,27 +1,25 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.*;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.stream.JsonParser;
-
+import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencySettingsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencySettingsService;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.stream.JsonParser;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 
 @ServerSide
 public class LicenseSettingsService
@@ -43,6 +41,7 @@ public class LicenseSettingsService
         this.settings = persistentSettings.getSettings();
         this.licenseService = licenseService;
         this.dependencySettingsService = dependencySettingsService;
+
         initSpdxLicences();
     }
 
@@ -264,14 +263,14 @@ public class LicenseSettingsService
     {
         String newJsonLicense = "";
 
-        for (int i = 0; i < licenseList.size(); i++)
+        for (License license : licenseList)
         {
-            if (licenseList.get(i).getName().contains("\""))
+            if (license.getName().contains("\""))
             {
                 JsonObject jsonObject = Json.createObjectBuilder()
-                    .add(licenseList.get(i).getIdentifier(), Json.createObjectBuilder()
-                        .add("name", licenseList.get(i).getName().replace("\"", ""))
-                        .add("status", licenseList.get(i).getStatus()))
+                    .add(license.getIdentifier(), Json.createObjectBuilder()
+                        .add("name", license.getName().replace("\"", ""))
+                        .add("status", license.getStatus()))
                     .build();
 
                 newJsonLicense = newJsonLicense + jsonObject.toString();
@@ -279,9 +278,9 @@ public class LicenseSettingsService
             else
             {
                 JsonObject jsonObject = Json.createObjectBuilder()
-                    .add(licenseList.get(i).getIdentifier(), Json.createObjectBuilder()
-                        .add("name", licenseList.get(i).getName())
-                        .add("status", licenseList.get(i).getStatus()))
+                    .add(license.getIdentifier(), Json.createObjectBuilder()
+                        .add("name", license.getName())
+                        .add("status", license.getStatus()))
                     .build();
 
                 newJsonLicense = newJsonLicense + jsonObject.toString();
@@ -304,9 +303,9 @@ public class LicenseSettingsService
             return;
         }
 
-        InputStream inputStream = LicenseService.class.getResourceAsStream("spdc_license_list.json");
         try
         {
+            InputStream inputStream = LicenseService.class.getResourceAsStream("spdx_license_list.json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder out = new StringBuilder();
             String line;
@@ -320,9 +319,9 @@ public class LicenseSettingsService
             reader.close();
             inputStream.close();
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-            LOGGER.error("IOException", e);
+            LOGGER.error("Could not load spdx_license_list.json", e);
         }
     }
 }
