@@ -139,7 +139,7 @@ public class MavenDependencyScanner implements Scanner
                         if (licenses.get(0).getName().matches(regexLicenseSubParts[0]))
                         {
                             dependency.setLicense(regexLicenseSubParts[1]);
-                            LOGGER.info("SET LICENSE: " + dependency.getLicense());
+                            LOGGER.debug("SET LICENSE: " + dependency.getLicense());
                         }
                     }
                 }

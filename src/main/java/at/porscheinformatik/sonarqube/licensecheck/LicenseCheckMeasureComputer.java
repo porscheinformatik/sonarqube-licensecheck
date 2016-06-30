@@ -39,7 +39,7 @@ public class LicenseCheckMeasureComputer implements MeasureComputer
         {
             if (context.getComponent().getType() == Component.Type.PROJECT)
             {
-                LOGGER.info("Combining dependencies on {}", context.getComponent().getKey());
+                LOGGER.debug("Combining dependencies on {}", context.getComponent().getKey());
                 Measure measure = context.getMeasure(INPUTDEPENDENCY.getKey());
                 String dependencies = "";
                 if (measure != null)
@@ -54,9 +54,9 @@ public class LicenseCheckMeasureComputer implements MeasureComputer
                 dependencies = Dependency.createString(dependencyList);
 
                 context.addMeasure(DEPENDENCY.getKey(), dependencies);
-                LOGGER.info("Stored {}", context.getMeasure(DEPENDENCY.getKey()));
+                LOGGER.debug("Stored {}", context.getMeasure(DEPENDENCY.getKey()));
 
-                LOGGER.info("Combining licenses on {}", context.getComponent().getKey());
+                LOGGER.debug("Combining licenses on {}", context.getComponent().getKey());
                 String licenses = "";
                 measure = context.getMeasure(INPUTLICENSE.getKey());
                 if (measure != null)
@@ -71,7 +71,7 @@ public class LicenseCheckMeasureComputer implements MeasureComputer
                 licenses = License.createString(licenseList);
 
                 context.addMeasure(LICENSE.getKey(), licenses);
-                LOGGER.info("Stored {}", context.getMeasure(LICENSE.getKey()));
+                LOGGER.debug("Stored {}", context.getMeasure(LICENSE.getKey()));
             }
         }
         else
