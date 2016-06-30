@@ -15,6 +15,7 @@ import javax.json.JsonReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -49,13 +50,12 @@ public class MavenDependencyScanner implements Scanner
 
         for (int i = 0; i < jsonArray.size(); i++)
         {
-            JsonObject jsonObject = jsonArray.getJsonObject(i);
-            JsonObject checkObject = jsonObject;
+            JsonObject checkObject = jsonArray.getJsonObject(i);
 
-            String scope = jsonObject.getString("s");
+            String scope = checkObject.getString("s");
             if ("compile".equals(scope) || "runtime".equals(scope))
             {
-                mavenDependencies.add(new Dependency(jsonObject.getString("k"), jsonObject.getString("v"), " "));
+                mavenDependencies.add(new Dependency(checkObject.getString("k"), checkObject.getString("v"), " "));
                 JsonArray dependencyArray = checkObject.getJsonArray("d");
                 checkDependencyForScope(dependencyArray, mavenDependencies);
             }
@@ -111,6 +111,11 @@ public class MavenDependencyScanner implements Scanner
             }
         });
 
+        if (pomFile == null || pomFile.length == 0)
+        {
+            return;
+        }
+
         try
         {
             Model model = new MavenXpp3Reader().read(new FileInputStream(pomFile[0]));
@@ -120,18 +125,18 @@ public class MavenDependencyScanner implements Scanner
             }
             else
             {
-                List<org.apache.maven.model.License> license = model.getLicenses();
-                if (license.size() == 1)
+                List<org.apache.maven.model.License> licenses = model.getLicenses();
+                if (licenses.size() == 1)
                 {
-                    if (license.get(0).getName() == null)
+                    if (licenses.get(0).getName() == null)
                     {
-                        license.get(0).setName("no license");
+                        licenses.get(0).setName("no license");
                     }
                     String regexLicenseString = licenseService.getLicensesRegex();
                     for (String s : regexLicenseString.split(";"))
                     {
                         String[] regexLicenseSubParts = s.split("~");
-                        if (license.get(0).getName().matches(regexLicenseSubParts[0]))
+                        if (licenses.get(0).getName().matches(regexLicenseSubParts[0]))
                         {
                             dependency.setLicense(regexLicenseSubParts[1]);
                             LOGGER.info("SET LICENSE: " + dependency.getLicense());
@@ -140,17 +145,17 @@ public class MavenDependencyScanner implements Scanner
                 }
                 else
                 {
-                    for (int i = 0; i < license.size(); i++)
+                    for (License license : licenses)
                     {
-                        if (license.get(i).getName() == null)
+                        if (license.getName() == null)
                         {
-                            license.get(i).setName("no license");
+                            license.setName("no license");
                         }
                         String regexLicenseString = licenseService.getLicensesRegex();
                         for (String s : regexLicenseString.split(";"))
                         {
                             String[] regexLicenseSubParts = s.split("~");
-                            if (license.get(i).getName().matches(regexLicenseSubParts[0]))
+                            if (license.getName().matches(regexLicenseSubParts[0]))
                             {
                                 dependency.setLicense(regexLicenseSubParts[1]);
                             }
@@ -165,14 +170,12 @@ public class MavenDependencyScanner implements Scanner
         }
         catch (IOException | XmlPullParserException e)
         {
-            e.printStackTrace();
+            LOGGER.error("Could not parse POM file " + pomFile[0].getAbsolutePath(), e);
         }
     }
 
     private static String loadAndExtractLocalRepository(File file)
     {
-        String element = "";
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try
         {
@@ -180,12 +183,11 @@ public class MavenDependencyScanner implements Scanner
             Document document = builder.parse(file);
             Element rootElement = document.getDocumentElement();
 
-            element = getLocalRepository("localRepository", rootElement);
-            return element;
+            return getLocalRepository("localRepository", rootElement);
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            LOGGER.warn("Could not find local repository in settings.xml", e);
         }
         return null;
     }
