@@ -31,13 +31,13 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
         repository.setName("License Check");
 
         repository.createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
-            .setName("Unlisted Dependency Violation [dependency-check]")
-            .setHtmlDescription("Violation because a dependency is not listed!")
+            .setName("Dependency has unknown license [license-check]")
+            .setHtmlDescription("The dependencies license could not be determined!")
             .setSeverity(Severity.BLOCKER);
 
         repository.createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
-            .setName("Dependency with wrong status Violation [dependency-check]")
-            .setHtmlDescription("Violation because a dependency is not allowed!")
+            .setName("License is not allowed [license-check]")
+            .setHtmlDescription("Violation because the license of the dependency is not allowed.")
             .setSeverity(Severity.BLOCKER);
 
         repository.done();
