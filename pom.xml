@@ -21,6 +21,11 @@
    <scope>test</scope>
   </dependency>
   <dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-all</artifactId>
+    <version>1.10.19</version>
+  </dependency>
+  <dependency>
    <groupId>org.sonarsource.sonarqube</groupId>
    <artifactId>sonar-plugin-api</artifactId>
    <version>5.2</version>
@@ -37,11 +42,6 @@
      <artifactId>sonar-views-bridge</artifactId>
     </exclusion>
    </exclusions>
-  </dependency>
-  <dependency>
-   <groupId>org.slf4j</groupId>
-   <artifactId>slf4j-log4j13</artifactId>
-   <version>1.0.1</version>
   </dependency>
   <dependency>
    <groupId>xpp3</groupId>

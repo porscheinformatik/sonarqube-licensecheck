@@ -1,26 +1,53 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
 public class MavenDependencyScannerTest
 {
+
     @Test
-    public void test()
+    public void testLicensesAreFound()
     {
-        String mavenProjectDependencies = "[{\"k\":\"junit:junit\",\"v\":\"3.8.1\",\"s\":\"test\",\"d\":[]},{\"k\":\"org.sonarsource.sonarqube:sonar-plugin-api\",\"v\":\"5.2\",\"s\":\"provided\",\"d\":[{\"k\":\"org.codehaus.woodstox:woodstox-core-lgpl\",\"v\":\"4.4.0\",\"s\":\"provided\",\"d\":[{\"k\":\"javax.xml.stream:stax-api\",\"v\":\"1.0-2\",\"s\":\"provided\",\"d\":[]}]},{\"k\":\"org.codehaus.woodstox:stax2-api\",\"v\":\"3.1.4\",\"s\":\"provided\",\"d\":[]},{\"k\":\"org.codehaus.staxmate:staxmate\",\"v\":\"2.0.1\",\"s\":\"provided\",\"d\":[]}]},{\"k\":\"org.owasp:dependency-check-core\",\"v\":\"1.3.3\",\"s\":\"compile\",\"d\":[{\"k\":\"org.slf4j:slf4j-api\",\"v\":\"1.7.13\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.owasp:dependency-check-utils\",\"v\":\"1.3.3\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.commons:commons-compress\",\"v\":\"1.10\",\"s\":\"compile\",\"d\":[]},{\"k\":\"commons-io:commons-io\",\"v\":\"2.4\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.commons:commons-lang3\",\"v\":\"3.4\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.lucene:lucene-core\",\"v\":\"4.7.2\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.lucene:lucene-analyzers-common\",\"v\":\"4.7.2\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.lucene:lucene-queryparser\",\"v\":\"4.7.2\",\"s\":\"compile\",\"d\":[{\"k\":\"org.apache.lucene:lucene-queries\",\"v\":\"4.7.2\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.apache.lucene:lucene-sandbox\",\"v\":\"4.7.2\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"org.apache.velocity:velocity\",\"v\":\"1.7\",\"s\":\"compile\",\"d\":[{\"k\":\"commons-collections:commons-collections\",\"v\":\"3.2.1\",\"s\":\"compile\",\"d\":[]},{\"k\":\"commons-lang:commons-lang\",\"v\":\"2.4\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"com.h2database:h2\",\"v\":\"1.3.176\",\"s\":\"runtime\",\"d\":[]},{\"k\":\"org.glassfish:javax.json\",\"v\":\"1.0.4\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.jsoup:jsoup\",\"v\":\"1.8.3\",\"s\":\"compile\",\"d\":[]},{\"k\":\"com.sun.mail:mailapi\",\"v\":\"1.5.4\",\"s\":\"compile\",\"d\":[{\"k\":\"javax.activation:activation\",\"v\":\"1.1\",\"s\":\"compile\",\"d\":[]}]}]}]";
+        //		String mavenProjectDependencies = "[{\"k\":\"commons-lang:commons-lang\",\"v\":\"2.6\",\"s\":\"compile\",\"d\":[]},{\"k\":\"commons-codec:commons-codec\",\"v\":\"1.10\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-context\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[{\"k\":\"org.springframework:spring-aop\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[{\"k\":\"aopalliance:aopalliance\",\"v\":\"1.0\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"org.springframework:spring-beans\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-core\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-expression\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"org.liquibase:liquibase-core\",\"v\":\"3.4.2\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.slf4j:slf4j-api\",\"v\":\"1.7.21\",\"s\":\"compile\",\"d\":[]},{\"k\":\"com.google.code.findbugs:annotations\",\"v\":\"2.0.0\",\"s\":\"compile\",\"d\":[]},{\"k\":\"com.google.code.findbugs:jsr305\",\"v\":\"2.0.0\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.testng:testng\",\"v\":\"6.8.21\",\"s\":\"test\",\"d\":[{\"k\":\"org.beanshell:bsh\",\"v\":\"2.0b4\",\"s\":\"test\",\"d\":[]},{\"k\":\"com.beust:jcommander\",\"v\":\"1.27\",\"s\":\"test\",\"d\":[]}]},{\"k\":\"ch.qos.logback:logback-classic\",\"v\":\"1.1.7\",\"s\":\"test\",\"d\":[{\"k\":\"ch.qos.logback:logback-core\",\"v\":\"1.1.7\",\"s\":\"test\",\"d\":[]}]},{\"k\":\"org.slf4j:jcl-over-slf4j\",\"v\":\"1.7.21\",\"s\":\"test\",\"d\":[]},{\"k\":\"org.mockito:mockito-core\",\"v\":\"1.10.19\",\"s\":\"test\",\"d\":[{\"k\":\"org.hamcrest:hamcrest-core\",\"v\":\"1.3\",\"s\":\"test\",\"d\":[]},{\"k\":\"org.objenesis:objenesis\",\"v\":\"2.1\",\"s\":\"test\",\"d\":[]}]}]";
+
+        String mavenProjectDependencies =
+            "[{\"k\":\"commons-lang:commons-lang\",\"v\":\"2.6\",\"s\":\"compile\",\"d\":[]},{\"k\":\"commons-codec:commons-codec\",\"v\":\"1.10\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-context\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[{\"k\":\"org.springframework:spring-aop\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[{\"k\":\"aopalliance:aopalliance\",\"v\":\"1.0\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"org.springframework:spring-beans\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-core\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.springframework:spring-expression\",\"v\":\"4.2.6.RELEASE\",\"s\":\"compile\",\"d\":[]}]},{\"k\":\"org.liquibase:liquibase-core\",\"v\":\"3.4.2\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.slf4j:slf4j-api\",\"v\":\"1.7.21\",\"s\":\"compile\",\"d\":[]},{\"k\":\"com.google.code.findbugs:annotations\",\"v\":\"2.0.0\",\"s\":\"compile\",\"d\":[]},{\"k\":\"com.google.code.findbugs:jsr305\",\"v\":\"2.0.0\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.testng:testng\",\"v\":\"6.8.21\",\"s\":\"test\",\"d\":[{\"k\":\"org.beanshell:bsh\",\"v\":\"2.0b4\",\"s\":\"test\",\"d\":[]},{\"k\":\"com.beust:jcommander\",\"v\":\"1.27\",\"s\":\"test\",\"d\":[]}]},{\"k\":\"ch.qos.logback:logback-classic\",\"v\":\"1.1.7\",\"s\":\"test\",\"d\":[{\"k\":\"ch.qos.logback:logback-core\",\"v\":\"1.1.7\",\"s\":\"test\",\"d\":[]}]},{\"k\":\"org.slf4j:jcl-over-slf4j\",\"v\":\"1.7.21\",\"s\":\"test\",\"d\":[]},{\"k\":\"org.mockito:mockito-core\",\"v\":\"1.10.19\",\"s\":\"test\",\"d\":[{\"k\":\"org.hamcrest:hamcrest-core\",\"v\":\"1.3\",\"s\":\"test\",\"d\":[]},{\"k\":\"org.objenesis:objenesis\",\"v\":\"2.1\",\"s\":\"test\",\"d\":[]}]}]";
+
         File moduleDir = new File(".");
+        Map<Pattern, String> licenseMap = new HashMap<>();
+        licenseMap.put(Pattern.compile("Indiana University.*"), "UNI");
+        licenseMap.put(Pattern.compile(".*BSD.*"), "BSD-3-Clause");
+        LicenseService licenseService = Mockito.mock(LicenseService.class);
+        Mockito.when(licenseService.getLicenseMap()).thenReturn(licenseMap);
+        Scanner scanner = new MavenDependencyScanner(licenseService);
 
-//        Scanner scanner = new MavenDependencyScanner();
-//        List<Dependency> dependencies = scanner.scan(moduleDir, mavenProjectDependencies);
+        // -
+        List<Dependency> dependencies = scanner.scan(moduleDir, mavenProjectDependencies);
 
-//        Assert.assertThat(dependencies, CoreMatchers.hasItem(new Dependency("org.owasp:dependency-check-core", "1.3.3", " ")));
+        // -
+        for (Dependency dep : dependencies)
+        {
+            if ("org.codehaus.staxmate:staxmate".equals(dep.getName()))
+            {
+                Assert.assertThat(dep.getLicense(), CoreMatchers.is("BSD-3-Clause"));
+            }
+            else if ("xpp3:xpp3".equals(dep.getName()) && "1.1.4c".equals(dep.getVersion()))
+            {
+                Assert.assertThat(dep.getLicense(), CoreMatchers.is("UNI"));
+            }
+        }
     }
 }

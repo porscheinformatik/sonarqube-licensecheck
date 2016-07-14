@@ -4,7 +4,10 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKe
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -54,6 +57,19 @@ public class LicenseService
             }
         }
         return licenses;
+    }
+
+    public Map<Pattern, String> getLicenseMap()
+    {
+        Map<Pattern, String> licenseMap = new HashMap<>();
+        String licensesRegex = getLicensesRegex();
+        String[] lines = licensesRegex.split(";");
+        for (String line : lines)
+        {
+            String[] regexLicense = line.split("~");
+            licenseMap.put(Pattern.compile(regexLicense[0]), regexLicense[1]);
+        }
+        return licenseMap;
     }
 
     public String getLicensesRegex()

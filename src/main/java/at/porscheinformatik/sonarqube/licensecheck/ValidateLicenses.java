@@ -79,13 +79,18 @@ public class ValidateLicenses
     private static Set<License> checkListForLicense(Dependency dependency, License license,
         Set<License> usedLicenseList)
     {
-        if (dependency.getLicense().equals(license.getIdentifier()))
+        if (dependency.getLicense() != null)
         {
-            if (!usedLicenseList.contains(license))
+            if (dependency.getLicense().equals(license.getIdentifier()))
             {
                 usedLicenseList.add(new License(license.getName(), license.getIdentifier(), license.getStatus()));
             }
         }
+        else
+        {
+            dependency.setLicense(" ");
+        }
+
         return usedLicenseList;
     }
 
