@@ -141,7 +141,10 @@ public class Dependency implements Comparable<Dependency>
         {
             String dependencyString = parts[i];
             String[] subParts = dependencyString.split("~");
-            dependencies.add(new Dependency(subParts[0], subParts[1], subParts[2]));
+            String name = subParts.length > 0 ? subParts[0] : null;
+            String version = subParts.length > 1 ? subParts[1] : null;
+            String license = subParts.length > 2 ? subParts[2] : null;
+            dependencies.add(new Dependency(name, version, license));
         }
         return dependencies;
     }
