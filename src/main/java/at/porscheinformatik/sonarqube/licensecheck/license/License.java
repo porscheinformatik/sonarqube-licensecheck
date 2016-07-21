@@ -139,9 +139,12 @@ public class License implements Comparable<License>
 
         for (int i = 0; i < parts.length; i++)
         {
-            String dependencyString = parts[i];
-            String[] subParts = dependencyString.split("~");
-            licenses.add(new License(subParts[0], subParts[1], subParts[2]));
+            String licenseString = parts[i];
+            String[] subParts = licenseString.split("~");
+            String name = subParts.length > 0 ? subParts[0] : null;
+            String identifier = subParts.length > 1 ? subParts[1] : null;
+            String status = subParts.length > 2 ? subParts[2] : null;
+            licenses.add(new License(name, identifier, status));
         }
         return licenses;
     }

@@ -74,26 +74,32 @@ public class LicenseCheckSensor implements Sensor
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
-        StringBuilder dependencyString = new StringBuilder();
-        for (Dependency dependency : dependencies)
+        if (!dependencies.isEmpty())
         {
-            dependencyString.append(dependency.getName()).append("~");
-            dependencyString.append(dependency.getVersion()).append("~");
-            dependencyString.append(dependency.getLicense()).append(";");
+            StringBuilder dependencyString = new StringBuilder();
+            for (Dependency dependency : dependencies)
+            {
+                dependencyString.append(dependency.getName()).append("~");
+                dependencyString.append(dependency.getVersion()).append("~");
+                dependencyString.append(dependency.getLicense()).append(";");
+            }
+            sensorContext
+                .saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY, dependencyString.toString()));
         }
-        sensorContext
-            .saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY, dependencyString.toString()));
     }
 
     private static void saveLicenses(SensorContext sensorContext, Set<License> licenses)
     {
-        StringBuilder licenseString = new StringBuilder();
-        for (License license : licenses)
+        if (!licenses.isEmpty())
         {
-            licenseString.append(license.getIdentifier()).append("~");
-            licenseString.append(license.getName()).append("~");
-            licenseString.append(license.getStatus()).append(";");
+            StringBuilder licenseString = new StringBuilder();
+            for (License license : licenses)
+            {
+                licenseString.append(license.getIdentifier()).append("~");
+                licenseString.append(license.getName()).append("~");
+                licenseString.append(license.getStatus()).append(";");
+            }
+            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE, licenseString.toString()));
         }
-        sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE, licenseString.toString()));
     }
 }
