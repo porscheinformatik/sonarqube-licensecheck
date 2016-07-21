@@ -1,6 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,8 +15,6 @@ import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependency.AllowedDependency;
-import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
@@ -26,95 +23,53 @@ public class ValidateLicenses
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateLicenses.class);
     private final LicenseService licenseService;
-    private final DependencyService dependencyService;
 
-    public ValidateLicenses(LicenseService licenseService, DependencyService dependencyService)
+    public ValidateLicenses(LicenseService licenseService)
     {
         super();
         this.licenseService = licenseService;
-        this.dependencyService = dependencyService;
     }
 
     public Set<Dependency> validateLicenses(Set<Dependency> dependencies, Project module, SensorContext context)
     {
-        if (!dependencies.isEmpty() && dependencies.toString().contains(" "))
+        for (Dependency dependency : dependencies)
         {
-            for (Dependency dependency : dependencies)
+            if (StringUtils.isBlank(dependency.getLicense()))
             {
-                if (StringUtils.isBlank(dependency.getLicense()))
-                {
-                    checkAllowedDependencies(module, context, dependency);
-                    licenseNotFoundIssue(module, context, dependency);
-                }
+                checkForLicenses(module, context, dependency);
+
+                licenseNotFoundIssue(module, context, dependency);
             }
         }
         return dependencies;
     }
 
-    public List<License> getAllowedLicenses()
-    {
-        List<License> allowedLicensesList = new ArrayList<>();
-        for (License license : licenseService.getLicenses())
-        {
-            if ("true".equals(license.getStatus()))
-            {
-                allowedLicensesList.add(new License(license.getName(), license.getIdentifier(), license.getStatus()));
-            }
-        }
-        return allowedLicensesList;
-    }
-
     public Set<License> getUsedLicenses(Set<Dependency> dependencies)
     {
         Set<License> usedLicenseList = new TreeSet<>();
+
+        List<License> licenses = licenseService.getLicenses();
+
         for (Dependency dependency : dependencies)
         {
-            for (License license : licenseService.getLicenses())
+            for (License license : licenses)
             {
-                usedLicenseList = checkListForLicense(dependency, license, usedLicenseList);
+                if (license.getIdentifier().equals(dependency.getLicense()))
+                {
+                    usedLicenseList.add(license);
+                }
             }
-        }
-        return usedLicenseList;
-    }
-
-    private static Set<License> checkListForLicense(Dependency dependency, License license,
-        Set<License> usedLicenseList)
-    {
-        if (dependency.getLicense() != null)
-        {
-            if (dependency.getLicense().equals(license.getIdentifier()))
-            {
-                usedLicenseList.add(new License(license.getName(), license.getIdentifier(), license.getStatus()));
-            }
-        }
-        else
-        {
-            dependency.setLicense(" ");
         }
 
         return usedLicenseList;
     }
 
-    private void checkAllowedDependencies(Project module, SensorContext context, Dependency dependency)
-    {
-        for (AllowedDependency allowedDependency : dependencyService.getAllowedDependencies())
-        {
-            String matchString = allowedDependency.getKey().replace("\\.", ".");
-            if (dependency.getName().matches(matchString))
-            {
-                checkForLicenses(module, context, allowedDependency, dependency);
-            }
-        }
-    }
-
-    private void checkForLicenses(Project module, SensorContext context, AllowedDependency allowedDependency,
-        Dependency dependency)
+    private void checkForLicenses(Project module, SensorContext context, Dependency dependency)
     {
         for (License license : licenseService.getLicenses())
         {
-            if (license.getIdentifier().equals(allowedDependency.getLicense()))
+            if (license.getIdentifier().equals(dependency.getLicense()))
             {
-                dependency.setLicense(allowedDependency.getLicense());
                 if ("false".equals(license.getStatus()))
                 {
                     LOGGER.info("Dependency " + dependency.getName() + " uses a not allowed license "
@@ -134,7 +89,7 @@ public class ValidateLicenses
 
     private static void licenseNotFoundIssue(Project module, SensorContext context, Dependency dependency)
     {
-        if (" ".equals(dependency.getLicense()))
+        if (StringUtils.isBlank(dependency.getLicense()))
         {
             LOGGER.info("No License found for Dependency " + dependency.getName());
 

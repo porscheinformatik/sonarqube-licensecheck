@@ -15,29 +15,34 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.dependency.AllowedDependency;
+import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
 public class MavenDependencyScanner implements Scanner
 {
-
-    private final LicenseService licenseService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
 
-    public MavenDependencyScanner(LicenseService licenseService)
+    private final LicenseService licenseService;
+
+    private final DependencyService dependencyService;
+
+    public MavenDependencyScanner(LicenseService licenseService, final DependencyService dependencyService)
     {
         this.licenseService = licenseService;
+        this.dependencyService = dependencyService;
     }
 
     @Override
     public List<Dependency> scan(File moduleDir, String mavenProjectDependencies)
     {
-
         JsonReader jsonReader = Json.createReader(new StringReader(mavenProjectDependencies));
         Set<Dependency> dependencies = new HashSet<>();
 
@@ -45,9 +50,29 @@ public class MavenDependencyScanner implements Scanner
 
         loadLicenses(dependencies);
 
+        mapAdditionalLicenses(dependencies);
+
         jsonReader.close();
 
         return new ArrayList<>(dependencies);
+    }
+
+    private void mapAdditionalLicenses(final Set<Dependency> dependencies)
+    {
+        for (Dependency dependency : dependencies)
+        {
+            if (StringUtils.isBlank(dependency.getLicense()))
+            {
+                for (AllowedDependency allowedDependency : dependencyService.getAllowedDependencies())
+                {
+                    String matchString = allowedDependency.getKey();
+                    if (dependency.getName().matches(matchString))
+                    {
+                        dependency.setLicense(allowedDependency.getLicense());
+                    }
+                }
+            }
+        }
     }
 
     private static void parseDependencyJson(Set<Dependency> dependencies, JsonArray jsonDependencyArray)
@@ -72,7 +97,6 @@ public class MavenDependencyScanner implements Scanner
 
     private void loadLicenses(Set<Dependency> dependencies)
     {
-
         File mavenRepositoryDir = DirectoryFinder.getMavenRepsitoryDir();
 
         if (mavenRepositoryDir == null)
@@ -85,13 +109,11 @@ public class MavenDependencyScanner implements Scanner
 
         for (Dependency dependency : dependencies)
         {
-
             List<License> licenses =
                 LicenseFinder.getLicenses(DirectoryFinder.getPomPath(dependency, mavenRepositoryDir));
 
             if (!licenses.isEmpty())
             {
-
                 outer: for (License license : licenses)
                 {
 

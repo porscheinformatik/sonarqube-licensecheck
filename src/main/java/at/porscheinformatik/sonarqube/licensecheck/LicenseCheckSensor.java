@@ -12,6 +12,7 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
 
+import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -20,19 +21,23 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 
 public class LicenseCheckSensor implements Sensor
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
+
     private final FileSystem fs;
     private final Settings settings;
     private final ValidateLicenses validateLicenses;
-    private final LicenseService licenseService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
+    private final Scanner[] scanners;
 
     public LicenseCheckSensor(FileSystem fs, Settings settings, ValidateLicenses validateLicenses,
-        LicenseService licenseService)
+        LicenseService licenseService, final DependencyService dependencyService)
     {
         this.fs = fs;
         this.settings = settings;
         this.validateLicenses = validateLicenses;
-        this.licenseService = licenseService;
+        this.scanners = new Scanner[]{
+            new PackageJsonDependencyScanner(),
+            new MavenDependencyScanner(licenseService, dependencyService)
+        };
     }
 
     @Override
@@ -49,18 +54,13 @@ public class LicenseCheckSensor implements Sensor
             String mavenProjectDependencies = settings.getString("sonar.maven.projectDependencies");
             Set<Dependency> dependencies = new TreeSet<>();
 
-            Scanner[] scanners =
-                {
-                    new PackageJsonDependencyScanner(),
-                    new MavenDependencyScanner(licenseService)
-                };
-
             for (Scanner scanner : scanners)
             {
                 dependencies.addAll(scanner.scan(fs.baseDir(), mavenProjectDependencies));
             }
 
             Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, module, context);
+
             Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies);
 
             saveDependencies(context, validatedDependencies);
@@ -76,15 +76,8 @@ public class LicenseCheckSensor implements Sensor
     {
         if (!dependencies.isEmpty())
         {
-            StringBuilder dependencyString = new StringBuilder();
-            for (Dependency dependency : dependencies)
-            {
-                dependencyString.append(dependency.getName()).append("~");
-                dependencyString.append(dependency.getVersion()).append("~");
-                dependencyString.append(dependency.getLicense()).append(";");
-            }
-            sensorContext
-                .saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY, dependencyString.toString()));
+            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY,
+                Dependency.createString(dependencies)));
         }
     }
 
@@ -92,14 +85,8 @@ public class LicenseCheckSensor implements Sensor
     {
         if (!licenses.isEmpty())
         {
-            StringBuilder licenseString = new StringBuilder();
-            for (License license : licenses)
-            {
-                licenseString.append(license.getIdentifier()).append("~");
-                licenseString.append(license.getName()).append("~");
-                licenseString.append(license.getStatus()).append(";");
-            }
-            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE, licenseString.toString()));
+            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE,
+                License.createString(licenses)));
         }
     }
 }

@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -149,7 +150,7 @@ public class License implements Comparable<License>
         return licenses;
     }
 
-    public static String createString(List<License> licenses)
+    public static String createString(Collection<License> licenses)
     {
         TreeSet<License> licenseSet = new TreeSet<>();
         licenseSet.addAll(licenses);

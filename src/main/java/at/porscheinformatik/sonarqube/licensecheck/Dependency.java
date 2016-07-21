@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -149,7 +150,7 @@ public class Dependency implements Comparable<Dependency>
         return dependencies;
     }
 
-    public static String createString(List<Dependency> dependencies)
+    public static String createString(Collection<Dependency> dependencies)
     {
         TreeSet<Dependency> dependencySet = new TreeSet<>();
         dependencySet.addAll(dependencies);
@@ -157,9 +158,14 @@ public class Dependency implements Comparable<Dependency>
         StringBuilder returnString = new StringBuilder();
         for (Dependency dependency : dependencySet)
         {
-            returnString.append(dependency.getName()).append("~");
-            returnString.append(dependency.getVersion()).append("~");
-            returnString.append(dependency.getLicense()).append(";");
+            String license = dependency.getLicense();
+            returnString
+                .append(dependency.getName())
+                .append("~")
+                .append(dependency.getVersion())
+                .append("~")
+                .append(license != null ? license : " ")
+                .append(";");
         }
         return returnString.toString();
     }

@@ -9,15 +9,16 @@ import java.util.regex.Pattern;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
 public class MavenDependencyScannerTest
 {
-
     @Test
     public void testLicensesAreFound()
     {
@@ -32,7 +33,8 @@ public class MavenDependencyScannerTest
         licenseMap.put(Pattern.compile(".*BSD.*"), "BSD-3-Clause");
         LicenseService licenseService = Mockito.mock(LicenseService.class);
         Mockito.when(licenseService.getLicenseMap()).thenReturn(licenseMap);
-        Scanner scanner = new MavenDependencyScanner(licenseService);
+        final DependencyService dependencyService = Mockito.mock(DependencyService.class);
+        Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
 
         // -
         List<Dependency> dependencies = scanner.scan(moduleDir, mavenProjectDependencies);
