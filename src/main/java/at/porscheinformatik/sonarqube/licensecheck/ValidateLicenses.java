@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.BatchSide;
@@ -40,7 +41,7 @@ public class ValidateLicenses
         {
             for (Dependency dependency : dependencies)
             {
-                if (" ".equals(dependency.getLicense()))
+                if (StringUtils.isBlank(dependency.getLicense()))
                 {
                     checkAllowedDependencies(module, context, dependency);
                     licenseNotFoundIssue(module, context, dependency);
