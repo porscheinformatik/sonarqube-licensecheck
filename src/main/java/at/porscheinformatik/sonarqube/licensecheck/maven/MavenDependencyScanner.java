@@ -116,20 +116,24 @@ public class MavenDependencyScanner implements Scanner
             {
                 outer: for (License license : licenses)
                 {
-
-                    for (Entry<Pattern, String> entry : licenseMap.entrySet())
+                    String licenseName = license.getName();
+                    if (StringUtils.isNotBlank(licenseName))
                     {
-                        if (entry.getKey().matcher(license.getName()).matches())
+                        for (Entry<Pattern, String> entry : licenseMap.entrySet())
                         {
-                            dependency.setLicense(entry.getValue());
-                            break outer;
+                            if (entry.getKey().matcher(licenseName).matches())
+                            {
+                                dependency.setLicense(entry.getValue());
+                                break outer;
+                            }
                         }
                     }
+                    LOGGER.info("No licenses found for '{}'", licenseName);
                 }
             }
             else
             {
-                LOGGER.info("No licenses found in dependency " + dependency.getName());
+                LOGGER.info("No licenses found in dependency {}", dependency.getName());
             }
         }
     }
