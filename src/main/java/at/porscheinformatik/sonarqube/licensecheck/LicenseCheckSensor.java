@@ -12,11 +12,11 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
@@ -29,14 +29,14 @@ public class LicenseCheckSensor implements Sensor
     private final Scanner[] scanners;
 
     public LicenseCheckSensor(FileSystem fs, Settings settings, ValidateLicenses validateLicenses,
-        LicenseService licenseService, final DependencyService dependencyService)
+        MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
     {
         this.fs = fs;
         this.settings = settings;
         this.validateLicenses = validateLicenses;
-        this.scanners = new Scanner[]{
+        this.scanners = new Scanner[] {
             new PackageJsonDependencyScanner(),
-            new MavenDependencyScanner(licenseService, dependencyService)
+            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)
         };
     }
 

@@ -1,0 +1,27 @@
+<div class="modal in">
+  <form id="mavenLicenseDelete-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Delete Maven License</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="js-modal-text">Are you sure you want to delete this maven license?</div>
+      <br>
+      <div class="modal-field">
+        <label for="mavenLicenseRegexDelete">License Regex</label>
+        <input id="mavenLicenseRegexDelete-fake" name="mavenLicenseRegexDelete-fake" type="text" size="50" maxlength="255" value={{mavenLicenseRegexDelete}}
+          readonly>
+      </div>
+      <div class="modal-field">
+        <label for="mavenLicenseKeyDelete">License Key</label>
+        <input id="mavenLicenseKeyDelete-fake" name="mavenLicenseKeyDelete-fake" type="text" size="50" maxlength="255" value={{mavenLicenseKeyDelete}}
+          readonly>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button ng-click="hide()" id="mavenLicenseDelete-submit">Delete</button>
+      <a class="js-modal-close" ng-click="cancel()" id="mavenLicenseDelete-cancel">Cancel</a>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>

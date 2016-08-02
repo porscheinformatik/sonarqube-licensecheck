@@ -61,76 +61,9 @@ public class License implements Comparable<License>
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        License other = (License) obj;
-        if (identifier == null)
-        {
-            if (other.identifier != null)
-            {
-                return false;
-            }
-        }
-        else if (!identifier.equals(other.identifier))
-        {
-            return false;
-        }
-        if (name == null)
-        {
-            if (other.name != null)
-            {
-                return false;
-            }
-        }
-        else if (!name.equals(other.name))
-        {
-            return false;
-        }
-        if (status == null)
-        {
-            if (other.status != null)
-            {
-                return false;
-            }
-        }
-        else if (!status.equals(other.status))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString()
     {
         return "{name:" + name + ", identifier:" + identifier + ", status:" + status + "}";
-    }
-
-    @Override
-    public int compareTo(License o)
-    {
-        if ((o == null) || (o.name == null))
-        {
-            return 1;
-        }
-        else if (this.name == null)
-        {
-            return -1;
-        }
-
-        return this.name.compareTo(o.name);
     }
 
     public static List<License> fromString(String serializedLicensesString)
@@ -163,5 +96,56 @@ public class License implements Comparable<License>
             returnString.append(license.getStatus()).append(";");
         }
         return returnString.toString();
+    }
+
+    @Override
+    public int compareTo(License o)
+    {
+        if (o == null)
+        {
+            return 1;
+        }
+        else if (this.identifier.compareTo(o.identifier) == 0)
+        {
+            if (this.name.compareTo(o.name) == 0)
+            {
+                return this.status.compareTo(o.status);
+            }
+            else
+            {
+                return this.name.compareTo(o.name);
+            }
+        }
+        else
+        {
+            return this.identifier.compareTo(o.identifier);
+        }
+    }
+
+    @Override
+    public boolean equals(Object object)
+    {
+        if (this == object)
+        {
+            return true;
+        }
+        if (object == null)
+        {
+            return false;
+        }
+        if (getClass() != object.getClass())
+        {
+            return false;
+        }
+
+        License license = (License) object;
+        if (license.identifier.equals(this.identifier) && license.name.equals(this.name))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

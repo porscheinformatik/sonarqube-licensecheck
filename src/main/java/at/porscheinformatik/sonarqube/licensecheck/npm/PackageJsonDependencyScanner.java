@@ -1,14 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.npm;
 
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +7,17 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
@@ -39,6 +41,7 @@ public class PackageJsonDependencyScanner implements Scanner
                 {
                     return dependencyParser(jsonObjectDependencies, packageJsonFile);
                 }
+                jsonReader.close();
             }
             catch (FileNotFoundException e)
             {
@@ -83,7 +86,7 @@ public class PackageJsonDependencyScanner implements Scanner
                     {
                         license = jsonObject.getString("license");
                     }
-                    else if(jsonObject.containsKey("licenses"))
+                    else if (jsonObject.containsKey("licenses"))
                     {
                         JsonArray licenses = jsonObject.getJsonArray("licenses");
                         if (licenses.size() > 0)
@@ -92,12 +95,12 @@ public class PackageJsonDependencyScanner implements Scanner
                         }
                     }
 
-                    if (license!= null)
+                    if (license != null)
                     {
-                        dependencies.add(
-                            new Dependency(identifier, jsonObject.getString("version"), license));
+                        dependencies.add(new Dependency(identifier, jsonObject.getString("version"), license));
                     }
                 }
+                jsonReader.close();
             }
             catch (FileNotFoundException e)
             {

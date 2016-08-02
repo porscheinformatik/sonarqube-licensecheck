@@ -1,113 +1,67 @@
-<h1 class="admin-page-title">License Check Configuration</h1>
-&nbsp;
-<ul class="tabs">
-    <li>
-        <a class="selected" href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Licenses</a>
-    </li>
-    <li>
-        <a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavendependency">Maven Dependency Mapping</a>
-    </li>
-    	<li><a
-		href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenlicenses">Maven License Mapping</a>
-	</li>
-</ul>
-&nbsp;
-
-<table class="data zebra" id="allowedLibraryTable">
-	<caption>This table shows all allowed licenses.</caption>
-	<thead>
-		<tr>
-			<th>Identifier</th>
-			<th>Name</th>
-			<th>Allowed</th>
-		</tr>
-
-		<tr class="top">
-			<% form_tag :action => 'add_licenses' do %>
-			<td><%= text_field_tag :identifier, nil, :placeholder=>
-				'Shortage of the License title', :size=> 20, :required=>'required'
-				%></td>
-			<td><%= text_field_tag :name, nil, :placeholder=> 'Title of the allowed license', :size=> 35, :required=>'required'%></td>
-			<td><%= select_tag :status, options_for_select([false, true]) %></td>
-			<td><%= submit_tag "Add License"%></td> <% end %>
-		</tr>
-	</thead>
-	<tbody>
-		<% @licenses.split(/;/).each do |license| %>
-		<tr>
-			<% license.split(/~/).each do |col| %>
-			<td><%= col -%></td> <% end %>
-			<td><div style="float: left"><input type="button" class="opener" value="Edit" /></div>
-			<% form_tag :action => 'delete_licenses' do %>
-			<%= hidden_field_tag :license_tag, license %>
-			<div style="float:left"> &nbsp; <input name="commit" type="submit" value="Delete" style="border-color: #DF0101; color: #DF0101"></div></td>
-			<% end %>
-		</tr>
-		<% end %>
-	</tbody>
-</table>
-<div id="dialog-1" title="Update License">
-	<div class="modal-head">
-		<h2>Edit License</h2>
-	</div>
-	<div class="modal-body">
-		<form id="licenseForm">
-			<div class="modal-field">
-				<label for="licensename">License Name</label>
-				<input type"text" name="licensename" size="38" id="licensename" />
-			</div>
-			<div class="modal-field">
-				<label for="selectID">Allowed</label>
-				<select id="selectID">
-					<option value="true">true</option>
-					<option value="false">false</option>
-				</select>
-			</div>
-			<input type="hidden" name="identifier" id="licenseid" />
-		</form>
-	</div>
+<div id="body" class="page-container">
+  <div id="content">
+    <div class="page md-padding" ng-app="sqlc.licenses" ng-controller="listLicensesCtrl" id="popupContainer" ng-cloak>
+      <ul class="tabs">
+        <li><a class="selected" href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Licenses</a></li>
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenDependencies">Maven Dependencies</a></li>
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenLicenses">Maven Licenses</a></li>
+      </ul>
+      <br>
+      <div id="license-header">
+        <header class="page-header">
+          <h1 class="page-title">Licenses</h1>
+          <i class="spinner hidden"></i>
+          <div class="page-actions">
+            <div class="button-license">
+              <button ng-click="addLicense($event)" id="license-add">Add License</button>
+            </div>
+          </div>
+          <p class="page-description">Add and administer licenses of projects.</p>
+        </header>
+      </div>
+      <div id="license-search">
+        <div>
+          <div class="panel panel-vertical bordered-bottom spacer-bottom">
+            <form id="licenses-search-form" class="search-box">
+              <button id="license-search-submit" class="search-box-submit button-clean">
+                                <i class="icon-search"></i>
+                            </button>
+              <input ng-model="searchString" id="license-search-query" class="search-box-input" type="search" name="q" placeholder="Search"
+                maxlength="100">
+            </form>
+          </div>
+        </div>
+      </div>
+      <div>
+        <table class="data zebra" width="100%">
+          <thead>
+            <tr>
+              <th>Identifier</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tr ng-repeat="license in licenses | searchFor:searchString as filteredItems">
+            <td width="20%">{{license.identifier}}</td>
+            <td width="40%">{{license.name}}</td>
+            <td width="20%">{{license.status}}</td>
+            <td>
+              <a class="icon-edit" ng-click="editLicense($event, license)" title="Edit License" data-toggle="tooltip"></a>
+              <a class="icon-delete" ng-click="deleteLicense($event, license)" title="Delete License" data-toggle="tooltip"></a>
+            </td>
+          </tr>
+          <tr ng-show="!filteredItems.length">
+            <td> no licenses available</td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
-<script type="text/javascript">
-	(function($) {
-		function updatelicense() {
-			var name = $("#licensename").val();
-			var status = $("#selectID").val();
-			var identfier = $( "#licenseid" ).val();
 
-			$.post('update_licenses', 'id='+ identfier +'&name=' +name+ '&status=' +status, function() {
-			  location.reload();
-			});
-
-			$(this).dialog("close");
-		}
-      
-         $(function() {
-            $("#dialog-1").dialog({
-               	autoOpen: false,
-               	width: 500,
-               	buttons: {
-               		Update: updatelicense,
-                  	Close: function() {$(this).dialog("close");}
-               },
-            });
-
-            $('.opener').click(function() {
-            	var tr = $(this).closest('tr');
-            	var identifier = $(tr).find('td').eq(0).text();
-            	var name = $(tr).find('td').eq(1).text();
-            	var status = $(tr).find('td').eq(2).text();
-
-            	$("#licenseid").val(identifier);
-            	$("#licensename").val(name);
-            	$("#selectID").val(status);
-
-               	$("#dialog-1").dialog( "open" );
-            });
-         });
-	}(jQuery));
-</script>
-
-
-
-
-
+<script src="../static/licensecheck/vendor.js"></script>
+<script src="../static/licensecheck/licensecheck.js"></script>

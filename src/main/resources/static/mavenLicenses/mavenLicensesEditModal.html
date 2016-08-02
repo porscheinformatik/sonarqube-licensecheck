@@ -1,0 +1,27 @@
+<div class="modal in">
+  <form id="mavenLicenseEdit-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Edit Maven License</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="modal-field">
+        <label for="mavenLicenseRegexEdit">License Regex<em class="mandatory">*</em></label>
+        <input id="mavenLicenseRegexEdit-fake" name="mavenLicenseRegexEdit-fake" type="text" class="hidden">
+        <input required ng-model="mavenLicenseRegexEdit" id="mavenLicenseRegexEdit" name="mavenLicenseRegexEdit" type="text" size="50"
+          maxlength="255" value={{mavenLicenseRegexEdit}}>
+      </div>
+      <div class="modal-field">
+        <label for="mavenLicenseKeyEdit">License Key<em class="mandatory">*</em></label>
+        <select required ng-model="mavenLicenseKeyEdit" id="mavenLicenseKeyEdit" name="mavenLicenseKeyEdit">
+          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button ng-click="check([mavenLicenseRegexEdit, mavenLicenseKeyEdit])" id="mavenLicenseEdit-submit">Edit</button>
+        <a class="js-modal-close" ng-click="cancel()" id="mavenLicenseEdit-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>

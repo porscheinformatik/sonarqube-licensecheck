@@ -1,0 +1,27 @@
+<div class="modal in">
+  <form id="mavenDependencyEdit-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Edit Maven Dependency</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="modal-field">
+        <label for="mavenDependencyKeyEdit">Key Regex<em class="mandatory">*</em></label>
+        <input id="mavenDependencyKeyEdit-fake" name="mavenDependencyKeyEdit-fake" type="text" class="hidden">
+        <input required ng-model="mavenDependencyKeyEdit" id="mavenDependencyKeyEdit" name="mavenDependencyKeyEdit" type="text" size="50"
+          maxlength="255" value={{mavenDependencyKeyEdit}}>
+      </div>
+      <div class="modal-field">
+        <label for="mavenDependencyLicenseEdit">License<em class="mandatory">*</em></label>
+        <select required ng-model="mavenDependencyLicenseEdit" id="mavenDependencyLicenseEdit" name="mavenDependencyLicenseEdit">
+          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button ng-click="check([mavenDependencyKeyEdit, mavenDependencyLicenseEdit])" id="mavenDependencyEdit-submit">Edit</button>
+        <a class="js-modal-close" ng-click="cancel()" id="mavenDependencyEdit-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>

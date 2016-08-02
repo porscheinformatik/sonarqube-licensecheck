@@ -4,10 +4,5 @@
 %>
 Used Dependencies
 Name;Version;License
-<% @entries.each do |row| %><% row.each do |col| %>"<%= col %>";<% end %>
-<% end %>
-
-Used Licenses
-Identifier;Name;Allowed
-<% @licenseForExport.each do |row| %><% row.each do |col| %>"<%= col %>";<% end %>
+<% @dependenciesForExport.each do |row| %><% row.each do |col| %>"<%= col %>";<% end %>
 <% end %>

@@ -1,0 +1,29 @@
+<div class="modal in">
+  <form id="mavenDependencyAdd-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Add Maven Dependency</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="modal-field">
+        <label for="mavenDependencyKeyAdd">Key Regex<em class="mandatory">*</em></label>
+        <input id="mavenDependencyKeyAdd-fake" name="mavenDependencyKeyAdd-fake" type="text" class="hidden">
+        <input required ng-model="mavenDependencyKeyAdd" id="mavenDependencyKeyAdd" name="mavenDependencyKeyAdd" type="text" size="50"
+          maxlength="255" value="">
+      </div>
+      <div class="modal-field">
+        <label for="mavenDependencyLicenseAdd">License<em class="mandatory">*</em></label>
+        <select required ng-model="mavenDependencyLicenseAdd" id="mavenDependencyLicenseAdd" name="mavenDependencyLicenseAdd">
+          <option selected hidden disabled></option>
+          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button ng-click="check([mavenDependencyKeyAdd, mavenDependencyLicenseAdd])" id="mavenDependencyAdd-submit">Add</button>
+        <a class="js-modal-close" ng-click="cancel()" id="mavenDependencyAdd-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>
+<script>document.getElementById('mavenDependencyKeyAdd').focus();</script>

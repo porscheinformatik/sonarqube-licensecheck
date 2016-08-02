@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.*;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -33,7 +34,6 @@ public class LicenseService
     public List<License> getLicenses()
     {
         String licenseString = settings.getString(LICENSE_KEY);
-
         JsonParser parser = Json.createParser(new StringReader(licenseString));
         final List<License> licenses = new ArrayList<>();
         JsonReader jsonReader = Json.createReader(new StringReader(licenseString));
@@ -46,8 +46,10 @@ public class LicenseService
             switch (event)
             {
                 case KEY_NAME:
-                    if (!"name".equals(parser.getString()) && !"url".equals(parser.getString())
-                        && !"osiApproved".equals(parser.getString()) && !"status".equals(parser.getString()))
+                    if (!"name".equals(parser.getString())
+                        && !"url".equals(parser.getString())
+                        && !"osiApproved".equals(parser.getString())
+                        && !"status".equals(parser.getString()))
                     {
                         saveLicensesToList(jsonObject, licenses, parser.getString());
                     }
@@ -56,6 +58,9 @@ public class LicenseService
                     break;
             }
         }
+
+        parser.close();
+
         return licenses;
     }
 
@@ -82,8 +87,7 @@ public class LicenseService
         JsonObject identifierObj = jsonObject.getJsonObject(identifier);
         if (identifierObj.containsKey("status"))
         {
-            licenses.add(
-                new License(identifierObj.getString("name"), identifier, identifierObj.getString("status")));
+            licenses.add(new License(identifierObj.getString("name"), identifier, identifierObj.getString("status")));
         }
         else
         {

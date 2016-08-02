@@ -72,15 +72,19 @@ public class ValidateLicenses
             {
                 if ("false".equals(license.getStatus()))
                 {
-                    LOGGER.info("Dependency " + dependency.getName() + " uses a not allowed license "
+                    LOGGER.info("Dependency "
+                        + dependency.getName()
+                        + " uses a not allowed license "
                         + dependency.getLicense());
 
-                    NewIssue issue = context.newIssue()
+                    NewIssue issue = context
+                        .newIssue()
                         .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
                             LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY))
-                        .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey()))
-                            .message("Dependency " + dependency.getName() + " uses a not allowed license "
-                                + dependency.getLicense()));
+                        .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey())).message("Dependency "
+                            + dependency.getName()
+                            + " uses a not allowed license "
+                            + dependency.getLicense()));
                     issue.save();
                 }
             }
@@ -93,11 +97,12 @@ public class ValidateLicenses
         {
             LOGGER.info("No License found for Dependency " + dependency.getName());
 
-            NewIssue issue =
-                context.newIssue().forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-                    LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
-                    .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey()))
-                        .message("No License found for Dependency: " + dependency.getName()));
+            NewIssue issue = context
+                .newIssue()
+                .forRule(
+                    RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY, LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
+                .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey())).message(
+                    "No License found for Dependency: " + dependency.getName()));
             issue.save();
         }
     }

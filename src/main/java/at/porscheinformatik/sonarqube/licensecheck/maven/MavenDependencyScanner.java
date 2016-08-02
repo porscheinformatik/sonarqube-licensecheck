@@ -21,23 +21,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.dependency.AllowedDependency;
-import at.porscheinformatik.sonarqube.licensecheck.dependency.DependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 
 public class MavenDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
 
-    private final LicenseService licenseService;
+    private final MavenLicenseService mavenLicenseService;
 
-    private final DependencyService dependencyService;
+    private final MavenDependencyService mavenDependencyService;
 
-    public MavenDependencyScanner(LicenseService licenseService, final DependencyService dependencyService)
+    public MavenDependencyScanner(MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
     {
-        this.licenseService = licenseService;
-        this.dependencyService = dependencyService;
+        this.mavenLicenseService = mavenLicenseService;
+        this.mavenDependencyService = mavenDependencyService;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class MavenDependencyScanner implements Scanner
         {
             if (StringUtils.isBlank(dependency.getLicense()))
             {
-                for (AllowedDependency allowedDependency : dependencyService.getAllowedDependencies())
+                for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies())
                 {
                     String matchString = allowedDependency.getKey();
                     if (dependency.getName().matches(matchString))
@@ -105,7 +105,7 @@ public class MavenDependencyScanner implements Scanner
             return;
         }
 
-        Map<Pattern, String> licenseMap = licenseService.getLicenseMap();
+        Map<Pattern, String> licenseMap = mavenLicenseService.getLicenseMap();
 
         for (Dependency dependency : dependencies)
         {

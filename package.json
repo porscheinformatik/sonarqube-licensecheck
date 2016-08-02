@@ -1,0 +1,26 @@
+{
+  "name": "sonarqube-licensecheck",
+  "version": "1.0.0",
+  "description": "SonarQube License Check",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://yes@scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-licensecheck"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "angular": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-aria": "1.5.8",
+    "angular-material": "1.1.0-rc.5",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0"
+  }
+}

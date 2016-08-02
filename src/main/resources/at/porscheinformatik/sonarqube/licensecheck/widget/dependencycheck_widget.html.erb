@@ -1,51 +1,49 @@
 <%
-	dependencyMeasure = measure("licensecheck.dependency")
-	if dependencyMeasure && !dependencyMeasure.data.blank?
+    dependencyMeasure = measure("licensecheck.dependency")
+    if dependencyMeasure && !dependencyMeasure.data.blank?
 %>
 
 <div>
-	<table class="data zebra">
-		<thead>
-			<tr>
-				<th> </th>
-				<th>Name</th>
-				<th>Version</th>
-				<th>License</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% dependencyString = '' %>
-			<% dependencyMeasure.data.split(/;/).each do |dependency| %>
-			<tr>
-				<td> 
-				<% dependencyString += dependency + ';'%>
-				<% @caseString = Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').validateLicense(dependency) %>
-				
-				<% if dependency.include? " " %>
-				<%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'error.png'), :size => '16x16', :style => 'vertical-align:middle') %>
-				<% elsif @caseString.eql? 'ok' %>
-				<%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'ok.png'), :size => '16x16', :style => 'vertical-align:middle') -%>
-				<% else %>
-				<%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'warning.png'), :size => '16x16', :style => 'vertical-align:middle') -%>
-				<% end %>
-				
-				</td>
-				<% dependency.split(/~/).each do |col| %>
-				<td>  <%= col -%> </td>
-				<% end %>
-			</tr>
-			<% end %>
-		</tbody>	
-	</table>
-	
-	<% Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').setDependencyString(dependencyString) %>
-	
-	<p><br> <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'ok.png'), :size => '16x16', :style => 'vertical-align:middle') %> : License allowed </p>
-	<p> <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'warning.png'), :size => '16x16', :style => 'vertical-align:middle') -%> : License not allowed </p>
-	<p> <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'error.png'), :size => '16x16', :style => 'vertical-align:middle') -%> : License not found </p>
-	<p><br> Export the used dependencies and licenses to a CSV file after a project scan</p>
-	<p><a class="csv" href="licensecheck_configuration/export_csv" id="export-csv-link">Export CSV</a></p>
+    <table class="data zebra">
+        <thead>
+            <tr>
+                <th> </th>
+                <th>Name</th>
+                <th>Version</th>
+                <th>License</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% dependencyString = '' %>
+            <% dependencyMeasure.data.split(/;/).each do |dependency| %>
+            <tr>
+                <td>
+                    <% dependencyString += dependency + ';'%>
+                    <% @caseString = Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').validateLicense(dependency) %>
 
+                    <% if dependency.include? " " %>
+                    <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'error.png'), :size => '16x16', :style => 'vertical-align:middle') %>
+                    <% elsif @caseString.eql? 'ok' %>
+                    <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'ok.png'), :size => '16x16', :style => 'vertical-align:middle') -%>
+                    <% else %>
+                    <%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'warning.png'), :size => '16x16', :style => 'vertical-align:middle') -%>
+                    <% end %>
+                </td>
+                <% dependency.split(/~/).each do |col| %>
+                <td>
+                    <%= col -%>
+                </td>
+                <% end %>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+    <% Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').setDependencyString(dependencyString) %>
+    <p><br><%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'ok.png'), :size => '16x16', :style => 'vertical-align:middle') %> : License allowed</p>
+    <p><%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'warning.png'), :size => '16x16', :style => 'vertical-align:middle') -%> : License not allowed </p>
+    <p><%= image_tag(url_for_static(:plugin => 'licensecheck', :path => 'error.png'), :size => '16x16', :style => 'vertical-align:middle') -%> : License not found </p>
+    <p><br> Export the used dependencies to a CSV file after a project scan</p>
+    <p><a class="csv" href="../../licensecheck_configuration/export_used_dependencies_csv" id="export-csv-link">Export CSV</a></p>
 </div>
 <% else %>
 <h1>No Data</h1>
