@@ -2,7 +2,6 @@ package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,7 @@ class LicenseFinder
             }
 
         }
-        catch (IOException | XmlPullParserException e)
+        catch (Exception e)
         {
             LOGGER.warn("Could not parse Maven POM " + filePath, e);
             return Collections.emptyList();
