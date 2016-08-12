@@ -1,0 +1,32 @@
+<div class="modal in">
+  <form id="projectLicenseDelete-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Delete Project License</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="js-modal-text">Are you sure you want to delete this project license?</div>
+      <br>
+      <div class="modal-field">
+        <label for="projectLicenseLicenseDelete">License</label>
+        <input id="projectLicenseLicenseDelete-fake" name="projectLicenseLicenseDelete-fake" type="text" size="50" maxlength="255"
+          value={{projectLicenseLicenseDelete}} readonly>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseProjectDelete">Project</label>
+        <input id="projectLicenseProjectDelete-fake" name="projectLicenseProjectDelete-fake" type="text" size="50" maxlength="255"
+          value={{projectLicenseProjectDelete}} readonly>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseStatusDelete">Status</label>
+        <input id="projectLicenseStatusDelete-fake" name="projectLicenseStatusDelete-fake" type="text" size="50" maxlength="255"
+          value={{projectLicenseStatusDelete}} readonly>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button ng-click="hide()" id="projectLicenseDelete-submit">Delete</button>
+      <a class="js-modal-close" ng-click="cancel()" id="projectLicenseDelete-cancel">Cancel</a>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>

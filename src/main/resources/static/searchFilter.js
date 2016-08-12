@@ -4,6 +4,29 @@
   var mavenDependencyModule = angular.module('sqlc.maven-dependencies');
   var mavenLicenseModule = angular.module('sqlc.maven-licenses');
   var licenseModule = angular.module('sqlc.licenses');
+  var projectLicenseModule = angular.module('sqlc.projectLicenses');
+
+  projectLicenseModule.filter('searchForProjectLicense', function () {
+    return function (arr, searchString) {
+      if (!searchString) {
+        return arr;
+      }
+      var result = [];
+      searchString = searchString.toLowerCase();
+      angular.forEach(arr, function (mavenDependency) {
+        if (projectLicense.license.toLowerCase().indexOf(searchString) !== -1) {
+          result.push(projectLicense);
+        }
+        else if (projectLicense.projectName.toLowerCase().indexOf(searchString) !== -1) {
+          result.push(projectLicense);
+        }
+        else if (projectLicense.status.toLowerCase().indexOf(searchString) !== -1) {
+          result.push(projectLicense);
+        }
+      });
+      return result;
+    };
+  });
 
   mavenDependencyModule.filter('searchForMavenDependency', function () {
     return function (arr, searchString) {

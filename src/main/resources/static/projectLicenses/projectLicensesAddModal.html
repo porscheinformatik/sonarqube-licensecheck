@@ -1,0 +1,38 @@
+<div class="modal in">
+  <form id="mavenLicenseAdd-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Add Project License</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="modal-field">
+        <label for="projectLicenseLicenseAdd">License<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseLicenseAdd" id="projectLicenseLicenseAdd" name="projectLicenseLicenseAdd">
+          <option selected hidden disabled></option>
+          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseProjectAdd">Project<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseProjectAdd" id="projectLicenseProjectAdd" name="projectLicenseProjectAdd">
+          <option selected hidden disabled></option>
+          <option ng-repeat="resource in resources | orderBy:'name'" value="{{resource.name}}">{{resource.name}}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseStatusAdd">Status<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseStatusAdd" id="projectLicenseStatusAdd" name="projectLicenseStatusAdd">
+          <option selected hidden disabled></option>
+          <option value="true">true</option>
+          <option value="false">false</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button ng-click="check([projectLicenseLicenseAdd, projectLicenseProjectAdd, projectLicenseStatusAdd])" id="projectLicenseAdd-submit">Add</button>
+        <a class="js-modal-close" ng-click="cancel()" id="projectLicenseAdd-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>
+<script>document.getElementById('projectLicenseLicenseAdd').focus();</script>

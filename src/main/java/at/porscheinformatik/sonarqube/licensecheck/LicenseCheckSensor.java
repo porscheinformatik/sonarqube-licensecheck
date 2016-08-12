@@ -34,10 +34,9 @@ public class LicenseCheckSensor implements Sensor
         this.fs = fs;
         this.settings = settings;
         this.validateLicenses = validateLicenses;
-        this.scanners = new Scanner[] {
+        this.scanners = new Scanner[]{
             new PackageJsonDependencyScanner(),
-            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)
-        };
+            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 
     @Override
@@ -61,7 +60,7 @@ public class LicenseCheckSensor implements Sensor
 
             Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, module, context);
 
-            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies);
+            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, module);
 
             saveDependencies(context, validatedDependencies);
             saveLicenses(context, usedLicenses);
@@ -76,8 +75,8 @@ public class LicenseCheckSensor implements Sensor
     {
         if (!dependencies.isEmpty())
         {
-            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY,
-                Dependency.createString(dependencies)));
+            sensorContext.saveMeasure(
+                new Measure<String>(LicenseCheckMetrics.INPUTDEPENDENCY, Dependency.createString(dependencies)));
         }
     }
 
@@ -85,8 +84,8 @@ public class LicenseCheckSensor implements Sensor
     {
         if (!licenses.isEmpty())
         {
-            sensorContext.saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE,
-                License.createString(licenses)));
+            sensorContext
+                .saveMeasure(new Measure<String>(LicenseCheckMetrics.INPUTLICENSE, License.createString(licenses)));
         }
     }
 }

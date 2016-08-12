@@ -19,7 +19,9 @@ public final class LicenseConfiguration
     public static final String PROPERTY_NEW_NAME = "newName";
     public static final String PROPERTY_NEW_IDENTIFIER = "newIdentifier";
     public static final String PROPERTY_NEW_STATUS = "newStatus";
+    public static final String PROPERTY_OLD_NAME = "oldName";
     public static final String PROPERTY_OLD_IDENTIFIER = "oldIdentifier";
+    public static final String PROPERTY_OLD_STATUS = "oldStatus";
 
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_IDENTIFIER = "identifier";

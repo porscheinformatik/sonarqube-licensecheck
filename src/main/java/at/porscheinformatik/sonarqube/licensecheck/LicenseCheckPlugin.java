@@ -13,9 +13,12 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencySettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.license.LicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.MavenDependencyWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
+import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidget;
 import at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator;
 import at.porscheinformatik.sonarqube.licensecheck.widget.UsedLicensesWidget;
@@ -45,6 +48,9 @@ public class LicenseCheckPlugin extends SonarPlugin
             MavenLicenseService.class,
             MavenLicenseSettingsService.class,
             MavenLicenseWs.class,
+            ProjectLicenseService.class,
+            ProjectLicenseSettingsService.class,
+            ProjectLicenseWs.class,
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category("License Check")
                 .name("Activate")

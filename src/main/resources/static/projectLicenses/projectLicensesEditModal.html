@@ -1,0 +1,34 @@
+<div class="modal in">
+  <form id="projectLicenseEdit-form" autocomplete="off">
+    <div class="modal-head">
+      <h2>Edit Project License</h2>
+    </div>
+    <div class="modal-body">
+      <div class="js-modal-messages"></div>
+      <div class="modal-field">
+        <label for="projectLicenseLicenseEdit">License<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseLicenseEdit" id="projectLicenseLicenseEdit" name="projectLicenseLicenseEdit">
+          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseProjectEdit">Project<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseProjectEdit" id="projectLicenseProjectEdit" name="projectLicenseProjectEdit">
+          <option ng-repeat="resource in resources | orderBy:'name'" value="{{resource.name}}">{{resource.name}}</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label for="projectLicenseStatusEdit">Status<em class="mandatory">*</em></label>
+        <select required ng-model="projectLicenseStatusEdit" id="projectLicenseStatusEdit" name="projectLicenseStatusEdit">
+          <option value="true">true</option>
+         <option value="false">false</option>
+        </select>
+      </div>
+      <div class="modal-foot">
+        <button ng-click="check([projectLicenseLicenseEdit, projectLicenseProjectEdit, projectLicenseStatusEdit])" id="projectLicenseEdit-submit">Edit</button>
+        <a class="js-modal-close" ng-click="cancel()" id="projectLicenseEdit-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-overlay in"></div>

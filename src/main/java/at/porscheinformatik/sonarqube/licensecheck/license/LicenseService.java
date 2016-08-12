@@ -17,18 +17,49 @@ import javax.json.stream.JsonParser;
 
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.config.Settings;
+import org.sonar.api.resources.Project;
 import org.sonar.api.server.ServerSide;
+
+import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
 
 @ServerSide
 @BatchSide
 public class LicenseService
 {
     private final Settings settings;
+    private final ProjectLicenseService projectLicenseService;
 
-    public LicenseService(Settings settings)
+    public LicenseService(Settings settings, ProjectLicenseService projectLicenseService)
     {
         super();
         this.settings = settings;
+        this.projectLicenseService = projectLicenseService;
+    }
+
+    public List<License> getLicenses(Project module)
+    {
+        List<License> globalLicenses = getLicenses();
+
+        if (module == null)
+        {
+            return globalLicenses;
+        }
+
+        List<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList(module.getKey());
+
+        for (License license : globalLicenses)
+        {
+            for (ProjectLicense projectLicense : projectLicenses)
+            {
+                if (license.getIdentifier().equals(projectLicense.getLicense()))
+                {
+                    license.setStatus(projectLicense.getStatus()); //override the stati of the globalLicenses
+                }
+            }
+        }
+
+        return globalLicenses;
     }
 
     public List<License> getLicenses()

@@ -36,19 +36,21 @@ public class ValidateLicenses
         {
             if (StringUtils.isBlank(dependency.getLicense()))
             {
-                checkForLicenses(module, context, dependency);
-
                 licenseNotFoundIssue(module, context, dependency);
+            }
+            else
+            {
+                checkForLicenses(module, context, dependency);
             }
         }
         return dependencies;
     }
 
-    public Set<License> getUsedLicenses(Set<Dependency> dependencies)
+    public Set<License> getUsedLicenses(Set<Dependency> dependencies, Project module)
     {
         Set<License> usedLicenseList = new TreeSet<>();
-
-        List<License> licenses = licenseService.getLicenses();
+        
+        List<License> licenses = licenseService.getLicenses(module);
 
         for (Dependency dependency : dependencies)
         {
@@ -66,7 +68,7 @@ public class ValidateLicenses
 
     private void checkForLicenses(Project module, SensorContext context, Dependency dependency)
     {
-        for (License license : licenseService.getLicenses())
+        for (License license : licenseService.getLicenses(module))
         {
             if (license.getIdentifier().equals(dependency.getLicense()))
             {

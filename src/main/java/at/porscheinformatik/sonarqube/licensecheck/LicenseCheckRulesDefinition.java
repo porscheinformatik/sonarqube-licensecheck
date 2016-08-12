@@ -30,12 +30,14 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
         NewRepository repository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
         repository.setName("License Check");
 
-        repository.createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
+        repository
+            .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
             .setName("Dependency has unknown license [license-check]")
             .setHtmlDescription("The dependencies license could not be determined!")
             .setSeverity(Severity.BLOCKER);
 
-        repository.createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
+        repository
+            .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
             .setName("License is not allowed [license-check]")
             .setHtmlDescription("Violation because the license of the dependency is not allowed.")
             .setSeverity(Severity.BLOCKER);

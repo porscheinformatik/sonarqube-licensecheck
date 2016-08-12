@@ -1,0 +1,68 @@
+<div id="body" class="page-container">
+  <div id="content">
+    <div class="page md-padding" ng-app="sqlc.projectLicenses" ng-controller="projectLicenseCtrl" id="popupContainer" ng-cloak>
+      <ul class="tabs">
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Global Licenses</a></li>
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenDependencies">Maven Dependencies</a></li>
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenLicenses">Maven Licenses</a></li>
+        <li><a class="selected" href="<%= ApplicationController.root_context -%>/licensecheck_configuration/projects">Project Licenses</a></li>
+      </ul>
+      <br>
+      <div id="projectLicenses-header">
+        <header class="page-header">
+          <h1 class="page-title">Project Licenses</h1>
+          <i class="spinner hidden"></i>
+          <div class="page-actions">
+            <div class="button-project">
+              <button ng-click="addProjectLicense($event)" id="projectLicense-add">Add Project License</button>
+            </div>
+          </div>
+          <p class="page-description">Add and administer project licenses.</p>
+        </header>
+      </div>
+      <div id="projectLicense-search">
+        <div>
+          <div class="panel panel-vertical bordered-bottom spacer-bottom">
+            <form id="projectLicense-search-form" class="search-box">
+              <button id="projectLicense-search-submit" class="search-box-submit button-clean">
+                                <i class="icon-search"></i>
+                            </button>
+              <input ng-model="searchString" id="projectLicense-search-query" class="search-box-input" type="search" name="q" placeholder="Search"
+                maxlength="100">
+            </form>
+          </div>
+        </div>
+      </div>
+      <div>
+        <table class="data zebra" width="100%">
+          <thead>
+            <tr>
+              <th>License</th>
+              <th>Project</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tr ng-repeat="projectLicense in projectLicenses | searchForProjectLicense:searchString as filteredItems">
+            <td width="25%">{{projectLicense.license}}</td>
+            <td width="25%">{{projectLicense.projectName}}</td>
+            <td width="25%">{{projectLicense.status}}</td>
+            <td>
+              <a class="icon-edit" ng-click="editProjectLicense($event, projectLicense)" title="Edit project license" data-toggle="tooltip"></a>
+              <a class="icon-delete" ng-click="deleteProjectLicense($event, projectLicense)" title="Delete project license" data-toggle="tooltip"></a>
+            </td>
+          </tr>
+          <tr ng-show="!filteredItems.length">
+            <td> no projects licenses available</td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../static/licensecheck/vendor.js"></script>
+<script src="../static/licensecheck/licensecheck.js"></script>

@@ -11,4 +11,6 @@ public class LicenseCheckPropertyKeys
     public static final String ACTIVATION_KEY = "licensecheck.activation";
     public static final String ALLOWED_DEPENDENCIES_KEY = "licensecheck.alloweddependencies";
     public static final String MAVEN_LICENSE_STRING = "licensecheck.mavenlicensestring";
+
+    public static final String PROJECT_LICENSE_KEY = "licensecheck.projectlicense";
 }

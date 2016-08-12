@@ -43,19 +43,30 @@ class LicenseEditAction implements RequestHandler
             StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_STATUS));
         boolean oldIdentifierIsNotBlank =
             StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_IDENTIFIER));
+        boolean oldNameIsNotBlank =
+            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_NAME));
+        boolean oldStatusIsNotBlank =
+            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_STATUS));
 
-        if (newIdentifierIsNotBlank && newNameIsNotBlank && newStatusIsNotBlank && oldIdentifierIsNotBlank)
+        if (newIdentifierIsNotBlank
+            && newNameIsNotBlank
+            && newStatusIsNotBlank
+            && oldIdentifierIsNotBlank
+            && oldStatusIsNotBlank
+            && oldNameIsNotBlank)
         {
             License newLicense = new License(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_NAME),
                 jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_IDENTIFIER),
                 jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_STATUS));
 
-            if (!licenseSettingsService.checkIfListContains(newLicense))
+            License oldLicense = new License(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_NAME),
+                jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_IDENTIFIER),
+                jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_STATUS));
+
+            if (!licenseSettingsService.checkIfListContains(newLicense)
+                || oldLicense.equals(newLicense) && !oldLicense.getStatus().equals(newLicense.getStatus()))
             {
-                licenseSettingsService
-                    .deleteLicense(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_IDENTIFIER));
-                licenseSettingsService.addLicense(newLicense);
-                licenseSettingsService.sortLicenses();
+                licenseSettingsService.updateLicense(oldLicense, newLicense);
                 response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
                 LOGGER.info(LicenseConfiguration.INFO_EDIT_SUCCESS + jsonObject.toString());
             }

@@ -33,6 +33,8 @@
         .then(function (answer) {
           var newLicense = new Object();
           newLicense.oldIdentifier = license.identifier;
+          newLicense.oldName = license.name;
+          newLicense.oldStatus = license.status;
           newLicense.newName = $scope.licenseNameEdit;
           newLicense.newIdentifier = $scope.licenseIdentifierEdit;
           newLicense.newStatus = $scope.licenseStatusEdit;

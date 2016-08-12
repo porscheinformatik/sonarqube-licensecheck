@@ -150,6 +150,13 @@ public class LicenseSettingsService
         }
     }
 
+    public void updateLicense(License oldLicense, License newLicense)
+    {
+        deleteLicense(oldLicense.getIdentifier());
+        addLicense(newLicense);
+        sortLicenses();
+    }
+
     private void updateLicensesParser(List<License> newLicenseList, String licenseString, String id, String name,
         String status)
     {

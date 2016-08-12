@@ -18,6 +18,10 @@ class LicensecheckConfigurationController < ApplicationController
     render :template => 'licensecheck_configuration/mavenLicenses'
   end
 
+  def projects
+    render :template => 'licensecheck_configuration/projectLicenses'
+  end
+
 
   def export_used_dependencies_csv
     @dependenciesForExport = load_dependencies
