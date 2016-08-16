@@ -42,7 +42,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tr ng-repeat="mavenDependency in mavenDependencies | searchFor:searchString as filteredItems">
+          <tr ng-repeat="mavenDependency in mavenDependencies | searchForMavenDependency:searchString as filteredItems">
             <td width="40%">{{mavenDependency.key}}</td>
             <td width="40%">{{mavenDependency.license}}</td>
             <td>

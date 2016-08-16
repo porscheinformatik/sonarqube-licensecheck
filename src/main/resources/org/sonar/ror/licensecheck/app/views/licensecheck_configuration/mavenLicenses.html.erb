@@ -41,7 +41,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tr ng-repeat="mavenLicense in mavenLicenses | searchFor:searchString as filteredItems">
+          <tr ng-repeat="mavenLicense in mavenLicenses | searchForMavenLicense:searchString as filteredItems">
             <td width="40%">{{mavenLicense.regex}}</td>
             <td width="40%">{{mavenLicense.key}}</td>
             <td>

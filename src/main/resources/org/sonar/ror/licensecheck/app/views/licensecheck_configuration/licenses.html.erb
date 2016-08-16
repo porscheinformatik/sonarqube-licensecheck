@@ -42,7 +42,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tr ng-repeat="license in licenses | searchFor:searchString as filteredItems">
+          <tr ng-repeat="license in licenses | searchForLicense:searchString as filteredItems">
             <td width="20%">{{license.identifier}}</td>
             <td width="40%">{{license.name}}</td>
             <td width="20%">{{license.status}}</td>

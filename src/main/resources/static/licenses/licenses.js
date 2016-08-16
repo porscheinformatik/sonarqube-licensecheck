@@ -1,15 +1,15 @@
 (function () {
   'use strict';
 
-  var app = angular.module('sqlc.licenses', ['ngMaterial']);
+  var app = angular.module('sqlc.licenses', ['ngMaterial', 'sqlc.common']);
   app.controller('listLicensesCtrl', function ($scope, $http, $mdDialog) {
 
-    var checkOutLogString = "Please check out the log file for more information.";
+    var checkOutLogString = 'Please check out the log file for more information.';
 
     var base = '../static/licensecheck/licenses/';
 
     var loadLicenses = function () {
-      $http.get("/api/licenses/show").then(function (response) {
+      $http.get('/api/licenses/show').then(function (response) {
         $scope.licenses = response.data.licenses;
       });
     };
@@ -28,7 +28,7 @@
         scope: $scope,
         clickOutsideToClose: true,
         preserveScope: true,
-        controller: DialogController
+        controller: 'DialogController'
       })
         .then(function (answer) {
           var newLicense = new Object();
@@ -39,14 +39,14 @@
           $http.post('/api/licenses/edit?license=' + JSON.stringify(newLicense))
             .then(
             function (response) {
-              alert("License edited");
+              alert('License edited');
               loadLicenses();
             },
             function (response) {
-              alert("Failed to edit license. " + checkOutLogString);
+              alert('Failed to edit license. ' + checkOutLogString);
             });
         }, function () {
-          // console.log("edit license canceled");
+          // console.log('edit license canceled');
         });
     };
 
@@ -58,7 +58,7 @@
         scope: $scope,
         clickOutsideToClose: true,
         preserveScope: true,
-        controller: DialogController
+        controller: 'DialogController'
       })
         .then(function (answer) {
           var license = new Object();
@@ -68,19 +68,19 @@
           $http.post('/api/licenses/add?license=' + JSON.stringify(license))
             .then(
             function (response) {
-              alert("License added");
+              alert('License added');
               loadLicenses();
             },
             function (response) {
-              alert("Failed to add license. " + checkOutLogString);
+              alert('Failed to add license. ' + checkOutLogString);
             })
         }, function () {
-          // console.log("add license canceled");
+          // console.log('add license canceled');
         });
 
-      $scope.licenseNameAdd = "";
-      $scope.licenseIdentifierAdd = "";
-      $scope.licenseStatusAdd = "";
+      $scope.licenseNameAdd = '';
+      $scope.licenseIdentifierAdd = '';
+      $scope.licenseStatusAdd = '';
     };
 
     $scope.deleteLicense = function (ev, license) {
@@ -95,44 +95,21 @@
         scope: $scope,
         clickOutsideToClose: true,
         preserveScope: true,
-        controller: DialogController
+        controller: 'DialogController'
       }).then(function () {
         $http.post('/api/licenses/delete?license=' + JSON.stringify(license))
           .then(
           function (response) {
-            alert("License deleted");
+            alert('License deleted');
             loadLicenses();
           },
           function (response) {
-            alert("Failed to delete license. " + checkOutLogString);
+            alert('Failed to delete license. ' + checkOutLogString);
           });
       },
         function () {
-          // console.log("deletion aborted");
+          // console.log('deletion aborted');
         });
     };
   });
-
-  app.filter('searchFor', function () {
-    return function (arr, searchString) {
-      if (!searchString) {
-        return arr;
-      }
-      var result = [];
-      searchString = searchString.toLowerCase();
-      angular.forEach(arr, function (license) {
-        if (license.name.toLowerCase().indexOf(searchString) !== -1) {
-          result.push(license);
-        }
-        else if (license.identifier.toLowerCase().indexOf(searchString) !== -1) {
-          result.push(license);
-        }
-        else if (license.status.toLowerCase().indexOf(searchString) !== -1) {
-          result.push(license);
-        }
-      });
-      return result;
-    };
-  });
-
 } ());
