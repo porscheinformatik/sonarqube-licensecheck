@@ -1,7 +1,7 @@
 Sonarqube Licensecheck Plugin
 ===================
 
-[![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck-plugin.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck-plugin)
+[![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck)
 
 This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of standard libraries and versions. This enables the governance of the used libraries and licences.
 

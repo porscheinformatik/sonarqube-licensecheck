@@ -148,17 +148,4 @@
    </profile>
  </profiles>
 
- <distributionManagement>
-  <repository>
-   <id>inhouse</id>
-   <name>Inhouse Repository</name>
-   <url>${inhouse.maven.repository}</url>
-  </repository>
-  <snapshotRepository>
-   <id>inhouse_snapshot</id>
-   <name>Inhouse Snapshot Repository</name>
-   <url>${inhouse_snapshot.maven.repository}</url>
-  </snapshotRepository>
- </distributionManagement>
-
 </project>
