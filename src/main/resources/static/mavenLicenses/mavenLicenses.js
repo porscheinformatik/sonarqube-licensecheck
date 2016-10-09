@@ -44,7 +44,6 @@
           $http.post('/api/mavenLicenses/edit?mavenLicense=' + JSON.stringify(newMavenLicense))
             .then(
             function (response) {
-              alert('Maven license edited');
               loadMavenLicenses();
             },
             function (response) {
@@ -72,7 +71,6 @@
           $http.post('/api/mavenLicenses/add?mavenLicense=' + JSON.stringify(mavenLicense))
             .then(
             function (response) {
-              alert('Maven license added');
               loadMavenLicenses();
             },
             function (response) {
@@ -102,7 +100,6 @@
         $http.post('/api/mavenLicenses/delete?mavenLicense=' + JSON.stringify(mavenLicense))
           .then(
           function (response) {
-            alert('Maven license deleted');
             loadMavenLicenses();
           },
           function (response) {

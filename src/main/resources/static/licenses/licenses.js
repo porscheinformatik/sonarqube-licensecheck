@@ -41,7 +41,6 @@
           $http.post('/api/licenses/edit?license=' + JSON.stringify(newLicense))
             .then(
             function (response) {
-              alert('License edited');
               loadLicenses();
             },
             function (response) {
@@ -70,7 +69,6 @@
           $http.post('/api/licenses/add?license=' + JSON.stringify(license))
             .then(
             function (response) {
-              alert('License added');
               loadLicenses();
             },
             function (response) {
@@ -102,7 +100,6 @@
         $http.post('/api/licenses/delete?license=' + JSON.stringify(license))
           .then(
           function (response) {
-            alert('License deleted');
             loadLicenses();
           },
           function (response) {

@@ -44,7 +44,6 @@
           $http.post('/api/mavenDependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
             .then(
             function (response) {
-              alert('Maven dependency edited');
               loadMavenDependencies();
             },
             function (response) {
@@ -72,7 +71,6 @@
           $http.post('/api/mavenDependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
             .then(
             function (response) {
-              alert('Maven depedency added');
               loadMavenDependencies();
             },
             function (response) {
@@ -102,7 +100,6 @@
         $http.post('/api/mavenDependencies/delete?mavenDependency=' + JSON.stringify(mavenDependency))
           .then(
           function (response) {
-            alert('Maven Dependency deleted');
             loadMavenDependencies();
           },
           function (response) {

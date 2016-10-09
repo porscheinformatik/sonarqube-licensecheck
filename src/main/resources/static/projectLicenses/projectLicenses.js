@@ -67,7 +67,6 @@
           $http.post('/api/projectLicenses/edit?projectLicense=' + JSON.stringify(newProjectLicense))
             .then(
             function (response) {
-              alert('Project License edited');
               loadProjectLicenses();
             },
             function (response) {
@@ -98,7 +97,6 @@
           $http.post('/api/projectLicenses/add?projectLicense=' + JSON.stringify(projectLicense))
             .then(
             function (response) {
-              alert('Project license added');
               loadProjectLicenses();
             },
             function (response) {
@@ -130,7 +128,6 @@
         $http.post('/api/projectLicenses/delete?projectLicense=' + JSON.stringify(projectLicense))
           .then(
           function (response) {
-            alert('Project license deleted');
             loadProjectLicenses();
           },
           function (response) {
