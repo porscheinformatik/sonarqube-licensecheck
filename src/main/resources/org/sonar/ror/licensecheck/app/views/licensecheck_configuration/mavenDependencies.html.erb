@@ -1,12 +1,15 @@
+<% content_for :style do %>
+    <style type="text/css">.ng-cloak { display: none; }</style>
+<% end %>
 <div id="body" class="page-container">
   <div id="content">
     <div class="page md-padding" ng-app="sqlc.maven-dependencies" ng-controller="listMavenDependenciesCtrl" id="popupContainer"
       ng-cloak>
       <ul class="tabs">
         <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/licenses">Licenses</a></li>
+        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/projects">Project Licenses</a></li>
         <li><a class="selected" href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenDependencies">Maven Dependencies</a></li>
         <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/mavenLicenses">Maven Licenses</a></li>
-        <li><a href="<%= ApplicationController.root_context -%>/licensecheck_configuration/projects">Project Licenses</a></li>
       </ul>
       <br>
       <div id="mavenDependency-header">
@@ -18,7 +21,7 @@
               <button ng-click="addMavenDependency($event)" id="mavenDependency-add">Add Maven Dependency</button>
             </div>
           </div>
-          <p class="page-description">Add and administer maven dependencies of projects.</p>
+          <p class="page-description">Map maven identifiers (groupId/artifactId) to licenses.</p>
         </header>
       </div>
       <div id="mavenDependency-search">
@@ -34,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div class="ng-cloak">
         <table class="data zebra" width="100%">
           <thead>
             <tr>
