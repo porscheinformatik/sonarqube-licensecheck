@@ -50,7 +50,7 @@ public class ValidateLicenses
     {
         Set<License> usedLicenseList = new TreeSet<>();
         
-        List<License> licenses = licenseService.getLicenses(module);
+        List<License> licenses = licenseService.getLicenses(module.getRoot());
 
         for (Dependency dependency : dependencies)
         {
@@ -68,7 +68,7 @@ public class ValidateLicenses
 
     private void checkForLicenses(Project module, SensorContext context, Dependency dependency)
     {
-        for (License license : licenseService.getLicenses(module))
+        for (License license : licenseService.getLicenses(module.getRoot()))
         {
             if (license.getIdentifier().equals(dependency.getLicense()))
             {
@@ -76,7 +76,7 @@ public class ValidateLicenses
                 {
                     LOGGER.info("Dependency "
                         + dependency.getName()
-                        + " uses a not allowed license "
+                        + " uses a not allowed licooense "
                         + dependency.getLicense());
 
                     NewIssue issue = context
