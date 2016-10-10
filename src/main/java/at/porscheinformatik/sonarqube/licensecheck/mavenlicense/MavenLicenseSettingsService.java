@@ -82,13 +82,7 @@ public class MavenLicenseSettingsService
 
     private void saveSettings(List<MavenLicense> mavenLicenses)
     {
-        String mavenLicensesString = "";
-
-        for (MavenLicense mavenLicense : mavenLicenses)
-        {
-            mavenLicensesString +=
-                mavenLicense.getLicenseNameRegEx().toString() + "~" + mavenLicense.getLicenseKey() + ";";
-        }
+        String mavenLicensesString = MavenLicense.createString(mavenLicenses);
 
         settings.setProperty(LICENSE_REGEX, mavenLicensesString);
         persistentSettings.saveProperty(LICENSE_REGEX, mavenLicensesString);

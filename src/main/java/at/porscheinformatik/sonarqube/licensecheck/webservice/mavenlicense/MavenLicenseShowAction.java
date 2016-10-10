@@ -48,7 +48,7 @@ class MavenLicenseShowAction implements RequestHandler
                 .prop(MavenLicenseConfiguration.PROPERTY_REGEX, mavenLicense.getLicenseNameRegEx().toString().isEmpty()
                     ? null : mavenLicense.getLicenseNameRegEx().toString())
                 .prop(MavenLicenseConfiguration.PROPERTY_KEY,
-                    mavenLicense.getLicenseKey().isEmpty() ? null : mavenLicense.getLicenseKey())
+                    mavenLicense.getLicense().isEmpty() ? null : mavenLicense.getLicense())
             .endObject();
     }
 

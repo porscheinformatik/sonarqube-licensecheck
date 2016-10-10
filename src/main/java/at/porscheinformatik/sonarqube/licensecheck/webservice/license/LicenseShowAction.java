@@ -1,15 +1,16 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
-import org.sonar.api.utils.text.JsonWriter;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration;
 
 class LicenseShowAction implements RequestHandler
 {
@@ -25,29 +26,14 @@ class LicenseShowAction implements RequestHandler
     {
         final List<License> licenses = licenseService.getLicenses();
 
-        JsonWriter json = response.newJsonWriter().beginObject();
-        writeLicenses(json, licenses);
-        json.endObject().close();
-    }
+        OutputStream os = response.stream()
+            .setStatus(200)
+            .setMediaType("application/json")
+            .output();
 
-    private static void writeLicenses(JsonWriter json, List<License> licenses)
-    {
-        json.name(LicenseConfiguration.JSON_ARRAY_NAME).beginArray();
-        for (License license : licenses)
+        try (Writer out = new OutputStreamWriter(os, "UTF-8"))
         {
-            writeLicense(json, license);
+            out.write(License.createString(licenses));
         }
-        json.endArray();
-    }
-
-    private static void writeLicense(JsonWriter json, License license)
-    {
-        json
-            .beginObject()
-            .prop(LicenseConfiguration.PROPERTY_NAME, license.getName().isEmpty() ? null : license.getName())
-            .prop(LicenseConfiguration.PROPERTY_IDENTIFIER,
-                license.getIdentifier().isEmpty() ? null : license.getIdentifier())
-            .prop(LicenseConfiguration.PROPERTY_STATUS, license.getStatus().isEmpty() ? null : license.getStatus())
-            .endObject();
     }
 }

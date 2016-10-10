@@ -7,14 +7,14 @@
       <div class="js-modal-messages"></div>
       <div class="modal-field">
         <label for="projectLicenseLicenseEdit">License<em class="mandatory">*</em></label>
-        <select required ng-model="projectLicenseLicenseEdit" id="projectLicenseLicenseEdit" name="projectLicenseLicenseEdit">
-          <option ng-repeat="license in licenses | orderBy:'identifier'" value="{{license.identifier}}">{{license.identifier}}</option>
+        <select required disabled ng-model="projectLicenseLicenseEdit" id="projectLicenseLicenseEdit"
+                ng-options="license.identifier as license.identifier for license in licenses">
         </select>
       </div>
       <div class="modal-field">
         <label for="projectLicenseProjectEdit">Project<em class="mandatory">*</em></label>
-        <select required ng-model="projectLicenseProjectEdit" id="projectLicenseProjectEdit" name="projectLicenseProjectEdit">
-          <option ng-repeat="resource in resources | orderBy:'name'" value="{{resource.name}}">{{resource.name}}</option>
+        <select required disabled ng-model="projectLicenseProjectEdit" id="projectLicenseProjectEdit"
+                ng-options="resource.key as resource.name for resource in resources">
         </select>
       </div>
       <div class="modal-field">

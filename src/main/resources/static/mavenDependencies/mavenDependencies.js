@@ -16,7 +16,7 @@
 
     var loadLicenses = function () {
       $http.get('/api/licenses/show').then(function (response) {
-        $scope.licenses = response.data.licenses;
+        $scope.licenses = response.data;
       });
     };
 

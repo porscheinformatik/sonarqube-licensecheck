@@ -1,15 +1,24 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.stream.JsonGenerator;
 
 public class Dependency implements Comparable<Dependency>
 {
     private String name;
     private String version;
     private String license;
+    private String status;
 
     public Dependency(String name, String version, String license)
     {
@@ -47,6 +56,16 @@ public class Dependency implements Comparable<Dependency>
     public void setLicense(String license)
     {
         this.license = license;
+    }
+
+    public void setStatus(final String status)
+    {
+        this.status = status;
+    }
+
+    public String getStatus()
+    {
+        return status;
     }
 
     @Override
@@ -136,37 +155,54 @@ public class Dependency implements Comparable<Dependency>
     public static List<Dependency> fromString(String serializedDependencyString)
     {
         List<Dependency> dependencies = new ArrayList<>();
-        String[] parts = serializedDependencyString.split(";");
 
-        for (int i = 0; i < parts.length; i++)
+        if (serializedDependencyString != null && serializedDependencyString.startsWith("["))
         {
-            String dependencyString = parts[i];
-            String[] subParts = dependencyString.split("~");
-            String name = subParts.length > 0 ? subParts[0] : null;
-            String version = subParts.length > 1 ? subParts[1] : null;
-            String license = subParts.length > 2 ? subParts[2] : null;
-            dependencies.add(new Dependency(name, version, license));
+            JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString));
+            JsonArray dependenciesJson = jsonReader.readArray();
+            for (int i = 0; i < dependenciesJson.size(); i++)
+            {
+                JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
+                dependencies.add(new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
+                    dependencyJson.getString("license")));
+            }
+        }
+        else
+        {
+            // deprecated - remove with later release
+            String[] parts = serializedDependencyString.split(";");
+
+            for (String dependencyString : parts)
+            {
+                String[] subParts = dependencyString.split("~");
+                String name = subParts.length > 0 ? subParts[0] : null;
+                String version = subParts.length > 1 ? subParts[1] : null;
+                String license = subParts.length > 2 ? subParts[2] : null;
+                dependencies.add(new Dependency(name, version, license));
+            }
         }
         return dependencies;
     }
 
     public static String createString(Collection<Dependency> dependencies)
     {
-        TreeSet<Dependency> dependencySet = new TreeSet<>();
-        dependencySet.addAll(dependencies);
+        TreeSet<Dependency> sortedDependencies = new TreeSet<>();
+        sortedDependencies.addAll(dependencies);
 
-        StringBuilder returnString = new StringBuilder();
-        for (Dependency dependency : dependencySet)
+        StringWriter jsonString = new StringWriter();
+        JsonGenerator generator = Json.createGenerator(jsonString);
+        generator.writeStartArray();
+        for (Dependency dependency : sortedDependencies)
         {
             String license = dependency.getLicense();
-            returnString
-                .append(dependency.getName())
-                .append("~")
-                .append(dependency.getVersion())
-                .append("~")
-                .append(license != null ? license : " ")
-                .append(";");
+            generator.writeStartObject();
+            generator.write("name", dependency.getName());
+            generator.write("version", dependency.getVersion());
+            generator.write("license", license != null ? license : " ");
+            generator.writeEnd();
         }
-        return returnString.toString();
+        generator.writeEnd();
+        generator.close();
+        return jsonString.toString();
     }
 }

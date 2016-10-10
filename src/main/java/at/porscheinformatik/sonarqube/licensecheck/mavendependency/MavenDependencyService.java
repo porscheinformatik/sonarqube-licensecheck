@@ -53,7 +53,6 @@ public class MavenDependencyService
             JsonArray jsonArray = Json
                 .createArrayBuilder()
                 .add(Json.createObjectBuilder().add("nameMatches", "org.apache..*").add("license", "Apache-2.0"))
-                .add(Json.createObjectBuilder().add("nameMatches", "org.glassfish..*").add("license", "CDDL-1.0"))
                 .build();
             String initValueMavenDepependencies = jsonArray.toString();
 

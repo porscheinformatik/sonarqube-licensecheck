@@ -27,29 +27,14 @@ public class ProjectLicenseSettingsService
         this.projectLicenseService = projectLicenseService;
     }
 
-    public boolean addProjectLicense(String license, String projectName, String status, String projectKey)
-    {
-        ProjectLicense newProjectLicense = new ProjectLicense(license, projectName, status, projectKey);
-
-        if (!checkIfListContains(newProjectLicense))
-        {
-            addProjectLicense(newProjectLicense);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public boolean addProjectLicense(ProjectLicense newProjectLicense)
     {
-        List<ProjectLicense> projectLicense = projectLicenseService.getProjectLicenseList();
+        List<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList();
 
-        if (!projectLicense.contains(newProjectLicense))
+        if (!projectLicenses.contains(newProjectLicense))
         {
-            projectLicense.add(newProjectLicense);
-            saveSettings(projectLicense);
+            projectLicenses.add(newProjectLicense);
+            saveSettings(projectLicenses);
             return true;
         }
         else
@@ -64,18 +49,17 @@ public class ProjectLicenseSettingsService
         return projectLicenses.contains(projectLicense);
     }
 
-    public void deleteProjectLicense(String license, String project)
+    public void deleteProjectLicense(String projectKey, String license)
     {
         List<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList();
         Iterator<ProjectLicense> i = projectLicenses.iterator();
 
-        ProjectLicense tmpProjectLicense = null;
         while (i.hasNext())
         {
-            tmpProjectLicense = i.next();
+            ProjectLicense tmpProjectLicense = i.next();
             String licenseFromList = tmpProjectLicense.getLicense();
-            String projectFromList = tmpProjectLicense.getProjectName();
-            if (licenseFromList.equals(license) && projectFromList.equals(project))
+            String projectFromList = tmpProjectLicense.getProjectKey();
+            if (licenseFromList.equals(license) && projectFromList.equals(projectKey))
             {
                 i.remove();
             }
@@ -85,35 +69,15 @@ public class ProjectLicenseSettingsService
 
     private void saveSettings(List<ProjectLicense> projectLicenses)
     {
-        String projectLicenseString = "";
-
-        for (ProjectLicense project : projectLicenses)
-        {
-            projectLicenseString += project.getLicense()
-                + "~"
-                + project.getProjectName()
-                + "~"
-                + project.getStatus()
-                + "~"
-                + project.getProjectKey()
-                + ";";
-        }
-
-        settings.setProperty(PROJECT_LICENSE_KEY, projectLicenseString);
-        persistentSettings.saveProperty(PROJECT_LICENSE_KEY, projectLicenseString);
-    }
-
-    public void updateProjectLicense(ProjectLicense oldProjectLicense, ProjectLicense newProjectLicense)
-    {
-        deleteProjectLicense(oldProjectLicense.getLicense(), oldProjectLicense.getProjectName());
-        addProjectLicense(newProjectLicense);
-        sortProjectLicenses();
-    }
-
-    public void sortProjectLicenses()
-    {
-        List<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList();
         Collections.sort(projectLicenses);
-        saveSettings(projectLicenses);
+        String projectLicensesString = ProjectLicense.createString(projectLicenses);
+        settings.setProperty(PROJECT_LICENSE_KEY, projectLicensesString);
+        persistentSettings.saveProperty(PROJECT_LICENSE_KEY, projectLicensesString);
+    }
+
+    public boolean updateProjectLicense(ProjectLicense newProjectLicense)
+    {
+        deleteProjectLicense(newProjectLicense.getProjectKey(), newProjectLicense.getLicense());
+        return addProjectLicense(newProjectLicense);
     }
 }

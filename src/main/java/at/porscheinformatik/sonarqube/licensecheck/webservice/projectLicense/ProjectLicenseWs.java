@@ -27,21 +27,35 @@ public class ProjectLicenseWs implements WebService
             .createAction(ProjectLicenseConfiguration.SHOW_ACTION)
             .setDescription(ProjectLicenseConfiguration.SHOW_ACTION_DESCRIPTION)
             .setHandler(new ProjectLicenseShowAction(projectLicenseService));
-        controller
+
+        NewAction deleteAction = controller
             .createAction(ProjectLicenseConfiguration.DELETE_ACTION)
             .setDescription(ProjectLicenseConfiguration.DELETE_ACTION_DESCRIPTION)
-            .setHandler(new ProjectLicenseDeleteAction(projectLicenseSettingsService))
-            .createParam(ProjectLicenseConfiguration.PARAM);
-        controller
+            .setHandler(new ProjectLicenseDeleteAction(projectLicenseSettingsService));
+        deleteAction.createParam(ProjectLicenseConfiguration.PARAM_PROJECT_KEY).setRequired(true);
+        deleteAction.createParam(ProjectLicenseConfiguration.PARAM_LICENSE).setRequired(true);
+
+        NewAction addAction = controller
             .createAction(ProjectLicenseConfiguration.ADD_ACTION)
             .setDescription(ProjectLicenseConfiguration.ADD_ACTION_DESCRIPTION)
-            .setHandler(new ProjectLicenseAddAction(projectLicenseSettingsService))
-            .createParam(ProjectLicenseConfiguration.PARAM);
-        controller
+            .setHandler(new ProjectLicenseAddAction(projectLicenseSettingsService));
+        addAction.createParam(ProjectLicenseConfiguration.PARAM_PROJECT_KEY).setRequired(true);
+        addAction.createParam(ProjectLicenseConfiguration.PARAM_LICENSE).setRequired(true);
+        addAction.createParam(ProjectLicenseConfiguration.PARAM_STATUS)
+            .setRequired(true)
+            .setPossibleValues("true", "false");
+
+        NewAction editAction = controller
             .createAction(ProjectLicenseConfiguration.EDIT_ACTION)
             .setDescription(ProjectLicenseConfiguration.EDIT_ACTION_DESCRIPTION)
-            .setHandler(new ProjectLicenseEditAction(projectLicenseSettingsService))
-            .createParam(ProjectLicenseConfiguration.PARAM);
+            .setHandler(new ProjectLicenseEditAction(projectLicenseSettingsService));
+
+        editAction.createParam(ProjectLicenseConfiguration.PARAM_PROJECT_KEY).setRequired(true);
+        editAction.createParam(ProjectLicenseConfiguration.PARAM_LICENSE).setRequired(true);
+        editAction.createParam(ProjectLicenseConfiguration.PARAM_STATUS)
+            .setRequired(true)
+            .setPossibleValues("true", "false");
+
         controller.done();
     }
 }

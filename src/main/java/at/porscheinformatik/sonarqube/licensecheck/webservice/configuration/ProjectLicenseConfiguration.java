@@ -2,8 +2,10 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class ProjectLicenseConfiguration
 {
-    public static final String PARAM = "projectLicense";
-    public static final String JSON_ARRAY_NAME = "projectLicenses";
+    public static final String PARAM_PROJECT_KEY = "projectKey";
+    public static final String PARAM_LICENSE = "license";
+    public static final String PARAM_STATUS = "status";
+
     public static final String CONTROLLER = "api/projectLicenses";
 
     public static final String SHOW_ACTION = "show";
@@ -17,16 +19,13 @@ public final class ProjectLicenseConfiguration
     public static final String EDIT_ACTION_DESCRIPTION = "Edit Project Licenses";
 
     public static final String PROPERTY_NEW_LICENSE = "newLicense";
-    public static final String PROPERTY_NEW_PROJECT_NAME = "newProjectName";
     public static final String PROPERTY_NEW_STATUS = "newStatus";
     public static final String PROPERTY_NEW_PROJECT_KEY = "newProjectKey";
     public static final String PROPERTY_OLD_LICENSE = "oldLicense";
-    public static final String PROPERTY_OLD_PROJECT_NAME = "oldProjectName";
     public static final String PROPERTY_OLD_STATUS = "oldStatus";
     public static final String PROPERTY_OLD_PROJECT_KEY = "oldProjectKey";
 
     public static final String PROPERTY_LICENSE = "license";
-    public static final String PROPERTY_PROJECT_NAME = "projectName";
     public static final String PROPERTY_STATUS = "status";
     public static final String PROPERTY_PROJECT_KEY = "projectKey";
 

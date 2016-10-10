@@ -1,19 +1,13 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
-import java.io.StringReader;
+import static at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration.*;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
 
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.HTTPConfiguration;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration;
@@ -31,56 +25,12 @@ class LicenseEditAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(LicenseConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
+        String id = request.mandatoryParam(PARAM_IDENTIFIER);
+        String newName = request.mandatoryParam(PARAM_NAME);
+        String newStatus = request.mandatoryParam(PARAM_STATUS);
 
-        boolean newIdentifierIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_IDENTIFIER));
-        boolean newNameIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_NAME));
-        boolean newStatusIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_STATUS));
-        boolean oldIdentifierIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_IDENTIFIER));
-        boolean oldNameIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_NAME));
-        boolean oldStatusIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_STATUS));
-
-        if (newIdentifierIsNotBlank
-            && newNameIsNotBlank
-            && newStatusIsNotBlank
-            && oldIdentifierIsNotBlank
-            && oldStatusIsNotBlank
-            && oldNameIsNotBlank)
-        {
-            License newLicense = new License(jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_NAME),
-                jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_IDENTIFIER),
-                jsonObject.getString(LicenseConfiguration.PROPERTY_NEW_STATUS));
-
-            License oldLicense = new License(jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_NAME),
-                jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_IDENTIFIER),
-                jsonObject.getString(LicenseConfiguration.PROPERTY_OLD_STATUS));
-
-            if (!licenseSettingsService.checkIfListContains(newLicense)
-                || oldLicense.equals(newLicense) && !oldLicense.getStatus().equals(newLicense.getStatus()))
-            {
-                licenseSettingsService.updateLicense(oldLicense, newLicense);
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
-                LOGGER.info(LicenseConfiguration.INFO_EDIT_SUCCESS + jsonObject.toString());
-            }
-            else
-            {
-                LOGGER.error(LicenseConfiguration.ERROR_EDIT_ALREADY_EXISTS + jsonObject.toString());
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-            }
-
-        }
-        else
-        {
-            LOGGER.error(LicenseConfiguration.ERROR_EDIT_INVALID_INPUT + jsonObject.toString());
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-        }
+        licenseSettingsService.updateLicense(id, newName, newStatus);
+        LOGGER.info(LicenseConfiguration.INFO_EDIT_SUCCESS, id, newName, newStatus);
+        response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
     }
 }

@@ -1,9 +1,19 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.stream.JsonGenerator;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class License implements Comparable<License>
 {
@@ -69,16 +79,34 @@ public class License implements Comparable<License>
     public static List<License> fromString(String serializedLicensesString)
     {
         List<License> licenses = new ArrayList<>();
-        String[] parts = serializedLicensesString.split(";");
 
-        for (int i = 0; i < parts.length; i++)
+        if (serializedLicensesString != null && serializedLicensesString.startsWith("["))
         {
-            String licenseString = parts[i];
-            String[] subParts = licenseString.split("~");
-            String name = subParts.length > 0 ? subParts[0] : null;
-            String identifier = subParts.length > 1 ? subParts[1] : null;
-            String status = subParts.length > 2 ? subParts[2] : null;
-            licenses.add(new License(name, identifier, status));
+            JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString));
+            JsonArray licensesJson = jsonReader.readArray();
+            for (int i = 0; i < licensesJson.size(); i++)
+            {
+                JsonObject licenseJson = licensesJson.getJsonObject(i);
+                licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
+                    licenseJson.getString("status")));
+            }
+        }
+        else
+        {
+            // deprecated - remove with later release
+            if (StringUtils.isNotEmpty(serializedLicensesString))
+            {
+                String[] parts = serializedLicensesString.split(";");
+
+                for (String licenseString : parts)
+                {
+                    String[] subParts = licenseString.split("~");
+                    String name = subParts.length > 0 ? subParts[0] : null;
+                    String identifier = subParts.length > 1 ? subParts[1] : null;
+                    String status = subParts.length > 2 ? subParts[2] : null;
+                    licenses.add(new License(name, identifier, status));
+                }
+            }
         }
         return licenses;
     }
@@ -88,14 +116,21 @@ public class License implements Comparable<License>
         TreeSet<License> licenseSet = new TreeSet<>();
         licenseSet.addAll(licenses);
 
-        StringBuilder returnString = new StringBuilder();
+        StringWriter jsonString = new StringWriter();
+        JsonGenerator generator = Json.createGenerator(jsonString);
+        generator.writeStartArray();
         for (License license : licenseSet)
         {
-            returnString.append(license.getName()).append("~");
-            returnString.append(license.getIdentifier()).append("~");
-            returnString.append(license.getStatus()).append(";");
+            generator.writeStartObject();
+            generator.write("name", license.getName());
+            generator.write("identifier", license.getIdentifier());
+            generator.write("status", license.getStatus());
+            generator.writeEnd();
         }
-        return returnString.toString();
+        generator.writeEnd();
+        generator.close();
+
+        return jsonString.toString();
     }
 
     @Override

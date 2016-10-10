@@ -48,7 +48,7 @@
           </thead>
           <tr ng-repeat="projectLicense in projectLicenses | searchForProjectLicense:searchString as filteredItems">
             <td width="25%">{{projectLicense.license}}</td>
-            <td width="25%">{{projectLicense.projectName}}</td>
+            <td width="25%">{{projectLicense.projectKey}}</td>
             <td width="25%">{{projectLicense.status}}</td>
             <td>
               <a class="icon-edit" ng-click="editProjectLicense($event, projectLicense)" title="Edit project license" data-toggle="tooltip"></a>

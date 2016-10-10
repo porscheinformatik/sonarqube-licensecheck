@@ -1,17 +1,31 @@
 package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.stream.JsonGenerator;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
-    private Pattern licenseNameRegEx;
-    private String licenseKey;
+    private final Pattern licenseNameRegEx;
+    private final String license;
 
-    public MavenLicense(String licenseNameRegEx, String licenseKey)
+    public MavenLicense(String licenseNameRegEx, String license)
     {
         super();
         this.licenseNameRegEx = Pattern.compile(licenseNameRegEx);
-        this.licenseKey = licenseKey;
+        this.license = license;
     }
 
     public Pattern getLicenseNameRegEx()
@@ -19,24 +33,9 @@ public class MavenLicense implements Comparable<MavenLicense>
         return licenseNameRegEx;
     }
 
-    public void setLicenseNameRegEx(String licenseNameRegEx)
+    public String getLicense()
     {
-        this.licenseNameRegEx = Pattern.compile(licenseNameRegEx);
-    }
-
-    public void setLicenseNameRegEx(Pattern licenseNameRegEx)
-    {
-        this.licenseNameRegEx = licenseNameRegEx;
-    }
-
-    public String getLicenseKey()
-    {
-        return licenseKey;
-    }
-
-    public void setLicenseKey(String licenseKey)
-    {
-        this.licenseKey = licenseKey;
+        return license;
     }
 
     @Override
@@ -46,13 +45,13 @@ public class MavenLicense implements Comparable<MavenLicense>
         {
             return 1;
         }
-        else if (this.licenseKey.compareTo(o.licenseKey) == 0)
+        else if (this.license.compareTo(o.license) == 0)
         {
             return this.licenseNameRegEx.toString().compareTo(o.licenseNameRegEx.toString());
         }
         else
         {
-            return this.licenseKey.compareTo(o.licenseKey);
+            return this.license.compareTo(o.license);
         }
     }
 
@@ -73,7 +72,7 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
 
         MavenLicense mavenLicense = (MavenLicense) object;
-        if (mavenLicense.licenseKey.equals(this.licenseKey)
+        if (mavenLicense.license.equals(this.license)
             && mavenLicense.licenseNameRegEx.toString().equals(this.licenseNameRegEx.toString()))
         {
             return true;
@@ -89,8 +88,60 @@ public class MavenLicense implements Comparable<MavenLicense>
     {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + ((licenseKey == null) ? 0 : licenseKey.hashCode());
+        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
         result = (prime * result) + ((licenseNameRegEx == null) ? 0 : licenseNameRegEx.hashCode());
         return result;
+    }
+
+    public static List<MavenLicense> fromString(String mavenLicenseString)
+    {
+        List<MavenLicense> mavenLicenses = new ArrayList<>();
+
+        if (mavenLicenseString != null && mavenLicenseString.startsWith("["))
+        {
+            JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString));
+            JsonArray licensesJson = jsonReader.readArray();
+            for (int i = 0; i < licensesJson.size(); i++)
+            {
+                JsonObject licenseJson = licensesJson.getJsonObject(i);
+                mavenLicenses.add(
+                    new MavenLicense(licenseJson.getString("licenseNameRegEx"), licenseJson.getString("license")));
+            }
+        }
+        else
+        {
+            // deprecated - remove with later release
+            if (StringUtils.isNotEmpty(mavenLicenseString))
+            {
+                String[] mavenLicenseEntries = mavenLicenseString.split(";");
+                for (String mavenLicenseEntry : mavenLicenseEntries)
+                {
+                    String[] mavenLicenseEntryParts = mavenLicenseEntry.split("~");
+                    mavenLicenses.add(new MavenLicense(mavenLicenseEntryParts[0], mavenLicenseEntryParts[1]));
+                }
+            }
+        }
+        return mavenLicenses;
+    }
+
+    public static String createString(Collection<MavenLicense> mavenLicenses)
+    {
+        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>();
+        mavenLicenseSet.addAll(mavenLicenses);
+
+        StringWriter jsonString = new StringWriter();
+        JsonGenerator generator = Json.createGenerator(jsonString);
+        generator.writeStartArray();
+        for (MavenLicense mavenLicense : mavenLicenseSet)
+        {
+            generator.writeStartObject();
+            generator.write("licenseNameRegEx", mavenLicense.getLicenseNameRegEx().pattern());
+            generator.write("license", mavenLicense.getLicense());
+            generator.writeEnd();
+        }
+        generator.writeEnd();
+        generator.close();
+
+        return jsonString.toString();
     }
 }

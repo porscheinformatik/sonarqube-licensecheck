@@ -2,7 +2,7 @@
   'use strict';
 
   var app = angular.module('sqlc.licenses', ['ngMaterial', 'sqlc.common']);
-  app.controller('listLicensesCtrl', function ($scope, $http, $mdDialog) {
+  app.controller('listLicensesCtrl', function ($scope, $http, $httpParamSerializerJQLike, $mdDialog) {
 
     var checkOutLogString = 'Please check out the log file for more information.';
 
@@ -10,7 +10,7 @@
 
     var loadLicenses = function () {
       $http.get('/api/licenses/show').then(function (response) {
-        $scope.licenses = response.data.licenses;
+        $scope.licenses = response.data;
       });
     };
 
@@ -31,23 +31,25 @@
         controller: 'DialogController'
       })
         .then(function (answer) {
-          var newLicense = new Object();
-          newLicense.oldIdentifier = license.identifier;
-          newLicense.oldName = license.name;
-          newLicense.oldStatus = license.status;
-          newLicense.newName = $scope.licenseNameEdit;
-          newLicense.newIdentifier = $scope.licenseIdentifierEdit;
-          newLicense.newStatus = $scope.licenseStatusEdit;
-          $http.post('/api/licenses/edit?license=' + JSON.stringify(newLicense))
-            .then(
+          var changedLicense = {
+            identifier: license.identifier,
+            name: $scope.licenseNameEdit,
+            status: $scope.licenseStatusEdit
+          };
+          $http({
+            url: '/api/licenses/edit',
+            method: 'POST',
+            data: $httpParamSerializerJQLike(changedLicense),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(
             function (response) {
               loadLicenses();
             },
             function (response) {
               alert('Failed to edit license. ' + checkOutLogString);
             });
-        }, function () {
-          // console.log('edit license canceled');
         });
     };
 
@@ -60,23 +62,27 @@
         clickOutsideToClose: true,
         preserveScope: true,
         controller: 'DialogController'
-      })
-        .then(function (answer) {
-          var license = new Object();
-          license.name = $scope.licenseNameAdd;
-          license.identifier = $scope.licenseIdentifierAdd;
-          license.status = $scope.licenseStatusAdd;
-          $http.post('/api/licenses/add?license=' + JSON.stringify(license))
-            .then(
-            function (response) {
-              loadLicenses();
-            },
-            function (response) {
-              alert('Failed to add license. ' + checkOutLogString);
-            })
-        }, function () {
-          // console.log('add license canceled');
-        });
+      }).then(function (answer) {
+        var license = {
+          name: $scope.licenseNameAdd,
+          identifier: $scope.licenseIdentifierAdd,
+          status: $scope.licenseStatusAdd
+        };
+        $http({
+          url: '/api/licenses/add',
+          method: 'POST',
+          data: $httpParamSerializerJQLike(license),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(
+          function (response) {
+            loadLicenses();
+          },
+          function (response) {
+            alert('Failed to add license. ' + checkOutLogString);
+          });
+      });
 
       $scope.licenseNameAdd = '';
       $scope.licenseIdentifierAdd = '';
@@ -97,18 +103,15 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-        $http.post('/api/licenses/delete?license=' + JSON.stringify(license))
-          .then(
-          function (response) {
-            loadLicenses();
-          },
-          function (response) {
-            alert('Failed to delete license. ' + checkOutLogString);
-          });
-      },
-        function () {
-          // console.log('deletion aborted');
+          $http.post('/api/licenses/delete?identifier=' + license.identifier)
+            .then(
+              function (response) {
+                loadLicenses();
+              },
+              function (response) {
+                alert('Failed to delete license. ' + checkOutLogString);
+              });
         });
     };
   });
-} ());
+}());

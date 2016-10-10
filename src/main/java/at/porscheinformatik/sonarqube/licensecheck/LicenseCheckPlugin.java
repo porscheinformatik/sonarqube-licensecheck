@@ -20,8 +20,8 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.Ma
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidget;
-import at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator;
 import at.porscheinformatik.sonarqube.licensecheck.widget.UsedLicensesWidget;
+import at.porscheinformatik.sonarqube.licensecheck.widget.WidgetHelper;
 
 public class LicenseCheckPlugin extends SonarPlugin
 {
@@ -30,7 +30,7 @@ public class LicenseCheckPlugin extends SonarPlugin
     {
         return Arrays.asList(
             DependencyCheckWidget.class,
-            DependencyCheckWidgetValidator.class,
+            WidgetHelper.class,
             UsedLicensesWidget.class,
             ValidateLicenses.class,
             LicenseCheckSensor.class,

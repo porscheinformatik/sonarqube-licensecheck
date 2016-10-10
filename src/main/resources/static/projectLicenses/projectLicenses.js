@@ -2,7 +2,7 @@
   'use strict';
 
   var app = angular.module('sqlc.projectLicenses', ['ngMaterial', 'sqlc.common']);
-  app.controller('projectLicenseCtrl', function ($scope, $http, $mdDialog) {
+  app.controller('projectLicenseCtrl', function ($scope, $http, $httpParamSerializerJQLike, $mdDialog) {
 
     var checkOutLogString = 'Please check out the log file for more information.';
 
@@ -10,7 +10,7 @@
 
     var loadProjectLicenses = function () {
       $http.get('/api/projectLicenses/show').then(function (response) {
-        $scope.projectLicenses = response.data.projectLicenses;
+        $scope.projectLicenses = response.data;
       });
     };
 
@@ -22,7 +22,7 @@
 
     var loadLicenses = function () {
       $http.get('/api/licenses/show').then(function (response) {
-        $scope.licenses = response.data.licenses;
+        $scope.licenses = response.data;
       });
     };
 
@@ -42,7 +42,7 @@
     $scope.editProjectLicense = function (ev, projectLicense) {
 
       $scope.projectLicenseLicenseEdit = projectLicense.license;
-      $scope.projectLicenseProjectEdit = projectLicense.projectName;
+      $scope.projectLicenseProjectEdit = projectLicense.projectKey;
       $scope.projectLicenseStatusEdit = projectLicense.status;
 
       $mdDialog.show({
@@ -54,18 +54,21 @@
         controller: 'DialogController'
       })
         .then(function (answer) {
-          var newProjectLicense = new Object();
-          newProjectLicense.oldLicense = projectLicense.license;
-          newProjectLicense.oldProjectName = projectLicense.projectName;
-          newProjectLicense.oldStatus = projectLicense.status;
-          newProjectLicense.oldProjectKey = getProjectKey(projectLicense.projectName);
-          newProjectLicense.newLicense = $scope.projectLicenseLicenseEdit;
-          newProjectLicense.newProjectName = $scope.projectLicenseProjectEdit;
-          newProjectLicense.newStatus = $scope.projectLicenseStatusEdit;
-          newProjectLicense.newProjectKey = getProjectKey(newProjectLicense.newProjectName);
 
-          $http.post('/api/projectLicenses/edit?projectLicense=' + JSON.stringify(newProjectLicense))
-            .then(
+          var changedProjectLicense = {
+            projectKey: projectLicense.projectKey,
+            license: projectLicense.license,
+            status: $scope.projectLicenseStatusEdit
+          };
+
+          $http({
+            url: '/api/projectLicenses/edit',
+            method: 'POST',
+            data: $httpParamSerializerJQLike(changedProjectLicense),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(
             function (response) {
               loadProjectLicenses();
             },
@@ -88,20 +91,26 @@
         controller: 'DialogController'
       })
         .then(function (answer) {
-          var projectLicense = new Object();
-          projectLicense.license = $scope.projectLicenseLicenseAdd;
-          projectLicense.projectName = $scope.projectLicenseProjectAdd;
-          projectLicense.status = $scope.projectLicenseStatusAdd;
-          projectLicense.projectKey = getProjectKey(projectLicense.projectName);
+          var projectLicense = {
+            license: $scope.projectLicenseLicenseAdd,
+            status: $scope.projectLicenseStatusAdd,
+            projectKey: $scope.projectLicenseProjectAdd
+          };
 
-          $http.post('/api/projectLicenses/add?projectLicense=' + JSON.stringify(projectLicense))
-            .then(
+          $http({
+            url: '/api/projectLicenses/add',
+            method: 'POST',
+            data: $httpParamSerializerJQLike(projectLicense),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(
             function (response) {
               loadProjectLicenses();
             },
             function (response) {
               alert('Failed to add project license. ' + checkOutLogString);
-            })
+            });
         }, function () {
           // console.log('add license canceled');
         });
@@ -125,8 +134,19 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-        $http.post('/api/projectLicenses/delete?projectLicense=' + JSON.stringify(projectLicense))
-          .then(
+        var projectLicenseToDelete = {
+          projectKey: projectLicense.projectKey,
+          license: projectLicense.license
+        };
+
+        $http({
+          url: '/api/projectLicenses/delete',
+          method: 'POST',
+          data: $httpParamSerializerJQLike(projectLicenseToDelete),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(
           function (response) {
             loadProjectLicenses();
           },

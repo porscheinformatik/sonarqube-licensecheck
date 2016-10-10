@@ -1,12 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
-import java.io.StringReader;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
@@ -30,21 +23,17 @@ class LicenseDeleteAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(LicenseConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
-
-        if (StringUtils.isNotBlank(jsonObject.getString(LicenseConfiguration.PROPERTY_IDENTIFIER)))
+        String licenseId = request.param(LicenseConfiguration.PARAM_IDENTIFIER);
+        LOGGER.warn("Deleting license: " + licenseId);
+        if (licenseSettingsService.deleteLicense(licenseId))
         {
-            licenseSettingsService.deleteLicense(jsonObject.getString(LicenseConfiguration.PROPERTY_IDENTIFIER));
-            LOGGER.info(LicenseConfiguration.INFO_DELETE_SUCCESS + jsonObject.toString());
-            licenseSettingsService.sortLicenses();
+            LOGGER.info(LicenseConfiguration.INFO_DELETE_SUCCESS, licenseId);
             response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
         }
         else
         {
-            LOGGER.error(LicenseConfiguration.ERROR_DELETE_INVALID_INPUT + jsonObject.toString());
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
+            LOGGER.error(LicenseConfiguration.ERROR_DELETE_LICENSE, licenseId);
+            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_FOUND);
         }
     }
 }

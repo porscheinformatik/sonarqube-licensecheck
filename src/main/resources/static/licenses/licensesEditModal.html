@@ -7,13 +7,11 @@
       <div class="js-modal-messages"></div>
       <div class="modal-field">
         <label for="licenseIdentifierEdit">Identifier<em class="mandatory">*</em></label>
-        <input id="licenseIdentifierEdit-fake" identifier="licenseIdentifierEdit-fake" type="text" class="hidden">
-        <input required ng-model="licenseIdentifierEdit" id="licenseIdentifierEdit" name="licenseIdentifierEdit" type="text" size="50"
+        <input required disabled ng-model="licenseIdentifierEdit" id="licenseIdentifierEdit" name="licenseIdentifierEdit" type="text" size="50"
           maxlength="255" value={{licenseIdentifierEdit}}>
       </div>
       <div class="modal-field">
         <label for="licenseNameEdit">Name<em class="mandatory">*</em></label>
-        <input id="licenseNameEdit-fake" name="licenseNameEdit-fake" type="text" class="hidden">
         <input required ng-model="licenseNameEdit" id="licenseNameEdit" name="licenseNameEdit" type="text" size="50" maxlength="255"
           value="{{licenseNameEdit}}">
       </div>

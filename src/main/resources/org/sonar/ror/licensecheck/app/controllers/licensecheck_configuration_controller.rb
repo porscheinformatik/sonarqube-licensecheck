@@ -38,7 +38,7 @@ class LicensecheckConfigurationController < ApplicationController
   end
 
   def load_dependencies
-    dependencyMeasure = Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').getDependencyString()
+    dependencyMeasure = Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.WidgetHelper').getDependencyString()
 
     entries = []
     checkedDependencies = dependencyMeasure.split(';')
@@ -53,7 +53,7 @@ class LicensecheckConfigurationController < ApplicationController
   end
 
   def load_licenses
-    licenseMeasure =  Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidgetValidator').getLicenseString()
+    licenseMeasure =  Api::Utils.java_facade.getComponentByClassname('licensecheck', 'at.porscheinformatik.sonarqube.licensecheck.widget.WidgetHelper').getLicenseString()
 
     entries = []
     checkedLicenses = licenseMeasure.split(';')

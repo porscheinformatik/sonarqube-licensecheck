@@ -5,15 +5,9 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKe
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.stream.JsonParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +20,9 @@ public class LicenseSettingsService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LicenseSettingsService.class);
 
-    /** This is not official API */
+    /**
+     * This is not official API
+     */
     private final PersistentSettings persistentSettings;
 
     private final Settings settings;
@@ -64,179 +60,77 @@ public class LicenseSettingsService
     {
         List<License> licenses = licenseService.getLicenses();
 
-        if (!checkIfListContains(newLicense))
-        {
-            licenses.add(newLicense);
-            saveSettings(licenses);
-            return true;
-        }
-        else
+        if (listContains(newLicense, licenses))
         {
             return false;
         }
+
+        licenses.add(newLicense);
+        saveSettings(licenses);
+
+        return true;
     }
 
-    public boolean checkIfListContains(License license)
+    private boolean listContains(License newLicense, List<License> licenses)
     {
-        List<License> licenses = licenseService.getLicenses();
-        return licenses.contains(license);
-    }
-
-    public void deleteLicense(String id)
-    {
-        final String[] identifierName = id.split("~");
-
-        List<License> newLicenseList = new ArrayList<>();
-        JsonParser parser = Json.createParser(new StringReader(settings.getString(LICENSE_KEY)));
-        JsonReader jsonReader = Json.createReader(new StringReader(settings.getString(LICENSE_KEY)));
-        final JsonObject jsonObject = jsonReader.readObject();
-
-        while (parser.hasNext())
+        for (License license : licenses)
         {
-            JsonParser.Event event = parser.next();
-            switch (event)
+            if (newLicense.getIdentifier().equals(license.getIdentifier()))
             {
-                case KEY_NAME:
-                    if (!"name".equals(parser.getString())
-                        && !"url".equals(parser.getString())
-                        && !"osiApproved".equals(parser.getString())
-                        && !"status".equals(parser.getString()))
-                    {
-                        newLicenseList =
-                            deleteLicensesCheck(newLicenseList, parser.getString(), identifierName[0], jsonObject);
-                    }
-                    break;
-                default:
-                    break;
+                return true;
             }
         }
-
-        parser.close();
-        jsonReader.close();
-
-        saveSettings(newLicenseList);
+        return false;
     }
 
-    private List<License> deleteLicensesCheck(List<License> newLicenseList, String identifier,
-        String identifierToDelete, JsonObject jsonObject)
+    public boolean deleteLicense(String id)
     {
-        JsonObject identifierObj = jsonObject.getJsonObject(identifier);
-        if (!identifier.equals(identifierToDelete))
+        List<License> licenses = License.fromString(settings.getString(LICENSE_KEY));
+        List<License> newLicenseList = new ArrayList<>();
+        boolean found = false;
+        for (License license : licenses)
         {
-
-            if (identifierObj.containsKey("status"))
+            if (id.equals(license.getIdentifier()))
             {
-                newLicenseList
-                    .add(new License(identifierObj.getString("name"), identifier, identifierObj.getString("status")));
+                found = true;
             }
             else
             {
-                newLicenseList.add(new License(identifierObj.getString("name"), identifier, "false"));
+                newLicenseList.add(license);
             }
         }
-        return newLicenseList;
-    }
 
-    public void updateLicense(final String id, final String name, final String status)
-    {
-        String licenseString = settings.getString(LICENSE_KEY);
-
-        final List<License> newLicenseList = new ArrayList<>();
-
-        if (licenseString.contains(id) || licenseString.contains(name))
+        if (found)
         {
-            updateLicensesParser(newLicenseList, licenseString, id, name, status);
             saveSettings(newLicenseList);
         }
+
+        return found;
     }
 
-    public void updateLicense(License oldLicense, License newLicense)
+    public boolean updateLicense(final String id, final String newName, final String newStatus)
     {
-        deleteLicense(oldLicense.getIdentifier());
-        addLicense(newLicense);
-        sortLicenses();
-    }
+        List<License> licenses = licenseService.getLicenses();
 
-    private void updateLicensesParser(List<License> newLicenseList, String licenseString, String id, String name,
-        String status)
-    {
-        JsonParser parser = Json.createParser(new StringReader(licenseString));
-        JsonReader jsonReader = Json.createReader(new StringReader(licenseString));
-        final JsonObject jsonObject = jsonReader.readObject();
-
-        while (parser.hasNext())
+        for (License license : licenses)
         {
-            JsonParser.Event event = parser.next();
-            switch (event)
+            if (id.equals(license.getIdentifier()))
             {
-                case KEY_NAME:
-                    if (!"name".equals(parser.getString())
-                        && !"url".equals(parser.getString())
-                        && !"osiApproved".equals(parser.getString())
-                        && !"status".equals(parser.getString()))
-                    {
-                        updateLicensesCheck(newLicenseList, jsonObject, parser.getString(), id, name, status);
-                    }
-                    break;
-                default:
-                    break;
+                license.setName(newName);
+                license.setStatus(newStatus);
+                saveSettings(licenses);
+                return true;
             }
         }
-
-        parser.close();
-        jsonReader.close();
-    }
-
-    private void updateLicensesCheck(List<License> newLicenseList, JsonObject jsonObject, String identifier, String id,
-        String name, String status)
-    {
-        JsonObject identifierObj = jsonObject.getJsonObject(identifier);
-        if (identifier.equals(id))
-        {
-            newLicenseList.add(new License(name, identifier, status));
-        }
-        else
-        {
-            newLicenseList
-                .add(new License(identifierObj.getString("name"), identifier, identifierObj.getString("status")));
-        }
+        return false;
     }
 
     private void saveSettings(List<License> licenseList)
     {
-
-        String newJsonLicense = "";
-
-        for (License license : licenseList)
-        {
-            if (license.getName().contains("\""))
-            {
-                JsonObject jsonObject = Json
-                    .createObjectBuilder()
-                    .add(license.getIdentifier(),
-                        Json.createObjectBuilder().add("name", license.getName().replace("\"", "")).add("status",
-                            license.getStatus()))
-                    .build();
-
-                newJsonLicense = newJsonLicense + jsonObject.toString();
-            }
-            else
-            {
-                JsonObject jsonObject = Json
-                    .createObjectBuilder()
-                    .add(license.getIdentifier(),
-                        Json.createObjectBuilder().add("name", license.getName()).add("status", license.getStatus()))
-                    .build();
-
-                newJsonLicense = newJsonLicense + jsonObject.toString();
-            }
-            if (newJsonLicense.contains("}{"))
-            {
-                newJsonLicense = newJsonLicense.replace("}{", ", ");
-            }
-        }
-        settings.setProperty(LICENSE_KEY, newJsonLicense);
-        persistentSettings.saveProperty(LICENSE_KEY, newJsonLicense);
+        Collections.sort(licenseList);
+        String licenseJson = License.createString(licenseList);
+        settings.setProperty(LICENSE_KEY, licenseJson);
+        persistentSettings.saveProperty(LICENSE_KEY, licenseJson);
     }
 
     private void initSpdxLicences()
@@ -271,12 +165,5 @@ public class LicenseSettingsService
         {
             LOGGER.error("Could not load spdx_license_list.json", e);
         }
-    }
-
-    public void sortLicenses()
-    {
-        List<License> licenseList = licenseService.getLicenses();
-        Collections.sort(licenseList);
-        saveSettings(licenseList);
     }
 }
