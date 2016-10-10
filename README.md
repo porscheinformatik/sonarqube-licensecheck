@@ -1,13 +1,14 @@
-Sonarqube Licensecheck Plugin
+SonarQube License-Check
 ===================
 
 [![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck)
 
-This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of standard libraries and versions. This enables the governance of the used libraries and licences.
+This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of
+standard libraries and versions. This enables the governance of the used libraries and licences.
 
 ## License
 
-This software is licensed under the Apache Software License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0.txt
+This software is licensed under the [Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 ## Compatibility
 
@@ -16,7 +17,8 @@ The plugin is compatible with SonarQube >= 5.3 and <= 5.6.
 
 ## Installation
 
-Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and restart the server to install the plugin.
+Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
+restart the server to install the plugin.
 
 ## Execution
 
@@ -24,11 +26,15 @@ When a project is analyzed using the `mvn sonar:sonar` in command line the exten
 
 ## Configuration
 
-After booting the SonarQube Server with the Licensecheck Plugin two new options can be found in the tab <b>Administrasion</b>.
+After booting the SonarQube Server with the License-Check Plugin two new options can be found in the tab
+<b>Administration</b>.
 
-* Within the general settings the plugin can be manually enabled or disabled. By default it is enabled. ![General configuration](docs/licensecheck_general_configuration.png)
-* All other configuration is under Licensecheck specific settings (Configuration > License Check) ![License configuration](docs/licensecheck_configuration.png)
-* If you want to create issues on license violation or unknown licences, enabled the rules "License is not allowed" and "Dependency has unknown license"
+* Within the general settings the plugin can be manually enabled or disabled. By default it is enabled. ![General
+configuration](docs/licensecheck_general_configuration.png)
+* All other configuration is under License-Check specific settings (Configuration > License Check) ![License
+configuration](docs/licensecheck_configuration.png)
+* If you want to create issues on license violation or unknown licences, enabled the rules "License is not allowed"
+and "Dependency has unknown license"
 
 ## Features
 
