@@ -6,10 +6,10 @@
 
     var checkOutLogString = 'Please check out the log file for more information.';
 
-    var base = '../static/licensecheck/licenses/';
+    var base = window.baseUrl + '/static/licensecheck/licenses/';
 
     var loadLicenses = function () {
-      $http.get('/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -37,7 +37,7 @@
             status: $scope.licenseStatusEdit
           };
           $http({
-            url: '/api/licenses/edit',
+            url: 'window.baseUrl + /api/licenses/edit',
             method: 'POST',
             data: $httpParamSerializerJQLike(changedLicense),
             headers: {
@@ -69,7 +69,7 @@
           status: $scope.licenseStatusAdd
         };
         $http({
-          url: '/api/licenses/add',
+          url: 'window.baseUrl + /api/licenses/add',
           method: 'POST',
           data: $httpParamSerializerJQLike(license),
           headers: {
@@ -103,7 +103,7 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-          $http.post('/api/licenses/delete?identifier=' + license.identifier)
+          $http.post('window.baseUrl + /api/licenses/delete?identifier=' + license.identifier)
             .then(
               function (response) {
                 loadLicenses();

@@ -6,22 +6,22 @@
 
     var checkOutLogString = 'Please check out the log file for more information.';
 
-    var base = '../static/licensecheck/projectLicenses/';
+    var base = window.baseUrl + '/static/licensecheck/projectLicenses/';
 
     var loadProjectLicenses = function () {
-      $http.get('/api/projectLicenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/projectLicenses/show').then(function (response) {
         $scope.projectLicenses = response.data;
       });
     };
 
     var loadProjects = function () {
-      $http.get('/api/resources?format=json').then(function (response) {
+      $http.get(window.baseUrl + '/api/resources?format=json').then(function (response) {
         $scope.resources = response.data;
       });
     };
 
     var loadLicenses = function () {
-      $http.get('/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -62,7 +62,7 @@
           };
 
           $http({
-            url: '/api/projectLicenses/edit',
+            url: window.baseUrl + '/api/projectLicenses/edit',
             method: 'POST',
             data: $httpParamSerializerJQLike(changedProjectLicense),
             headers: {
@@ -98,7 +98,7 @@
           };
 
           $http({
-            url: '/api/projectLicenses/add',
+            url: window.baseUrl + '/api/projectLicenses/add',
             method: 'POST',
             data: $httpParamSerializerJQLike(projectLicense),
             headers: {
@@ -140,7 +140,7 @@
         };
 
         $http({
-          url: '/api/projectLicenses/delete',
+          url: window.baseUrl + '/api/projectLicenses/delete',
           method: 'POST',
           data: $httpParamSerializerJQLike(projectLicenseToDelete),
           headers: {

@@ -6,16 +6,16 @@
 
     var checkOutLogString = 'Please check out the log file for more information.';
 
-    var base = '../static/licensecheck/mavenDependencies/';
+    var base = window.baseUrl + '/static/licensecheck/mavenDependencies/';
 
     var loadMavenDependencies = function () {
-      $http.get('/api/mavenDependencies/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/mavenDependencies/show').then(function (response) {
         $scope.mavenDependencies = response.data.mavenDependencies;
       });
     };
 
     var loadLicenses = function () {
-      $http.get('/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -41,7 +41,7 @@
           newMavenDependency.oldKey = mavenDependency.key;
           newMavenDependency.newKey = $scope.mavenDependencyKeyEdit;
           newMavenDependency.newLicense = $scope.mavenDependencyLicenseEdit;
-          $http.post('/api/mavenDependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
+          $http.post(window.baseUrl + '/api/mavenDependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
             .then(
             function (response) {
               loadMavenDependencies();
@@ -68,7 +68,7 @@
           var mavenDependency = new Object();
           mavenDependency.key = $scope.mavenDependencyKeyAdd;
           mavenDependency.license = $scope.mavenDependencyLicenseAdd;
-          $http.post('/api/mavenDependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
+          $http.post(window.baseUrl + '/api/mavenDependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
             .then(
             function (response) {
               loadMavenDependencies();
@@ -97,7 +97,7 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-        $http.post('/api/mavenDependencies/delete?mavenDependency=' + JSON.stringify(mavenDependency))
+        $http.post(window.baseUrl + '/api/mavenDependencies/delete?mavenDependency=' + JSON.stringify(mavenDependency))
           .then(
           function (response) {
             loadMavenDependencies();
