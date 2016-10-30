@@ -5,12 +5,14 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -80,35 +82,65 @@ public class License implements Comparable<License>
     {
         List<License> licenses = new ArrayList<>();
 
-        if (serializedLicensesString != null && serializedLicensesString.startsWith("["))
+        if (serializedLicensesString != null)
         {
-            JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString));
-            JsonArray licensesJson = jsonReader.readArray();
-            for (int i = 0; i < licensesJson.size(); i++)
+            if (serializedLicensesString.startsWith("["))
             {
-                JsonObject licenseJson = licensesJson.getJsonObject(i);
-                licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
-                    licenseJson.getString("status")));
-            }
-        }
-        else
-        {
-            // deprecated - remove with later release
-            if (StringUtils.isNotEmpty(serializedLicensesString))
-            {
-                String[] parts = serializedLicensesString.split(";");
-
-                for (String licenseString : parts)
+                try (JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString)))
                 {
-                    String[] subParts = licenseString.split("~");
-                    String name = subParts.length > 0 ? subParts[0] : null;
-                    String identifier = subParts.length > 1 ? subParts[1] : null;
-                    String status = subParts.length > 2 ? subParts[2] : null;
-                    licenses.add(new License(name, identifier, status));
+                    JsonArray licensesJson = jsonReader.readArray();
+                    for (JsonObject licenseJson : licensesJson.getValuesAs(JsonObject.class))
+                    {
+                        licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
+                            licenseJson.getString("status")));
+                    }
                 }
+            }
+            else if (serializedLicensesString.startsWith("{"))
+            {
+                readLegacyJson(serializedLicensesString, licenses);
+            }
+            else
+            {
+                readLegaySeparated(serializedLicensesString, licenses);
             }
         }
         return licenses;
+    }
+
+    @Deprecated
+    private static void readLegaySeparated(String serializedLicensesString, List<License> licenses)
+    {
+        // deprecated - remove with later release
+        if (StringUtils.isNotEmpty(serializedLicensesString))
+        {
+            String[] parts = serializedLicensesString.split(";");
+
+            for (String licenseString : parts)
+            {
+                String[] subParts = licenseString.split("~");
+                String name = subParts.length > 0 ? subParts[0] : null;
+                String identifier = subParts.length > 1 ? subParts[1] : null;
+                String status = subParts.length > 2 ? subParts[2] : null;
+                licenses.add(new License(name, identifier, status));
+            }
+        }
+    }
+
+    @Deprecated
+    private static void readLegacyJson(String serializedLicensesString, List<License> licenses)
+    {
+        // deprecated - remove with later release
+        try (JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString)))
+        {
+            JsonObject licensesJson = jsonReader.readObject();
+            for (Map.Entry<String, JsonValue> licenseJson : licensesJson.entrySet())
+            {
+                JsonObject value = (JsonObject) licenseJson.getValue();
+                licenses.add(new License(value.getString("name"), licenseJson.getKey(),
+                    value.getString("status")));
+            }
+        }
     }
 
     public static String createString(Collection<License> licenses)
@@ -174,13 +206,6 @@ public class License implements Comparable<License>
         }
 
         License license = (License) object;
-        if (license.identifier.equals(this.identifier) && license.name.equals(this.name))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return license.identifier.equals(this.identifier) && license.name.equals(this.name);
     }
 }

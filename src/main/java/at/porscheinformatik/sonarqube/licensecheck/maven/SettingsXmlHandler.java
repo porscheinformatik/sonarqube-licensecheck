@@ -44,7 +44,7 @@ class SettingsXmlHandler extends DefaultHandler
     public void characters(char[] ch, int start, int length) throws SAXException
     {
 
-        if (enableReadElementData == true)
+        if (enableReadElementData)
         {
             if (tagName.equals("localRepository"))
             {

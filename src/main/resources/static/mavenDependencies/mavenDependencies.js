@@ -37,10 +37,11 @@
         controller: 'DialogController'
       })
         .then(function (answer) {
-          var newMavenDependency = new Object();
-          newMavenDependency.oldKey = mavenDependency.key;
-          newMavenDependency.newKey = $scope.mavenDependencyKeyEdit;
-          newMavenDependency.newLicense = $scope.mavenDependencyLicenseEdit;
+          var newMavenDependency = {
+            oldKey: mavenDependency.key,
+            newKey:  $scope.mavenDependencyKeyEdit,
+            newLicense: $scope.mavenDependencyLicenseEdit
+          };
           $http.post(window.baseUrl + '/api/mavenDependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
             .then(
             function (response) {
@@ -65,9 +66,10 @@
         controller: 'DialogController'
       })
         .then(function (answer) {
-          var mavenDependency = new Object();
-          mavenDependency.key = $scope.mavenDependencyKeyAdd;
-          mavenDependency.license = $scope.mavenDependencyLicenseAdd;
+          var mavenDependency = {
+            key: $scope.mavenDependencyKeyAdd,
+            license: $scope.mavenDependencyLicenseAdd
+          };
           $http.post(window.baseUrl + '/api/mavenDependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
             .then(
             function (response) {

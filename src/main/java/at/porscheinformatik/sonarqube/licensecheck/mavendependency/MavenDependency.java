@@ -82,13 +82,6 @@ public class MavenDependency implements Comparable<MavenDependency>
         }
 
         MavenDependency mavenDependency = (MavenDependency) object;
-        if (mavenDependency.license.equals(this.license) && mavenDependency.key.equals(this.key))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return mavenDependency.license.equals(this.license) && mavenDependency.key.equals(this.key);
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
@@ -19,7 +20,9 @@ import org.sonar.server.platform.PersistentSettings;
 @ServerSide
 public class MavenDependencySettingsService
 {
-    /** This is not official API */
+    /**
+     * This is not official API
+     */
     private final PersistentSettings persistentSettings;
 
     private final Settings settings;
@@ -45,7 +48,7 @@ public class MavenDependencySettingsService
     {
         List<MavenDependency> mavenDependencies = mavenDependencyService.getMavenDependencies();
 
-        if (!checkIfListContains(newMavenDependency))
+        if (!mavenDependencies.contains(newMavenDependency))
         {
             mavenDependencies.add(newMavenDependency);
             saveSettings(mavenDependencies);
@@ -55,12 +58,6 @@ public class MavenDependencySettingsService
         {
             return false;
         }
-    }
-
-    public boolean checkIfListContains(MavenDependency mavenDependency)
-    {
-        List<MavenDependency> mavenDependencies = mavenDependencyService.getMavenDependencies();
-        return mavenDependencies.contains(mavenDependency);
     }
 
     public void deleteMavenDependency(String key)
@@ -86,22 +83,17 @@ public class MavenDependencySettingsService
 
     private void saveSettings(List<MavenDependency> mavenDependencies)
     {
-        String newJsonDependency = "";
+        Collections.sort(mavenDependencies);
 
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (int i = 0; i < mavenDependencies.size(); i++)
         {
-            JsonArray jsonArray = Json
-                .createArrayBuilder()
-                .add(Json.createObjectBuilder().add("nameMatches", mavenDependencies.get(i).getKey()).add("license",
-                    mavenDependencies.get(i).getLicense()))
-                .build();
-            newJsonDependency = newJsonDependency + jsonArray.toString();
-
-            if (newJsonDependency.contains("]["))
-            {
-                newJsonDependency = newJsonDependency.replace("][", ", ");
-            }
+            jsonArray.add(
+                Json.createObjectBuilder().add("nameMatches", mavenDependencies.get(i).getKey()).add("license",
+                    mavenDependencies.get(i).getLicense()));
         }
+
+        String newJsonDependency = jsonArray.build().toString();
         settings.setProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
     }
@@ -126,10 +118,8 @@ public class MavenDependencySettingsService
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
     }
 
-    public void sortDependencies()
+    public boolean hasDependency(MavenDependency mavenDependency)
     {
-        List<MavenDependency> mavenDependencies = mavenDependencyService.getMavenDependencies();
-        Collections.sort(mavenDependencies);
-        saveSettings(mavenDependencies);
+        return mavenDependencyService.getMavenDependencies().contains(mavenDependency);
     }
 }

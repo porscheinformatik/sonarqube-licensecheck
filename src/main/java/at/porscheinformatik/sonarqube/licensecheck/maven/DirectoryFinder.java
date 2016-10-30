@@ -2,7 +2,7 @@ package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import java.io.File;
 
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;;
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 
 class DirectoryFinder
 {

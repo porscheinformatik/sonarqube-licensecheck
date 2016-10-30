@@ -69,7 +69,7 @@
           status: $scope.licenseStatusAdd
         };
         $http({
-          url: 'window.baseUrl + /api/licenses/add',
+          url: window.baseUrl + '/api/licenses/add',
           method: 'POST',
           data: $httpParamSerializerJQLike(license),
           headers: {
@@ -103,7 +103,7 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-          $http.post('window.baseUrl + /api/licenses/delete?identifier=' + license.identifier)
+          $http.post(window.baseUrl + '/api/licenses/delete?identifier=' + license.identifier)
             .then(
               function (response) {
                 loadLicenses();

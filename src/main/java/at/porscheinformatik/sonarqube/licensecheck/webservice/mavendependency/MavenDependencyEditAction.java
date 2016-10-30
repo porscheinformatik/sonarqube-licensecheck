@@ -48,12 +48,11 @@ class MavenDependencyEditAction implements RequestHandler
                 new MavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_KEY),
                     jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_LICENSE));
 
-            if (!mavenDependencySettingsService.checkIfListContains(newMavenDependency))
+            if (!mavenDependencySettingsService.hasDependency(newMavenDependency))
             {
                 mavenDependencySettingsService
                     .deleteMavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_OLD_KEY));
                 mavenDependencySettingsService.addMavenDependency(newMavenDependency);
-                mavenDependencySettingsService.sortDependencies();
                 response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
                 LOGGER.info(MavenDependencyConfiguration.INFO_EDIT_SUCCESS + jsonObject.toString());
             }

@@ -67,16 +67,20 @@ public class ProjectLicense implements Comparable<ProjectLicense>
     public static List<ProjectLicense> fromString(String projectLicensesString)
     {
         List<ProjectLicense> projectLicenses = new ArrayList<>();
-        JsonReader jsonReader = Json.createReader(new StringReader(projectLicensesString));
-        JsonArray projectLicensesJson = jsonReader.readArray();
-        for (int i = 0; i < projectLicensesJson.size(); i++)
+
+        try (JsonReader jsonReader = Json.createReader(new StringReader(projectLicensesString)))
         {
-            JsonObject projectLicenseJson = projectLicensesJson.getJsonObject(i);
-            projectLicenses.add(new ProjectLicense(
-                projectLicenseJson.getString("projectKey"),
-                projectLicenseJson.getString("license"),
-                projectLicenseJson.getString("status")));
+            JsonArray projectLicensesJson = jsonReader.readArray();
+            for (int i = 0; i < projectLicensesJson.size(); i++)
+            {
+                JsonObject projectLicenseJson = projectLicensesJson.getJsonObject(i);
+                projectLicenses.add(new ProjectLicense(
+                    projectLicenseJson.getString("projectKey"),
+                    projectLicenseJson.getString("license"),
+                    projectLicenseJson.getString("status")));
+            }
         }
+
         return projectLicenses;
     }
 
@@ -121,15 +125,8 @@ public class ProjectLicense implements Comparable<ProjectLicense>
 
         ProjectLicense projectLicense = (ProjectLicense) object;
 
-        if (projectLicense.getLicense().equals(this.getLicense())
-            && projectLicense.getProjectKey().equals(this.getProjectKey()))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return projectLicense.getLicense().equals(this.getLicense())
+            && projectLicense.getProjectKey().equals(this.getProjectKey());
     }
 
     @Override

@@ -158,13 +158,16 @@ public class Dependency implements Comparable<Dependency>
 
         if (serializedDependencyString != null && serializedDependencyString.startsWith("["))
         {
-            JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString));
-            JsonArray dependenciesJson = jsonReader.readArray();
-            for (int i = 0; i < dependenciesJson.size(); i++)
+            try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
             {
-                JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
-                dependencies.add(new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
-                    dependencyJson.getString("license")));
+                JsonArray dependenciesJson = jsonReader.readArray();
+                for (int i = 0; i < dependenciesJson.size(); i++)
+                {
+                    JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
+                    dependencies.add(
+                        new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
+                            dependencyJson.getString("license")));
+                }
             }
         }
         else

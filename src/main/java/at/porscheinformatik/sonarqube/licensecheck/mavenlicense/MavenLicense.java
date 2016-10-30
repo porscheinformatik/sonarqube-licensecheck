@@ -72,15 +72,8 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
 
         MavenLicense mavenLicense = (MavenLicense) object;
-        if (mavenLicense.license.equals(this.license)
-            && mavenLicense.licenseNameRegEx.toString().equals(this.licenseNameRegEx.toString()))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return mavenLicense.license.equals(this.license)
+            && mavenLicense.licenseNameRegEx.toString().equals(this.licenseNameRegEx.toString());
     }
 
     @Override
@@ -99,28 +92,28 @@ public class MavenLicense implements Comparable<MavenLicense>
 
         if (mavenLicenseString != null && mavenLicenseString.startsWith("["))
         {
-            JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString));
-            JsonArray licensesJson = jsonReader.readArray();
-            for (int i = 0; i < licensesJson.size(); i++)
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString)))
             {
-                JsonObject licenseJson = licensesJson.getJsonObject(i);
-                mavenLicenses.add(
-                    new MavenLicense(licenseJson.getString("licenseNameRegEx"), licenseJson.getString("license")));
-            }
-        }
-        else
-        {
-            // deprecated - remove with later release
-            if (StringUtils.isNotEmpty(mavenLicenseString))
-            {
-                String[] mavenLicenseEntries = mavenLicenseString.split(";");
-                for (String mavenLicenseEntry : mavenLicenseEntries)
+                JsonArray licensesJson = jsonReader.readArray();
+                for (int i = 0; i < licensesJson.size(); i++)
                 {
-                    String[] mavenLicenseEntryParts = mavenLicenseEntry.split("~");
-                    mavenLicenses.add(new MavenLicense(mavenLicenseEntryParts[0], mavenLicenseEntryParts[1]));
+                    JsonObject licenseJson = licensesJson.getJsonObject(i);
+                    mavenLicenses.add(
+                        new MavenLicense(licenseJson.getString("licenseNameRegEx"), licenseJson.getString("license")));
                 }
             }
         }
+        else if (StringUtils.isNotEmpty(mavenLicenseString))
+        {
+            // deprecated - remove with later release
+            String[] mavenLicenseEntries = mavenLicenseString.split(";");
+            for (String mavenLicenseEntry : mavenLicenseEntries)
+            {
+                String[] mavenLicenseEntryParts = mavenLicenseEntry.split("~");
+                mavenLicenses.add(new MavenLicense(mavenLicenseEntryParts[0], mavenLicenseEntryParts[1]));
+            }
+        }
+
         return mavenLicenses;
     }
 

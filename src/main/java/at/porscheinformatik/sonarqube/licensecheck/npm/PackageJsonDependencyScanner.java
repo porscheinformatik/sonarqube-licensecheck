@@ -3,6 +3,7 @@ package at.porscheinformatik.sonarqube.licensecheck.npm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +31,9 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (packageJsonFile.exists())
         {
-            InputStream fis;
-            try
+            try (InputStream fis = new FileInputStream(packageJsonFile);
+                JsonReader jsonReader = Json.createReader(fis))
             {
-                fis = new FileInputStream(packageJsonFile);
-                JsonReader jsonReader = Json.createReader(fis);
                 JsonObject jsonObject = jsonReader.readObject();
                 JsonObject jsonObjectDependencies = jsonObject.getJsonObject("dependencies");
                 if (jsonObjectDependencies != null)
@@ -43,9 +42,9 @@ public class PackageJsonDependencyScanner implements Scanner
                 }
                 jsonReader.close();
             }
-            catch (FileNotFoundException e)
+            catch (IOException e)
             {
-                throw new RuntimeException(e);
+                LOGGER.error("Error reading package.json", e);
             }
         }
         return Collections.emptyList();
