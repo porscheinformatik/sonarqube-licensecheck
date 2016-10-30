@@ -39,7 +39,6 @@ class MavenDependencyDeleteAction implements RequestHandler
             mavenDependencySettingsService
                 .deleteMavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_KEY));
             LOGGER.info(MavenDependencyConfiguration.INFO_DELETE_SUCCESS + jsonObject.toString());
-            mavenDependencySettingsService.sortDependencies();
             response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
         }
         else
