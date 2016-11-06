@@ -8,7 +8,6 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Proj
 
 public class ProjectLicenseWs implements WebService
 {
-
     private final ProjectLicenseService projectLicenseService;
     private ProjectLicenseSettingsService projectLicenseSettingsService;
 
@@ -23,6 +22,7 @@ public class ProjectLicenseWs implements WebService
     public void define(Context context)
     {
         NewController controller = context.createController(ProjectLicenseConfiguration.CONTROLLER);
+
         controller
             .createAction(ProjectLicenseConfiguration.SHOW_ACTION)
             .setDescription(ProjectLicenseConfiguration.SHOW_ACTION_DESCRIPTION)
@@ -38,6 +38,7 @@ public class ProjectLicenseWs implements WebService
         NewAction addAction = controller
             .createAction(ProjectLicenseConfiguration.ADD_ACTION)
             .setDescription(ProjectLicenseConfiguration.ADD_ACTION_DESCRIPTION)
+            .setPost(true)
             .setHandler(new ProjectLicenseAddAction(projectLicenseSettingsService));
         addAction.createParam(ProjectLicenseConfiguration.PARAM_PROJECT_KEY).setRequired(true);
         addAction.createParam(ProjectLicenseConfiguration.PARAM_LICENSE).setRequired(true);
@@ -48,6 +49,7 @@ public class ProjectLicenseWs implements WebService
         NewAction editAction = controller
             .createAction(ProjectLicenseConfiguration.EDIT_ACTION)
             .setDescription(ProjectLicenseConfiguration.EDIT_ACTION_DESCRIPTION)
+            .setPost(true)
             .setHandler(new ProjectLicenseEditAction(projectLicenseSettingsService));
 
         editAction.createParam(ProjectLicenseConfiguration.PARAM_PROJECT_KEY).setRequired(true);

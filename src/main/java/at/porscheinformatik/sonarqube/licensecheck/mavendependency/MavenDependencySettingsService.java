@@ -60,10 +60,8 @@ public class MavenDependencySettingsService
         }
     }
 
-    public void deleteMavenDependency(String key)
+    public void deleteMavenDependency(final String key)
     {
-        String[] keyId = key.split("~");
-
         List<MavenDependency> newDependencyList = new ArrayList<>();
         JsonReader jsonReader = Json.createReader(new StringReader(settings.getString(ALLOWED_DEPENDENCIES_KEY)));
         JsonArray jsonArray = jsonReader.readArray();
@@ -72,7 +70,7 @@ public class MavenDependencySettingsService
         for (int i = 0; i < jsonArray.size(); i++)
         {
             JsonObject jsonObject = jsonArray.getJsonObject(i);
-            if (!jsonObject.getString("nameMatches").equals(keyId[0]))
+            if (!jsonObject.getString("nameMatches").equals(key))
             {
                 newDependencyList
                     .add(new MavenDependency(jsonObject.getString("nameMatches"), jsonObject.getString("license")));
