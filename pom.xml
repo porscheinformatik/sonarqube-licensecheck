@@ -61,11 +61,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:git:https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin</connection>
-    <developerConnection>
-      scm:git:[fetch=]https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin[push=]https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin
-    </developerConnection>
-    <url>https://scm.porscheinformatik.com/gerrit/p/products/poco/sonarqube-plugin</url>
+    <connection>scm:git:https://github.com/porscheinformatik/sonarqube-licensecheck.git</connection>
+    <developerConnection>https://github.com/porscheinformatik/sonarqube-licensecheck.git</developerConnection>
+    <url>https://github.com/porscheinformatik/sonarqube-licensecheck</url>
     <tag>HEAD</tag>
   </scm>
 
