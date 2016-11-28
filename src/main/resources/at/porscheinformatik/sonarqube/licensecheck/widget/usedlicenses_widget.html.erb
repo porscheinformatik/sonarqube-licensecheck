@@ -24,7 +24,7 @@
         </tbody>
     </table>
     <p><br> Export the used licenses to a CSV file after a project scan</p>
-    <p><a class="csv" href="../../licensecheck_configuration/export_used_licenses_csv" id="export-csv-link">Export CSV</a></p>
+  <p><a href="<%= ApplicationController.root_context -%>/licensecheck_export?id=<%= @project.key -%>&format=xls" class="csv">Export to Excel</a></p>
 </div>
 <% else %>
 <h1>No Data</h1>

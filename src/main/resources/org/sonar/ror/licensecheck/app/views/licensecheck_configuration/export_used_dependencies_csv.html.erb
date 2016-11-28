@@ -1,8 +1,0 @@
-<%
- response.headers['Content-Type'] = "'text/csv; charset=iso-8859-1'"
- response.headers['Content-Disposition'] = 'attachment; filename="' + @filename + '"'
-%>
-Used Dependencies
-Name;Version;License
-<% @dependenciesForExport.each do |row| %><% row.each do |col| %>"<%= col %>";<% end %>
-<% end %>
