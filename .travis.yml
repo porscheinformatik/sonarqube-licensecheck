@@ -1,2 +1,4 @@
 language: java
 script: mvn verify -Pnodejs
+jdk:
+  - oraclejdk8
