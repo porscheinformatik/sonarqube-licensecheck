@@ -36,7 +36,6 @@ public class LicenseCheckPlugin extends SonarPlugin
             LicenseCheckSensor.class,
             LicenseCheckMetrics.class,
             LicenseCheckConfigurationPage.class,
-            LicenseCheckExportPage.class,
             LicenseCheckMeasureComputer.class,
             LicenseCheckRulesDefinition.class,
             LicenseCheckPropertyKeys.class,
