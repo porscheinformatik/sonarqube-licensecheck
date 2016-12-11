@@ -30,24 +30,24 @@
         preserveScope: true,
         controller: 'DialogController'
       })
-        .then(function (answer) {
+        .then(function () {
           var changedLicense = {
             identifier: license.identifier,
             name: $scope.licenseNameEdit,
             status: $scope.licenseStatusEdit
           };
           $http({
-            url: 'window.baseUrl + /api/licenses/edit',
+            url: window.baseUrl + '/api/licenses/edit',
             method: 'POST',
             data: $httpParamSerializerJQLike(changedLicense),
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           }).then(
-            function (response) {
+            function () {
               loadLicenses();
             },
-            function (response) {
+            function () {
               alert('Failed to edit license. ' + checkOutLogString);
             });
         });
@@ -62,7 +62,7 @@
         clickOutsideToClose: true,
         preserveScope: true,
         controller: 'DialogController'
-      }).then(function (answer) {
+      }).then(function () {
         var license = {
           name: $scope.licenseNameAdd,
           identifier: $scope.licenseIdentifierAdd,
@@ -76,10 +76,10 @@
             'Content-Type': 'application/x-www-form-urlencoded'
           }
         }).then(
-          function (response) {
+          function () {
             loadLicenses();
           },
-          function (response) {
+          function () {
             alert('Failed to add license. ' + checkOutLogString);
           });
       });
@@ -105,10 +105,10 @@
       }).then(function () {
           $http.post(window.baseUrl + '/api/licenses/delete?identifier=' + license.identifier)
             .then(
-              function (response) {
+              function () {
                 loadLicenses();
               },
-              function (response) {
+              function () {
                 alert('Failed to delete license. ' + checkOutLogString);
               });
         });
