@@ -43,6 +43,11 @@ public class MavenDependencyScanner implements Scanner
     @Override
     public List<Dependency> scan(File moduleDir, String mavenProjectDependencies)
     {
+        if (mavenProjectDependencies == null || mavenProjectDependencies.length() == 0)
+        {
+            return new ArrayList<>();
+        }
+
         JsonReader jsonReader = Json.createReader(new StringReader(mavenProjectDependencies));
         Set<Dependency> dependencies = new HashSet<>();
 
