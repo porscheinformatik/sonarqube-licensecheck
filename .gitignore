@@ -3,6 +3,7 @@
 .settings/
 target/
 node_modules/
+node/
 package.json
 .idea/
 *.iml
