@@ -2,8 +2,6 @@ language: java
 script: mvn verify -Pnodejs
 jdk:
 - oraclejdk8
-addons:
-  srcclr: true
 deploy:
   provider: releases
   api_key:
