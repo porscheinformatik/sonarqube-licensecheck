@@ -40,6 +40,15 @@ class DirectoryFinder
             mavenConfFile = new File(System.getenv("MAVEN_HOME"), "conf/settings.xml");
         }
 
-        return mavenConfFile.exists() ? SettingsXmlParser.parseXmlFile(mavenConfFile).getLocalRepositoryPath() : null;
+        if (mavenConfFile.exists() && mavenConfFile.isFile())
+        {
+            File localRepositoryPath = SettingsXmlParser.parseXmlFile(mavenConfFile).getLocalRepositoryPath();
+            if (localRepositoryPath != null)
+            {
+                return localRepositoryPath;
+            }
+        }
+
+        return new File(System.getProperty("user.home"), ".m2/repository");
     }
 }
