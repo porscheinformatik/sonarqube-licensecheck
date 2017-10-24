@@ -6,7 +6,7 @@ public final class LicenseConfiguration
     public static final String PARAM_IDENTIFIER = "identifier";
     public static final String PARAM_STATUS = "status";
 
-    public static final String CONTROLLER = "api/licenses";
+    public static final String CONTROLLER = "api/licensecheck/licenses";
 
     public static final String SHOW_ACTION = "show";
     public static final String DELETE_ACTION = "delete";

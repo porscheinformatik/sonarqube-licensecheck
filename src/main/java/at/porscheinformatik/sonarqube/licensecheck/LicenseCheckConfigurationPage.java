@@ -31,7 +31,7 @@ public class LicenseCheckConfigurationPage implements Page
     @Override
     public String getId()
     {
-        return "/licensecheck_configuration";
+        return "/licensecheck/configuration";
     }
 
     @Override

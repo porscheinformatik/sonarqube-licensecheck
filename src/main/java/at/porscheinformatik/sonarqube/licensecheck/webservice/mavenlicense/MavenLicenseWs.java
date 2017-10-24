@@ -8,7 +8,6 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Mave
 
 public class MavenLicenseWs implements WebService
 {
-
     private final MavenLicenseService mavenLicenseService;
     private MavenLicenseSettingsService mavenLicenseSettingsService;
 

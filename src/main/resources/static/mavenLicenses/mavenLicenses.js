@@ -9,13 +9,13 @@
     var base = window.baseUrl + '/static/licensecheck/mavenLicenses/';
 
     var loadMavenLicenses = function () {
-      $http.get(window.baseUrl + '/api/mavenLicenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/maven-licenses/show').then(function (response) {
         $scope.mavenLicenses = response.data.mavenLicenses;
       });
     };
 
     var loadLicenses = function () {
-      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -41,7 +41,7 @@
           newMavenLicense.oldRegex = mavenLicense.regex;
           newMavenLicense.newRegex = $scope.mavenLicenseRegexEdit;
           newMavenLicense.newKey = $scope.mavenLicenseKeyEdit;
-          $http.post(window.baseUrl + '/api/mavenLicenses/edit?mavenLicense=' + JSON.stringify(newMavenLicense))
+          $http.post(window.baseUrl + '/api/licensecheck/maven-licenses/edit?mavenLicense=' + JSON.stringify(newMavenLicense))
             .then(
             function (response) {
               loadMavenLicenses();
@@ -68,7 +68,7 @@
           var mavenLicense = new Object();
           mavenLicense.regex = $scope.mavenLicenseRegexAdd;
           mavenLicense.key = $scope.mavenLicenseKeyAdd;
-          $http.post(window.baseUrl + '/api/mavenLicenses/add?mavenLicense=' + JSON.stringify(mavenLicense))
+          $http.post(window.baseUrl + '/api/licensecheck/maven-licenses/add?mavenLicense=' + JSON.stringify(mavenLicense))
             .then(
             function (response) {
               loadMavenLicenses();
@@ -97,7 +97,7 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-        $http.post(window.baseUrl + '/api/mavenLicenses/delete?mavenLicense=' + JSON.stringify(mavenLicense))
+        $http.post(window.baseUrl + '/api/licensecheck/maven-licenses/delete?mavenLicense=' + JSON.stringify(mavenLicense))
           .then(
           function (response) {
             loadMavenLicenses();

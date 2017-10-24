@@ -1,5 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.WebService;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -8,7 +10,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Lice
 
 public class LicenseWs implements WebService
 {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseWs.class);
     private final LicenseService licenseService;
     private LicenseSettingsService licenseSettingsService;
 

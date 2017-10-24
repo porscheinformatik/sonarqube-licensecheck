@@ -9,13 +9,13 @@
     var base = window.baseUrl + '/static/licensecheck/mavenDependencies/';
 
     var loadMavenDependencies = function () {
-      $http.get(window.baseUrl + '/api/mavenDependencies/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/maven-dependencies/show').then(function (response) {
         $scope.mavenDependencies = response.data.mavenDependencies;
       });
     };
 
     var loadLicenses = function () {
-      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -42,7 +42,7 @@
             newKey:  $scope.mavenDependencyKeyEdit,
             newLicense: $scope.mavenDependencyLicenseEdit
           };
-          $http.post(window.baseUrl + '/api/mavenDependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
+          $http.post(window.baseUrl + '/api/licensecheck/maven-dependencies/edit?mavenDependency=' + JSON.stringify(newMavenDependency))
             .then(
             function (response) {
               loadMavenDependencies();
@@ -70,7 +70,7 @@
             key: $scope.mavenDependencyKeyAdd,
             license: $scope.mavenDependencyLicenseAdd
           };
-          $http.post(window.baseUrl + '/api/mavenDependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
+          $http.post(window.baseUrl + '/api/licensecheck/maven-dependencies/add?mavenDependency=' + JSON.stringify(mavenDependency))
             .then(
             function (response) {
               loadMavenDependencies();
@@ -99,7 +99,7 @@
         preserveScope: true,
         controller: 'DialogController'
       }).then(function () {
-        $http.post(window.baseUrl + '/api/mavenDependencies/delete?mavenDependency=' + JSON.stringify(mavenDependency))
+        $http.post(window.baseUrl + '/api/licensecheck/maven-dependencies/delete?mavenDependency=' + JSON.stringify(mavenDependency))
           .then(
           function (response) {
             loadMavenDependencies();

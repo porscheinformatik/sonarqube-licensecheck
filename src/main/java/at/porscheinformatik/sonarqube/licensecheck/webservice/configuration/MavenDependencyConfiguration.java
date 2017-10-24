@@ -4,7 +4,7 @@ public final class MavenDependencyConfiguration
 {
     public static final String PARAM = "mavenDependency";
     public static final String JSON_ARRAY_NAME = "mavenDependencies";
-    public static final String CONTROLLER = "api/mavenDependencies";
+    public static final String CONTROLLER = "api/licensecheck/maven-dependencies";
 
     public static final String SHOW_ACTION = "show";
     public static final String DELETE_ACTION = "delete";

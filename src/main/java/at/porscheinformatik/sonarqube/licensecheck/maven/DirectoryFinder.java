@@ -6,14 +6,12 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 
 class DirectoryFinder
 {
-
     private DirectoryFinder()
     {
     }
 
     public static File getPomPath(Dependency findPathOfDependency, File mavenRepositoryDir)
     {
-
         String[] IDs = findPathOfDependency.getName().split(":");
         String groupId = IDs[0];
         String artifactId = IDs[1];

@@ -9,7 +9,7 @@
     var base = window.baseUrl + '/static/licensecheck/projectLicenses/';
 
     var loadProjectLicenses = function () {
-      $http.get(window.baseUrl + '/api/projectLicenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/project-licenses/show').then(function (response) {
         $scope.projectLicenses = response.data;
       });
     };
@@ -21,7 +21,7 @@
     };
 
     var loadLicenses = function () {
-      $http.get(window.baseUrl + '/api/licenses/show').then(function (response) {
+      $http.get(window.baseUrl + '/api/licensecheck/licenses/show').then(function (response) {
         $scope.licenses = response.data;
       });
     };
@@ -62,7 +62,7 @@
           };
 
           $http({
-            url: window.baseUrl + '/api/projectLicenses/edit',
+            url: window.baseUrl + '/api/licensecheck/project-licenses/edit',
             method: 'POST',
             data: $httpParamSerializerJQLike(changedProjectLicense),
             headers: {
@@ -98,7 +98,7 @@
           };
 
           $http({
-            url: window.baseUrl + '/api/projectLicenses/add',
+            url: window.baseUrl + '/api/licensecheck/project-licenses/add',
             method: 'POST',
             data: $httpParamSerializerJQLike(projectLicense),
             headers: {
@@ -140,7 +140,7 @@
         };
 
         $http({
-          url: window.baseUrl + '/api/projectLicenses/delete',
+          url: window.baseUrl + '/api/licensecheck/project-licenses/delete',
           method: 'POST',
           data: $httpParamSerializerJQLike(projectLicenseToDelete),
           headers: {

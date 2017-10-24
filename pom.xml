@@ -33,13 +33,13 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>5.6</version>
+      <version>6.5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-server</artifactId>
-      <version>5.6</version>
+      <version>6.5</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -66,12 +66,6 @@
     <url>https://github.com/porscheinformatik/sonarqube-licensecheck</url>
     <tag>HEAD</tag>
   </scm>
-
-  <contributors>
-    <contributor>
-      <name>Stephanie Kaschnitz</name>
-    </contributor>
-  </contributors>
 
   <build>
     <plugins>

@@ -6,7 +6,7 @@ public final class ProjectLicenseConfiguration
     public static final String PARAM_LICENSE = "license";
     public static final String PARAM_STATUS = "status";
 
-    public static final String CONTROLLER = "api/projectLicenses";
+    public static final String CONTROLLER = "api/licensecheck/project-licenses";
 
     public static final String SHOW_ACTION = "show";
     public static final String DELETE_ACTION = "delete";
