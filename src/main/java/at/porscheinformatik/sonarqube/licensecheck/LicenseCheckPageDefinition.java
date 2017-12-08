@@ -10,6 +10,9 @@ public class LicenseCheckPageDefinition implements PageDefinition
     public void define(Context context)
     {
         context
-            .addPage(Page.builder("licensecheck/configuration").setName("License Check").setAdmin(true).build());
+            .addPage(Page.builder("licensecheck/configuration")
+                .setName("License Check")
+                .setAdmin(true)
+                .build());
     }
 }

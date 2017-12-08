@@ -4,19 +4,22 @@
   "description": "SonarQube License Check",
   "private": true,
   "scripts": {
-    "build": "gulp"
+    "build": "webpack -p",
+    "watch": "concurrently --kill-others \"webpack -w\" \"node test-server.js\""
   },
   "author": "Christian Köberl",
   "license": "Apache-2.0",
   "devDependencies": {
-    "gulp": "3.9.1",
-    "gulp-angular-filesort": "1.1.1",
-    "gulp-concat": "2.6.1"
+    "buble": "^0.18.0",
+    "buble-loader": "^0.4.1",
+    "concurrently": "^3.5.1",
+    "css-loader": "^0.28.7",
+    "http-proxy": "^1.16.2",
+    "vue-loader": "^13.5.0",
+    "vue-template-compiler": "^2.5.9",
+    "webpack": "^3.9.0"
   },
   "dependencies": {
-    "angular": "1.5.9",
-    "angular-animate": "1.5.9",
-    "angular-aria": "1.5.9",
-    "angular-material": "1.1.1"
+    "vue": "^2.5.9"
   }
 }
