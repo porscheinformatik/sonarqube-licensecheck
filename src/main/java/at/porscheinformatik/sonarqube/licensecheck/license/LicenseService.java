@@ -5,7 +5,7 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKe
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
 import org.sonar.api.server.ServerSide;
@@ -14,7 +14,7 @@ import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
 
 @ServerSide
-@BatchSide
+@ScannerSide
 public class LicenseService
 {
     private final Settings settings;

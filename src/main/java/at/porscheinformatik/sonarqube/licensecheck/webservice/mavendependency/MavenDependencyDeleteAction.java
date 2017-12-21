@@ -1,12 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency;
 
-import java.io.StringReader;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
@@ -30,21 +23,9 @@ class MavenDependencyDeleteAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(MavenDependencyConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
-
-        if (StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_KEY)))
-        {
-            mavenDependencySettingsService
-                .deleteMavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_KEY));
-            LOGGER.info(MavenDependencyConfiguration.INFO_DELETE_SUCCESS + jsonObject.toString());
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
-        }
-        else
-        {
-            LOGGER.error(MavenDependencyConfiguration.ERROR_DELETE_INVALID_INPUT + jsonObject.toString());
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-        }
+        String key = request.param(MavenDependencyConfiguration.PARAM_KEY);
+        mavenDependencySettingsService.deleteMavenDependency(key);
+        LOGGER.info(MavenDependencyConfiguration.INFO_DELETE_SUCCESS + key);
+        response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
     }
 }

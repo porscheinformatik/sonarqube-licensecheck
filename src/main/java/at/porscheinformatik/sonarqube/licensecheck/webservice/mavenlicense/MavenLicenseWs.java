@@ -27,21 +27,28 @@ public class MavenLicenseWs implements WebService
             .createAction(MavenLicenseConfiguration.SHOW_ACTION)
             .setDescription(MavenLicenseConfiguration.SHOW_ACTION_DESCRIPTION)
             .setHandler(new MavenLicenseShowAction(mavenLicenseService));
-        controller
+
+        NewAction deletAction = controller
             .createAction(MavenLicenseConfiguration.DELETE_ACTION)
             .setDescription(MavenLicenseConfiguration.DELETE_ACTION_DESCRIPTION)
-            .setHandler(new MavenLicenseDeleteAction(mavenLicenseSettingsService))
-            .createParam(MavenLicenseConfiguration.PARAM);
-        controller
+            .setHandler(new MavenLicenseDeleteAction(mavenLicenseSettingsService));
+        deletAction.createParam(MavenLicenseConfiguration.PARAM_REGEX).setRequired(true);
+            
+        NewAction addAction = controller
             .createAction(MavenLicenseConfiguration.ADD_ACTION)
             .setDescription(MavenLicenseConfiguration.ADD_ACTION_DESCRIPTION)
-            .setHandler(new MavenLicenseAddAction(mavenLicenseSettingsService))
-            .createParam(MavenLicenseConfiguration.PARAM);
-        controller
+            .setHandler(new MavenLicenseAddAction(mavenLicenseSettingsService));
+        addAction.createParam(MavenLicenseConfiguration.PARAM_REGEX).setRequired(true);
+        addAction.createParam(MavenLicenseConfiguration.PARAM_LICENSE).setRequired(true);
+
+        NewAction editAction = controller
             .createAction(MavenLicenseConfiguration.EDIT_ACTION)
             .setDescription(MavenLicenseConfiguration.EDIT_ACTION_DESCRIPTION)
-            .setHandler(new MavenLicenseEditAction(mavenLicenseSettingsService))
-            .createParam(MavenLicenseConfiguration.PARAM);
+            .setHandler(new MavenLicenseEditAction(mavenLicenseSettingsService));
+        editAction.createParam(MavenLicenseConfiguration.PARAM_REGEX).setRequired(true);
+        editAction.createParam(MavenLicenseConfiguration.PARAM_OLD_REGEX).setRequired(true);
+        editAction.createParam(MavenLicenseConfiguration.PARAM_LICENSE).setRequired(true);
+        
         controller.done();
     }
 }

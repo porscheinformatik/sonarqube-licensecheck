@@ -1,12 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense;
 
-import java.io.StringReader;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
@@ -30,22 +23,10 @@ class MavenLicenseDeleteAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(MavenLicenseConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
-
-        if (StringUtils.isNotBlank(jsonObject.getString(MavenLicenseConfiguration.PROPERTY_REGEX)))
-        {
-            mavenLicenseSettingsService
-                .deleteMavenLicense(jsonObject.getString(MavenLicenseConfiguration.PROPERTY_REGEX));
-            LOGGER.info(MavenLicenseConfiguration.INFO_DELETE_SUCCESS + jsonObject.toString());
-            mavenLicenseSettingsService.sortMavenLicenses();
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
-        }
-        else
-        {
-            LOGGER.error(MavenLicenseConfiguration.ERROR_DELETE_INVALID_INPUT + jsonObject.toString());
-            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-        }
+        String licenseNameRegex = request.param(MavenLicenseConfiguration.PARAM_REGEX);
+        mavenLicenseSettingsService.deleteMavenLicense(licenseNameRegex);
+        LOGGER.info(MavenLicenseConfiguration.INFO_DELETE_SUCCESS + licenseNameRegex);
+        mavenLicenseSettingsService.sortMavenLicenses();
+        response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
     }
 }

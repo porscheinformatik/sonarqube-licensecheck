@@ -18,19 +18,19 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
-    private final Pattern licenseNameRegEx;
+    private final Pattern regex;
     private final String license;
 
-    public MavenLicense(String licenseNameRegEx, String license)
+    public MavenLicense(String regex, String license)
     {
         super();
-        this.licenseNameRegEx = Pattern.compile(licenseNameRegEx);
+        this.regex = Pattern.compile(regex);
         this.license = license;
     }
 
-    public Pattern getLicenseNameRegEx()
+    public Pattern getRegex()
     {
-        return licenseNameRegEx;
+        return regex;
     }
 
     public String getLicense()
@@ -47,7 +47,7 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
         else if (this.license.compareTo(o.license) == 0)
         {
-            return this.licenseNameRegEx.toString().compareTo(o.licenseNameRegEx.toString());
+            return this.regex.toString().compareTo(o.regex.toString());
         }
         else
         {
@@ -73,7 +73,7 @@ public class MavenLicense implements Comparable<MavenLicense>
 
         MavenLicense mavenLicense = (MavenLicense) object;
         return mavenLicense.license.equals(this.license)
-            && mavenLicense.licenseNameRegEx.toString().equals(this.licenseNameRegEx.toString());
+            && mavenLicense.regex.toString().equals(this.regex.toString());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MavenLicense implements Comparable<MavenLicense>
         final int prime = 31;
         int result = 1;
         result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        result = (prime * result) + ((licenseNameRegEx == null) ? 0 : licenseNameRegEx.hashCode());
+        result = (prime * result) + ((regex == null) ? 0 : regex.hashCode());
         return result;
     }
 
@@ -98,8 +98,16 @@ public class MavenLicense implements Comparable<MavenLicense>
                 for (int i = 0; i < licensesJson.size(); i++)
                 {
                     JsonObject licenseJson = licensesJson.getJsonObject(i);
-                    mavenLicenses.add(
-                        new MavenLicense(licenseJson.getString("licenseNameRegEx"), licenseJson.getString("license")));
+                    String regex = null;
+                    try 
+                    {
+                        regex = licenseJson.getString("regex");                        
+                    }
+                    catch (NullPointerException e)
+                    {
+                        regex = licenseJson.getString("licenseNameRegex");
+                    }
+                    mavenLicenses.add(new MavenLicense(regex, licenseJson.getString("license")));
                 }
             }
         }
@@ -128,7 +136,7 @@ public class MavenLicense implements Comparable<MavenLicense>
         for (MavenLicense mavenLicense : mavenLicenseSet)
         {
             generator.writeStartObject();
-            generator.write("licenseNameRegEx", mavenLicense.getLicenseNameRegEx().pattern());
+            generator.write("regex", mavenLicense.getRegex().pattern());
             generator.write("license", mavenLicense.getLicense());
             generator.writeEnd();
         }

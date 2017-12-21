@@ -33,7 +33,7 @@ public class MavenLicenseService
         Map<Pattern, String> licenseMap = new HashMap<>();
         for (MavenLicense license : getMavenLicenseList())
         {
-            licenseMap.put(license.getLicenseNameRegEx(), license.getLicense());
+            licenseMap.put(license.getRegex(), license.getLicense());
         }
         return licenseMap;
     }

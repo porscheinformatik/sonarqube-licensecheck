@@ -1,12 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency;
 
-import java.io.StringReader;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
@@ -30,34 +23,19 @@ class MavenDependencyAddAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(MavenDependencyConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
+        String key = request.param(MavenDependencyConfiguration.PARAM_KEY);
+        String license = request.param(MavenDependencyConfiguration.PARAM_LICENSE);
 
-        boolean keyIsNotBlank = StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_KEY));
-        boolean licenseIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_LICENSE));
+        boolean success = mavenDependencySettingsService.addMavenDependency(key, license);
 
-        if (keyIsNotBlank && licenseIsNotBlank)
+        if (success)
         {
-            boolean success = mavenDependencySettingsService.addMavenDependency(
-                jsonObject.getString(MavenDependencyConfiguration.PROPERTY_KEY),
-                jsonObject.getString(MavenDependencyConfiguration.PROPERTY_LICENSE));
-
-            if (success)
-            {
-                LOGGER.info(MavenDependencyConfiguration.INFO_ADD_SUCCESS + jsonObject.toString());
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
-            }
-            else
-            {
-                LOGGER.error(MavenDependencyConfiguration.ERROR_ADD_ALREADY_EXISTS + jsonObject.toString());
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-            }
+            LOGGER.info(MavenDependencyConfiguration.INFO_ADD_SUCCESS + key + "/" + license);
+            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
         }
         else
         {
-            LOGGER.error(MavenDependencyConfiguration.INFO_ADD_SUCCESS + jsonObject.toString());
+            LOGGER.error(MavenDependencyConfiguration.ERROR_ADD_ALREADY_EXISTS + key + "/" + license);
             response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
         }
     }

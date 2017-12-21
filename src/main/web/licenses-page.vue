@@ -41,7 +41,7 @@
         </tbody>
       </table>
     </div>
-    <modal-dialog :header="editMode === 'add' ? 'Add license' : 'Edit license'" :show="!!itemToEdit" @close="cancelEdit()">
+    <modal-dialog :header="editMode === 'add' ? 'Add License' : 'Edit License'" :show="!!itemToEdit" @close="cancelEdit()">
       <div slot="body" v-if="itemToEdit">
         <div class="modal-field">
           <label for="itemIdentifierEdit">Identifier<em class="mandatory">*</em></label>

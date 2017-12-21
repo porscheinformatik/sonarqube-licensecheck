@@ -27,7 +27,7 @@
         <tbody>
           <tr v-for="item in displayedItems" :key="item.key">
             <td>{{item.key}}</td>
-            <td>{{item.license}}</td>
+            <td>{{item.license}} / {{item.licenseName}}</td>
             <td>
               <a class="icon-edit" @click="showEditDialog(item)" title="Edit Maven Dependency"></a>
               <a class="icon-delete" @click="showDeleteDialog(item)" title="Delete Maven Dependency"></a>
@@ -39,6 +39,24 @@
         </tbody>
       </table>
     </div>
+    <modal-dialog :header="editMode === 'add' ? 'Add Maven Dependency' : 'Edit Maven Dependency'" :show="!!itemToEdit" @close="cancelEdit()">
+      <div slot="body" v-if="itemToEdit">
+        <div class="modal-field">
+          <label for="keyEdit">Key Regex<em class="mandatory">*</em></label>
+          <input required v-focus v-model="itemToEdit.key" id="keyEdit" name="keyEdit" type="text" size="50"
+            maxlength="255">
+        </div>
+        <div class="modal-field">
+          <label for="licenseSelect">License<em class="mandatory">*</em></label>
+          <select required v-model="itemToEdit.license" id="licenseSelect" name="licenseSelect">
+            <option v-for="license in licenses" v-bind:value="license.identifier" v-bind:key="license.identifier">
+              {{ license.identifier }} / {{ license.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <span slot="footer"><button @click="saveItem(itemToEdit)">Save</button></span>
+    </modal-dialog>
     <modal-dialog header="Delete Maven Dependency" :show="!!itemToDelete" @close="cancelDelete()">
       <div slot="body" v-if="itemToDelete">Are you sure you want to delete the Maven dependency mapping &quot;{{itemToDelete.key}}&quot; / &quot;{{itemToDelete.license}}&quot;?</div>
       <span slot="footer"><button @click="deleteItem(itemToDelete)">Delete</button></span>
@@ -54,7 +72,8 @@ export default {
       itemToDelete: null,
       itemToEdit: null,
       editMode: null,
-      searchText: null
+      searchText: null,
+      licenses: []
     };
   },
   computed: {
@@ -77,9 +96,23 @@ export default {
   methods: {
     load() {
       window.SonarRequest
+        .getJSON("/api/licensecheck/licenses/show")
+        .then(response => {
+          this.licenses = response;
+          this.loadMavenDependencies();
+        });
+    },
+    loadMavenDependencies() {
+      window.SonarRequest
         .getJSON("/api/licensecheck/maven-dependencies/show")
         .then(response => {
-          this.items = response.mavenDependencies;
+          this.items = response.mavenDependencies.map(item => {
+            let license = this.licenses.find(license => license.identifier === item.license);
+            if (license) {
+              item.licenseName = license.name;
+            }
+            return item;
+          });
         });
     },
     showAddDialog() {
@@ -87,7 +120,7 @@ export default {
       this.editMode = 'add';
     },
     showEditDialog(item) {
-      this.itemToEdit = Object.assign({}, item);
+      this.itemToEdit = Object.assign({ old_key: item.key }, item);
       this.editMode = 'edit';
     },
     cancelEdit() {
@@ -97,7 +130,7 @@ export default {
       window.SonarRequest
         .post(`/api/licensecheck/maven-dependencies/${this.editMode}`, item)
         .then(() => {
-          this.load()
+          this.loadMavenDependencies();
         });
       this.itemToEdit = null;
     },
@@ -109,9 +142,9 @@ export default {
     },
     deleteItem(item) {
       window.SonarRequest
-        .post('/api/licensecheck/maven-dependencies/delete', { identifier: item.identifier })
+        .post('/api/licensecheck/maven-dependencies/delete', { key: item.key })
         .then(() => {
-          this.load()
+          this.loadMavenDependencies();
         });
       this.itemToDelete = null;
     }

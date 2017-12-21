@@ -2,7 +2,9 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class MavenDependencyConfiguration
 {
-    public static final String PARAM = "mavenDependency";
+    public static final String PARAM_KEY = "key";
+    public static final String PARAM_LICENSE = "license";
+    public static final String PARAM_OLD_KEY = "old_key";
     public static final String JSON_ARRAY_NAME = "mavenDependencies";
     public static final String CONTROLLER = "api/licensecheck/maven-dependencies";
 
@@ -15,10 +17,6 @@ public final class MavenDependencyConfiguration
     public static final String DELETE_ACTION_DESCRIPTION = "Delete Maven Dependency";
     public static final String ADD_ACTION_DESCRIPTION = "Add Maven Dependency";
     public static final String EDIT_ACTION_DESCRIPTION = "Edit Maven Dependency";
-
-    public static final String PROPERTY_NEW_KEY = "newKey";
-    public static final String PROPERTY_NEW_LICENSE = "newLicense";
-    public static final String PROPERTY_OLD_KEY = "oldKey";
 
     public static final String PROPERTY_KEY = "key";
     public static final String PROPERTY_LICENSE = "license";

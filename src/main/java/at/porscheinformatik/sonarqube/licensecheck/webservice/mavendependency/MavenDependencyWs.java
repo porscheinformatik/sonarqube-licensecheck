@@ -27,21 +27,28 @@ public class MavenDependencyWs implements WebService
             .createAction(MavenDependencyConfiguration.SHOW_ACTION)
             .setDescription(MavenDependencyConfiguration.SHOW_ACTION_DESCRIPTION)
             .setHandler(new MavenDependencyShowAction(mavenDependencyService));
-        controller
+
+        NewAction deleteAction = controller
             .createAction(MavenDependencyConfiguration.DELETE_ACTION)
             .setDescription(MavenDependencyConfiguration.DELETE_ACTION_DESCRIPTION)
-            .setHandler(new MavenDependencyDeleteAction(mavenDependencySettingsService))
-            .createParam(MavenDependencyConfiguration.PARAM);
-        controller
+            .setHandler(new MavenDependencyDeleteAction(mavenDependencySettingsService));
+        deleteAction.createParam(MavenDependencyConfiguration.PARAM_KEY).setRequired(true);
+
+        NewAction addAction = controller
             .createAction(MavenDependencyConfiguration.ADD_ACTION)
             .setDescription(MavenDependencyConfiguration.ADD_ACTION_DESCRIPTION)
-            .setHandler(new MavenDependencyAddAction(mavenDependencySettingsService))
-            .createParam(MavenDependencyConfiguration.PARAM);
-        controller
+            .setHandler(new MavenDependencyAddAction(mavenDependencySettingsService));
+        addAction.createParam(MavenDependencyConfiguration.PARAM_KEY).setRequired(true);
+        addAction.createParam(MavenDependencyConfiguration.PARAM_LICENSE).setRequired(true);
+
+        NewAction editAction = controller
             .createAction(MavenDependencyConfiguration.EDIT_ACTION)
             .setDescription(MavenDependencyConfiguration.EDIT_ACTION_DESCRIPTION)
-            .setHandler(new MavenDependencyEditAction(mavenDependencySettingsService))
-            .createParam(MavenDependencyConfiguration.PARAM);
+            .setHandler(new MavenDependencyEditAction(mavenDependencySettingsService));
+        editAction.createParam(MavenDependencyConfiguration.PARAM_KEY).setRequired(true);
+        editAction.createParam(MavenDependencyConfiguration.PARAM_OLD_KEY).setRequired(true);
+        editAction.createParam(MavenDependencyConfiguration.PARAM_LICENSE).setRequired(true);
+
         controller.done();
     }
 }

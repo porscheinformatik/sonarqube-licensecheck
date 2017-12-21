@@ -71,7 +71,7 @@ public class MavenLicenseSettingsService
 
         while (i.hasNext())
         {
-            String regexFromList = i.next().getLicenseNameRegEx().toString();
+            String regexFromList = i.next().getRegex().toString();
             if (regexFromList.equals(regex))
             {
                 i.remove();

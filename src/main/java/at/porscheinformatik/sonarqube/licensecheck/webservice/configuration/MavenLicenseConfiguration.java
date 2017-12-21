@@ -2,7 +2,9 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class MavenLicenseConfiguration
 {
-    public static final String PARAM = "mavenLicense";
+    public static final String PARAM_REGEX = "regex";
+    public static final String PARAM_OLD_REGEX = "old_regex";
+    public static final String PARAM_LICENSE = "license";
     public static final String JSON_ARRAY_NAME = "mavenLicenses";
     public static final String CONTROLLER = "api/licensecheck/maven-licenses";
 
@@ -20,8 +22,8 @@ public final class MavenLicenseConfiguration
     public static final String PROPERTY_NEW_REGEX = "newRegex";
     public static final String PROPERTY_OLD_REGEX = "oldRegex";
 
-    public static final String PROPERTY_KEY = "key";
     public static final String PROPERTY_REGEX = "regex";
+    public static final String PROPERTY_LICENSE = "license";
 
     public static final String ERROR_EDIT_ALREADY_EXISTS = "Edit Maven License aborted. Maven License already exists: ";
     public static final String ERROR_EDIT_INVALID_INPUT = "Failed to edit maven license, due to invalid input: ";

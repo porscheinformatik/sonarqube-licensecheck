@@ -1,12 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency;
 
-import java.io.StringReader;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
@@ -31,41 +24,22 @@ class MavenDependencyEditAction implements RequestHandler
     @Override
     public void handle(Request request, Response response) throws Exception
     {
-        JsonReader jsonReader = Json.createReader(new StringReader(request.param(MavenDependencyConfiguration.PARAM)));
-        JsonObject jsonObject = jsonReader.readObject();
-        jsonReader.close();
+        String key = request.param(MavenDependencyConfiguration.PARAM_KEY);
+        String oldKey = request.param(MavenDependencyConfiguration.PARAM_OLD_KEY);
+        String license = request.param(MavenDependencyConfiguration.PARAM_LICENSE);
 
-        boolean oldKeyIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_OLD_KEY));
-        boolean newKeyIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_KEY));
-        boolean newLicenseIsNotBlank =
-            StringUtils.isNotBlank(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_LICENSE));
+        MavenDependency newMavenDependency = new MavenDependency(key, license);
 
-        if (oldKeyIsNotBlank && newKeyIsNotBlank && newLicenseIsNotBlank)
+        if (!mavenDependencySettingsService.hasDependency(newMavenDependency))
         {
-            MavenDependency newMavenDependency =
-                new MavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_KEY),
-                    jsonObject.getString(MavenDependencyConfiguration.PROPERTY_NEW_LICENSE));
-
-            if (!mavenDependencySettingsService.hasDependency(newMavenDependency))
-            {
-                mavenDependencySettingsService
-                    .deleteMavenDependency(jsonObject.getString(MavenDependencyConfiguration.PROPERTY_OLD_KEY));
-                mavenDependencySettingsService.addMavenDependency(newMavenDependency);
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
-                LOGGER.info(MavenDependencyConfiguration.INFO_EDIT_SUCCESS + jsonObject.toString());
-            }
-            else
-            {
-                LOGGER.error(MavenDependencyConfiguration.ERROR_EDIT_ALREADY_EXISTS + jsonObject.toString());
-                response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
-            }
-
+            mavenDependencySettingsService.deleteMavenDependency(oldKey);
+            mavenDependencySettingsService.addMavenDependency(newMavenDependency);
+            response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_OK);
+            LOGGER.info(MavenDependencyConfiguration.INFO_EDIT_SUCCESS + newMavenDependency);
         }
         else
         {
-            LOGGER.error(MavenDependencyConfiguration.ERROR_ADD_INVALID_INPUT + jsonObject.toString());
+            LOGGER.error(MavenDependencyConfiguration.ERROR_EDIT_ALREADY_EXISTS + newMavenDependency);
             response.stream().setStatus(HTTPConfiguration.HTTP_STATUS_NOT_MODIFIED);
         }
     }
