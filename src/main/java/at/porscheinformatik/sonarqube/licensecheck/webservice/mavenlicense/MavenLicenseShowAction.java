@@ -25,9 +25,11 @@ class MavenLicenseShowAction implements RequestHandler
     {
         final List<MavenLicense> mavenLicenses = mavenLicenseService.getMavenLicenseList();
 
-        JsonWriter json = response.newJsonWriter().beginObject();
-        writeMavenLicenses(json, mavenLicenses);
-        json.endObject().close();
+        try (JsonWriter json = response.newJsonWriter().beginObject())
+        {
+            writeMavenLicenses(json, mavenLicenses);
+            json.endObject().close();
+        }
 
     }
 

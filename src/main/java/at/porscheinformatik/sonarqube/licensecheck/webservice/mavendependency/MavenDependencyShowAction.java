@@ -25,10 +25,11 @@ class MavenDependencyShowAction implements RequestHandler
     {
         final List<MavenDependency> mavenDependencies = mavenDependencyService.getMavenDependencies();
 
-        JsonWriter json = response.newJsonWriter().beginObject();
-        writeMavenDependencies(json, mavenDependencies);
-        json.endObject().close();
-
+        try (JsonWriter json = response.newJsonWriter().beginObject())
+        {
+            writeMavenDependencies(json, mavenDependencies);
+            json.endObject().close();
+        }
     }
 
     private static void writeMavenDependencies(JsonWriter json, List<MavenDependency> mavenDependencies)

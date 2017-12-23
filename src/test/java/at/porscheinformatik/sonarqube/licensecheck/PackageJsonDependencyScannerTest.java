@@ -19,7 +19,7 @@ public class PackageJsonDependencyScannerTest
     {
         Scanner scanner = new PackageJsonDependencyScanner();
 
-        List<Dependency> dependencies = scanner.scan(folder, null);
+        List<Dependency> dependencies = scanner.scan(folder);
 
         Assert.assertThat(dependencies, CoreMatchers.hasItem(new Dependency("angular", "1.5.0", "MIT")));
     }

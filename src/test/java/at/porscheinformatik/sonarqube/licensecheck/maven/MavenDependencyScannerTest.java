@@ -4,11 +4,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -22,9 +25,6 @@ public class MavenDependencyScannerTest
     @Test
     public void testLicensesAreFound()
     {
-        String mavenProjectDependencies =
-            "[{\"k\":\"xpp3:xpp3\",\"v\":\"1.1.4c\",\"s\":\"compile\",\"d\":[]},{\"k\":\"org.sonarsource.sonarqube:sonar-plugin-api\",\"v\":\"5.6\",\"s\":\"compile\",\"d\":[{\"k\":\"org.codehaus.staxmate:staxmate\",\"v\":\"2.0.1\",\"s\":\"compile\",\"d\":[{\"k\":\"org.codehaus.woodstox:woodstox-core-lgpl\",\"v\":\"4.4.0\",\"s\":\"compile\",\"d\":[]}]}]}]";
-
         File moduleDir = new File(".");
 
         Map<Pattern, String> licenseMap = new HashMap<>();
@@ -36,7 +36,9 @@ public class MavenDependencyScannerTest
         Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
 
         // -
-        List<Dependency> dependencies = scanner.scan(moduleDir, mavenProjectDependencies);
+        List<Dependency> dependencies = scanner.scan(moduleDir);
+
+        assertThat(dependencies.size(), Matchers.greaterThan(0));
 
         // -
         for (Dependency dep : dependencies)
@@ -53,14 +55,15 @@ public class MavenDependencyScannerTest
     }
 
     @Test
-    public void testNullMavenProjectDependencies()
+    public void testNullMavenProjectDependencies() throws IOException
     {
         MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
         MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
         Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
 
-        File moduleDir = new File(".");
-        List<Dependency> dependencies = scanner.scan(moduleDir, null);
+        File moduleDir = Files.createTempDirectory("lala").toFile();
+        moduleDir.deleteOnExit();
+        List<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), is(0));
     }

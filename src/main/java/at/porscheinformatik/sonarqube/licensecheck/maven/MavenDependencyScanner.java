@@ -1,22 +1,29 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import java.io.File;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,113 +41,154 @@ public class MavenDependencyScanner implements Scanner
 
     private final MavenDependencyService mavenDependencyService;
 
-    public MavenDependencyScanner(MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
+    public MavenDependencyScanner(MavenLicenseService mavenLicenseService,
+        MavenDependencyService mavenDependencyService)
     {
         this.mavenLicenseService = mavenLicenseService;
         this.mavenDependencyService = mavenDependencyService;
     }
 
     @Override
-    public List<Dependency> scan(File moduleDir, String mavenProjectDependencies)
+    public List<Dependency> scan(File moduleDir)
     {
-        if (mavenProjectDependencies == null || mavenProjectDependencies.length() == 0)
-        {
-            return new ArrayList<>();
-        }
-
-        JsonReader jsonReader = Json.createReader(new StringReader(mavenProjectDependencies));
-        Set<Dependency> dependencies = new HashSet<>();
-
-        parseDependencyJson(dependencies, jsonReader.readArray());
-
-        loadLicenses(dependencies);
-
-        mapAdditionalLicenses(dependencies);
-
-        jsonReader.close();
-
-        return new ArrayList<>(dependencies);
+        return this.readDependecyList(moduleDir)
+            .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap()))
+            .map(this::mapMavenDependencyToLicense)
+            .collect(Collectors.toList());
     }
 
-    private void mapAdditionalLicenses(final Set<Dependency> dependencies)
+    private Stream<Dependency> readDependecyList(File moduleDir)
     {
-        for (Dependency dependency : dependencies)
+        Path tempFile = createTempFile();
+        if (tempFile == null)
         {
-            if (StringUtils.isBlank(dependency.getLicense()))
+            return Stream.empty();
+        }
+
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(new File(moduleDir, "pom.xml"));
+        request.setGoals(Arrays.asList("dependency:list"));
+        Properties properties = new Properties();
+        properties.setProperty("outputFile", tempFile.toAbsolutePath().toString()); // redirect output to a file
+        properties.setProperty("outputAbsoluteArtifactFilename", "true"); // with paths
+        properties.setProperty("includeScope", "runtime"); // only runtime (scope compile + runtime)
+        // if only interested in scope runtime, you may replace with excludeScope = compile
+        request.setProperties(properties);
+
+        Invoker invoker = new DefaultInvoker();
+        invoker.setOutputHandler(null); // not interested in Maven output itself
+
+        try
+        {
+            InvocationResult result = invoker.execute(request);
+            if (result.getExitCode() != 0)
             {
-                for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies())
-                {
-                    String matchString = allowedDependency.getKey();
-                    if (dependency.getName().matches(matchString))
-                    {
-                        dependency.setLicense(allowedDependency.getLicense());
-                    }
-                }
+                LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
             }
+
+            return Files.lines(tempFile)
+                .filter(StringUtils::isNotBlank)
+                .map(MavenDependencyScanner::findDependency)
+                .filter(Objects::nonNull);
+        }
+        catch (MavenInvocationException e)
+        {
+            LOGGER.warn("Could not get dependency list via maven", e);
+        }
+        catch (Exception e)
+        {
+            LOGGER.warn("Error reading file", e);
+        }
+        return Stream.empty();
+    }
+
+    private Path createTempFile()
+    {
+        try
+        {
+            Path tempFile = Files.createTempFile("dependencies", ".txt");
+            tempFile.toFile().deleteOnExit();
+            return tempFile;
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Could not create temp file for dependencies: {}", e.getMessage());
+            return null;
         }
     }
 
-    private static void parseDependencyJson(Set<Dependency> dependencies, JsonArray jsonDependencyArray)
+    private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("\\s*([^:]*):([^:]*):[^:]*:([^:]*):[^:]*:(.*)");
+    private static Dependency findDependency(String line)
     {
-        for (int i = 0; i < jsonDependencyArray.size(); i++)
+        Matcher matcher = DEPENDENCY_PATTERN.matcher(line);
+        if (matcher.find())
         {
-            JsonObject jsonDependency = jsonDependencyArray.getJsonObject(i);
-            String scope = jsonDependency.getString("s");
-            if ("compile".equals(scope) || "runtime".equals(scope))
-            {
-                if (jsonDependency.containsKey("d"))
-                {
-                    parseDependencyJson(dependencies, jsonDependency.getJsonArray("d"));
-                }
-
-                Dependency dependency =
-                    new Dependency(jsonDependency.getString("k"), jsonDependency.getString("v"), null);
-                dependencies.add(dependency);
-            }
+            String groupId = matcher.group(1);
+            String artifactId = matcher.group(2);
+            String version = matcher.group(3);
+            String path = matcher.group(4);
+            Dependency dependency = new Dependency(groupId + ":" + artifactId, version, null);
+            dependency.setLocalPath(path);
+            return dependency;
         }
+        return null;
     }
 
-    private void loadLicenses(Set<Dependency> dependencies)
+    private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap)
     {
-        File mavenRepositoryDir = DirectoryFinder.getMavenRepsitoryDir();
-
-        if (mavenRepositoryDir == null)
+        return (Dependency dependency) ->
         {
-            LOGGER.error("Could not find local Repository in settings.xml (user home, MAVEN_HOME).");
-            return;
-        }
-
-        Map<Pattern, String> licenseMap = mavenLicenseService.getLicenseMap();
-
-        for (Dependency dependency : dependencies)
-        {
-            List<License> licenses =
-                LicenseFinder.getLicenses(DirectoryFinder.getPomPath(dependency, mavenRepositoryDir));
-
-            if (!licenses.isEmpty())
+            if (dependency.getLocalPath() != null)
             {
-                outer: for (License license : licenses)
+                String path = dependency.getLocalPath();
+                int lastDotIndex = path.lastIndexOf('.');
+                if (lastDotIndex > 0)
                 {
-                    String licenseName = license.getName();
-                    if (StringUtils.isNotBlank(licenseName))
+                    String pomPath = path.substring(0, lastDotIndex) + ".pom";
+                    List<License> licenses = LicenseFinder.getLicenses(new File(pomPath));
+                    if (!licenses.isEmpty())
                     {
-                        for (Entry<Pattern, String> entry : licenseMap.entrySet())
+                        outer:
+                        for (License license : licenses)
                         {
-                            if (entry.getKey().matcher(licenseName).matches())
+                            String licenseName = license.getName();
+                            if (StringUtils.isNotBlank(licenseName))
                             {
-                                dependency.setLicense(entry.getValue());
-                                break outer;
+                                for (Entry<Pattern, String> entry : licenseMap.entrySet())
+                                {
+                                    if (entry.getKey().matcher(licenseName).matches())
+                                    {
+                                        dependency.setLicense(entry.getValue());
+                                        break outer;
+                                    }
+                                }
                             }
+                            LOGGER.info("No licenses found for '{}'", licenseName);
                         }
                     }
-                    LOGGER.info("No licenses found for '{}'", licenseName);
+                    else
+                    {
+                        LOGGER.info("No licenses found in dependency {}", dependency.getName());
+                    }
                 }
             }
-            else
-            {
-                LOGGER.info("No licenses found in dependency {}", dependency.getName());
-            }
-        }
+            return dependency;
+        };
     }
 
+    private Dependency mapMavenDependencyToLicense(Dependency dependency)
+    {
+        if (StringUtils.isBlank(dependency.getLicense()))
+        {
+            for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies())
+            {
+                String matchString = allowedDependency.getKey();
+                if (dependency.getName().matches(matchString))
+                {
+                    dependency.setLicense(allowedDependency.getLicense());
+                }
+            }
+        }
+        return dependency;
+    }
 }

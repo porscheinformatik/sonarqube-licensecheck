@@ -19,6 +19,7 @@ public class Dependency implements Comparable<Dependency>
     private String version;
     private String license;
     private String status;
+    private String localPath;
 
     public Dependency(String name, String version, String license)
     {
@@ -66,6 +67,16 @@ public class Dependency implements Comparable<Dependency>
     public String getStatus()
     {
         return status;
+    }
+
+    public String getLocalPath()
+    {
+        return localPath;
+    }
+
+    public void setLocalPath(String localPath)
+    {
+        this.localPath = localPath;
     }
 
     @Override
@@ -156,34 +167,38 @@ public class Dependency implements Comparable<Dependency>
     {
         List<Dependency> dependencies = new ArrayList<>();
 
-        if (serializedDependencyString != null && serializedDependencyString.startsWith("["))
+        if (serializedDependencyString != null)
         {
-            try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
+            if (serializedDependencyString.startsWith("["))
             {
-                JsonArray dependenciesJson = jsonReader.readArray();
-                for (int i = 0; i < dependenciesJson.size(); i++)
+                try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
                 {
-                    JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
-                    dependencies.add(
-                        new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
-                            dependencyJson.getString("license")));
+                    JsonArray dependenciesJson = jsonReader.readArray();
+                    for (int i = 0; i < dependenciesJson.size(); i++)
+                    {
+                        JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
+                        dependencies.add(
+                            new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
+                                dependencyJson.getString("license")));
+                    }
+                }
+            }
+            else
+            {
+                // deprecated - remove with later release
+                String[] parts = serializedDependencyString.split(";");
+
+                for (String dependencyString : parts)
+                {
+                    String[] subParts = dependencyString.split("~");
+                    String name = subParts.length > 0 ? subParts[0] : null;
+                    String version = subParts.length > 1 ? subParts[1] : null;
+                    String license = subParts.length > 2 ? subParts[2] : null;
+                    dependencies.add(new Dependency(name, version, license));
                 }
             }
         }
-        else
-        {
-            // deprecated - remove with later release
-            String[] parts = serializedDependencyString.split(";");
 
-            for (String dependencyString : parts)
-            {
-                String[] subParts = dependencyString.split("~");
-                String name = subParts.length > 0 ? subParts[0] : null;
-                String version = subParts.length > 1 ? subParts[1] : null;
-                String license = subParts.length > 2 ? subParts[2] : null;
-                dependencies.add(new Dependency(name, version, license));
-            }
-        }
         return dependencies;
     }
 

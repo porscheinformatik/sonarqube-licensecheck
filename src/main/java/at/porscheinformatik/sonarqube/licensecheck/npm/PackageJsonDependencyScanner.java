@@ -25,7 +25,7 @@ public class PackageJsonDependencyScanner implements Scanner
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
     @Override
-    public List<Dependency> scan(File file, String mavenProjectDependencies)
+    public List<Dependency> scan(File file)
     {
         File packageJsonFile = new File(file, "package.json");
 
@@ -74,9 +74,8 @@ public class PackageJsonDependencyScanner implements Scanner
         {
             File packageFile = new File(moduleFolder, "package.json");
 
-            try (InputStream fis = new FileInputStream(packageFile))
+            try (InputStream fis = new FileInputStream(packageFile); JsonReader jsonReader = Json.createReader(fis))
             {
-                JsonReader jsonReader = Json.createReader(fis);
                 JsonObject jsonObject = jsonReader.readObject();
                 if (jsonObject != null)
                 {

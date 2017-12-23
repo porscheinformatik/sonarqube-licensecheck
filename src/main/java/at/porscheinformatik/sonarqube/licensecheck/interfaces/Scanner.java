@@ -7,5 +7,5 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 
 public interface Scanner
 {
-    List<Dependency> scan(File moduleDir, String mavenProjectDependencies);
+    List<Dependency> scan(File moduleDir);
 }

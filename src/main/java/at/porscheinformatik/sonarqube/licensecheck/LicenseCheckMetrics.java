@@ -20,7 +20,7 @@ public class LicenseCheckMetrics implements Metrics
     private static final String LICENSE_CHECK_LICENSE_KEY = "licensecheck.license";
     private static final String INPUT_DEPENDENCY_KEY = "licensecheck.inputdependency";
     private static final String INPUT_LICENSE_KEY = "licensecheck.inputlicense";
-    private static final String MAVEN_LICENSES_KEY = "maven.licenses";
+
 
     public static final Metric DEPENDENCY =
         new Metric.Builder(LICENSE_CHECK_DEPENDENCY_KEY, "License Check - Dependencies", Metric.ValueType.DATA)
@@ -54,17 +54,9 @@ public class LicenseCheckMetrics implements Metrics
             .setDomain(CoreMetrics.DOMAIN_GENERAL)
             .create();
 
-    public static final Metric MAVENLICENSE =
-        new Metric.Builder(MAVEN_LICENSES_KEY, "Maven - Licenses", Metric.ValueType.DATA)
-            .setDescription("Used Libraries")
-            .setDirection(Metric.DIRECTION_WORST)
-            .setQualitative(TRUE)
-            .setDomain(CoreMetrics.DOMAIN_GENERAL)
-            .create();
-
     @Override
     public List<Metric> getMetrics()
     {
-        return Arrays.asList(DEPENDENCY, LICENSE, INPUTDEPENDENCY, INPUTLICENSE, MAVENLICENSE);
+        return Arrays.asList(DEPENDENCY, LICENSE, INPUTDEPENDENCY, INPUTLICENSE);
     }
 }

@@ -22,14 +22,11 @@ public final class MavenDependencyConfiguration
     public static final String PROPERTY_LICENSE = "license";
 
     public static final String ERROR_EDIT_ALREADY_EXISTS = "Edit Maven Dependency aborted. Maven Dependency already exists: ";
-    public static final String ERROR_EDIT_INVALID_INPUT = "Failed to edit maven dependency, due to invalid input: ";
     public static final String INFO_EDIT_SUCCESS = "Maven Dependency edited: ";
 
     public static final String ERROR_ADD_ALREADY_EXISTS =
         "Add Maven Dependency aborted. Maven Dependency already exists: ";
-    public static final String ERROR_ADD_INVALID_INPUT = "Failed to add maven dependency, due to invalid input: ";
     public static final String INFO_ADD_SUCCESS = "Maven Dependency added: ";
 
-    public static final String ERROR_DELETE_INVALID_INPUT = "Failed to delete maven dependency, due to invalid key: ";
     public static final String INFO_DELETE_SUCCESS = "Maven Dependency deleted: ";
 }

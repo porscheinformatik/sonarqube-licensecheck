@@ -18,12 +18,9 @@ public final class LicenseConfiguration
     public static final String ADD_ACTION_DESCRIPTION = "Add Licenses";
     public static final String EDIT_ACTION_DESCRIPTION = "Edit Licenses";
 
-    public static final String ERROR_EDIT_ALREADY_EXISTS = "Edit License aborted. License already exists!";
-    public static final String ERROR_EDIT_INVALID_INPUT = "Failed to edit license, due to invalid input: ";
     public static final String INFO_EDIT_SUCCESS = "License edited id:{}, new name {}, new status {}";
 
     public static final String ERROR_ADD_ALREADY_EXISTS = "Add License aborted. License already exists!";
-    public static final String ERROR_ADD_INVALID_INPUT = "Failed to add license, due to invalid input: ";
     public static final String INFO_ADD_SUCCESS = "License added: ";
 
     public static final String ERROR_DELETE_LICENSE = "Failed to delete license: {}";

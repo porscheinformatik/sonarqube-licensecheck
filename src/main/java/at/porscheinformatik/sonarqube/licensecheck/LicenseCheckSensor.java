@@ -50,12 +50,11 @@ public class LicenseCheckSensor implements Sensor
     {
         if (settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
         {
-            String mavenProjectDependencies = settings.getString("sonar.maven.projectDependencies");
             Set<Dependency> dependencies = new TreeSet<>();
 
             for (Scanner scanner : scanners)
             {
-                dependencies.addAll(scanner.scan(fs.baseDir(), mavenProjectDependencies));
+                dependencies.addAll(scanner.scan(fs.baseDir()));
             }
 
             Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, module, context);

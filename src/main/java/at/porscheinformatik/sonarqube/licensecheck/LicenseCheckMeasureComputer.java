@@ -4,7 +4,6 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.DE
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.INPUTDEPENDENCY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.INPUTLICENSE;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.LICENSE;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckMetrics.MAVENLICENSE;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.ACTIVATION_KEY;
 import static org.sonar.api.ce.measure.Component.Type.MODULE;
 import static org.sonar.api.ce.measure.Component.Type.PROJECT;
@@ -37,7 +36,7 @@ public class LicenseCheckMeasureComputer implements MeasureComputer
     {
         return defContext.newDefinitionBuilder()
             .setInputMetrics(INPUTDEPENDENCY.getKey(), INPUTLICENSE.getKey())
-            .setOutputMetrics(DEPENDENCY.getKey(), LICENSE.getKey(), MAVENLICENSE.getKey())
+            .setOutputMetrics(DEPENDENCY.getKey(), LICENSE.getKey())
             .build();
     }
 

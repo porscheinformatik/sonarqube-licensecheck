@@ -45,6 +45,18 @@ public class LicenseCheckPlugin extends SonarPlugin
             ProjectLicenseService.class,
             ProjectLicenseSettingsService.class,
             ProjectLicenseWs.class,
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_KEY)
+                .type(PropertyType.TEXT)
+                .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.ALLOWED_DEPENDENCIES_KEY)
+                .type(PropertyType.TEXT)
+                .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_REGEX)
+                .type(PropertyType.TEXT)
+                .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY)
+                .type(PropertyType.TEXT)
+                .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category("License Check")
                 .name("Activate")
