@@ -8,8 +8,41 @@
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
+  <description>Checks Maven and NPM dependencies against a defined set of allowed licenses and reports any unknown or
+    not allowed licenses as an issue.
+  </description>
+  <url>https://github.com/porscheinformatik/sonarqube-licensecheck</url>
+
+  <organization>
+    <name>Porsche Informatik</name>
+    <url>https://www.porscheinformatik.at</url>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>derkoe</id>
+      <name>Christian Köberl</name>
+    </developer>
+    <developer>
+      <name>Stephanie Kaschnitz</name>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/porscheinformatik/sonarqube-licensecheck/issues</url>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
   <properties>
     <sonar.sources>src/main</sonar.sources>
+    <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
   </properties>
 
   <dependencies>
@@ -33,13 +66,13 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>6.5</version>
+      <version>6.7</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-server</artifactId>
-      <version>6.5</version>
+      <version>6.7</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -76,10 +109,7 @@
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
-          <!-- the entry-point class that extends org.sonar.api.SonarPlugin -->
           <pluginClass>at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPlugin</pluginClass>
-          <pluginDescription>License and Dependendy Check</pluginDescription>
-          <!-- advanced properties can be set here. See paragraph "Advanced Build Properties". -->
         </configuration>
       </plugin>
 

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
 import org.sonar.api.resources.Project;
@@ -36,6 +38,10 @@ public class ValidateLicensesTest
         module = mock(Project.class);
         final Project root = mock(Project.class);
         when(module.getRoot()).thenReturn(root);
+        ProjectDefinition projectDefintion = mock(ProjectDefinition.class);
+        when(projectDefintion.getBaseDir()).thenReturn(new File("."));
+        when(projectDefintion.getWorkDir()).thenReturn(new File("."));
+        when(module.definition()).thenReturn(projectDefintion);
         final LicenseService licenseService = mock(LicenseService.class);
         when(licenseService.getLicenses(root)).thenReturn(Arrays.asList(
             new License("MIT", "MIT", "false"),

@@ -83,7 +83,9 @@ public class ValidateLicenses
                         .newIssue()
                         .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
                             LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY))
-                        .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey())).message("Dependency "
+                        .at(new DefaultIssueLocation()
+                            .on(new DefaultInputModule(module.definition()))
+                            .message("Dependency "
                             + dependency.getName()
                             + " uses a not allowed license "
                             + dependency.getLicense()));
@@ -101,10 +103,11 @@ public class ValidateLicenses
 
             NewIssue issue = context
                 .newIssue()
-                .forRule(
-                    RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY, LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
-                .at(new DefaultIssueLocation().on(new DefaultInputModule(module.getKey())).message(
-                    "No License found for Dependency: " + dependency.getName()));
+                .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+                    LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
+                .at(new DefaultIssueLocation()
+                    .on(new DefaultInputModule(module.definition()))
+                    .message("No License found for Dependency: " + dependency.getName()));
             issue.save();
         }
     }
