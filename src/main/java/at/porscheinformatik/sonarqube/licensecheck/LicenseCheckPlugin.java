@@ -19,9 +19,6 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.license.LicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.MavenDependencyWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
-import at.porscheinformatik.sonarqube.licensecheck.widget.DependencyCheckWidget;
-import at.porscheinformatik.sonarqube.licensecheck.widget.UsedLicensesWidget;
-import at.porscheinformatik.sonarqube.licensecheck.widget.WidgetHelper;
 
 public class LicenseCheckPlugin extends SonarPlugin
 {
@@ -29,13 +26,9 @@ public class LicenseCheckPlugin extends SonarPlugin
     public List getExtensions()
     {
         return Arrays.asList(
-            DependencyCheckWidget.class,
-            WidgetHelper.class,
-            UsedLicensesWidget.class,
             ValidateLicenses.class,
             LicenseCheckSensor.class,
             LicenseCheckMetrics.class,
-            LicenseCheckConfigurationPage.class,
             LicenseCheckPageDefinition.class,
             LicenseCheckMeasureComputer.class,
             LicenseCheckRulesDefinition.class,

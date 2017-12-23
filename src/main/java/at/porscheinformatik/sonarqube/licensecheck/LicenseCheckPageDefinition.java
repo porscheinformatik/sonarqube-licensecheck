@@ -14,5 +14,11 @@ public class LicenseCheckPageDefinition implements PageDefinition
                 .setName("License Check")
                 .setAdmin(true)
                 .build());
+
+        context.addPage(Page.builder("licensecheck/licenses")
+            .setName("License Check")
+            .setScope(Page.Scope.COMPONENT)
+            .setComponentQualifiers(Page.Qualifier.PROJECT)
+            .build());
     }
 }

@@ -1,7 +1,10 @@
 module.exports = {
-  entry: './src/main/web/configuration.js',
+  entry: {
+    configuration: './src/main/web/configuration.js',
+    licenses: './src/main/web/licenses.js'
+  },
   output: {
-    filename: 'target/classes/static/configuration.js'
+    filename: 'target/classes/static/[name].js'
   },
   resolve: {
     alias: {
