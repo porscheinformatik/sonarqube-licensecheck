@@ -69,10 +69,9 @@ public class MavenDependencyScanner implements Scanner
         request.setPomFile(new File(moduleDir, "pom.xml"));
         request.setGoals(Arrays.asList("dependency:list"));
         Properties properties = new Properties();
-        properties.setProperty("outputFile", tempFile.toAbsolutePath().toString()); // redirect output to a file
-        properties.setProperty("outputAbsoluteArtifactFilename", "true"); // with paths
+        properties.setProperty("outputFile", tempFile.toAbsolutePath().toString());
+        properties.setProperty("outputAbsoluteArtifactFilename", "true");
         properties.setProperty("includeScope", "runtime"); // only runtime (scope compile + runtime)
-        // if only interested in scope runtime, you may replace with excludeScope = compile
         request.setProperties(properties);
 
         Invoker invoker = new DefaultInvoker();
