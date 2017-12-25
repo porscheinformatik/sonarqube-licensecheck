@@ -43,6 +43,7 @@
   <properties>
     <sonar.sources>src/main</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
+    <forkMode>never</forkMode>
   </properties>
 
   <dependencies>
