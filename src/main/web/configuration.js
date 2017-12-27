@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import LicensesPage from './licenses-page';
-import MavenDependenciesPage from './maven-dependencies-page';
-import MavenLicensesPage from './maven-licenses-page';
-import ProjectLicensesPage from './project-licenses-page';
+import LicensesPage from './configuration/licenses-page';
+import MavenDependenciesPage from './configuration/maven-dependencies-page';
+import MavenLicensesPage from './configuration/maven-licenses-page';
+import ProjectLicensesPage from './configuration/project-licenses-page';
 import ModalDialog from './modal-dialog';
 
 window.registerExtension('licensecheck/configuration', function (options) {

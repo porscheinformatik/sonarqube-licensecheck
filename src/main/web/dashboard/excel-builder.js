@@ -32,7 +32,7 @@ function buildDependenciesWorksheet(dependencies) {
   <Cell><Data ss:Type="String">${dependency.name}</Data></Cell>
   <Cell><Data ss:Type="String">${dependency.version}</Data></Cell>
   <Cell><Data ss:Type="String">${dependency.license}</Data></Cell>
-  <Cell><Data ss:Type="String"><%= dependency.status %></Data></Cell>
+  <Cell><Data ss:Type="String">${dependency.status}</Data></Cell>
 </Row>`;
   });
   return result + '</Table></Worksheet>';

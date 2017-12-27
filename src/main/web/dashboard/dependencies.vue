@@ -8,6 +8,7 @@
         <th>Name</th>
         <th>Version</th>
         <th>License</th>
+        <th>Status</th>
       </tr>
       </thead>
       <tbody>
@@ -15,6 +16,10 @@
         <td>{{dependency.name}}</td>
         <td>{{dependency.version}}</td>
         <td>{{dependency.license}}</td>
+        <td>
+          <span :class="{ 'icon-license-ok': dependency.status === 'Allowed', 'icon-license-nok': dependency.status === 'Forbidden', 'icon-license-unknown': dependency.status === 'Unknown' }"></span>
+          {{dependency.status}}
+        </td>
       </tr>
       </tbody>
     </table>
@@ -28,5 +33,5 @@
 </script>
 
 <style>
-
+  @import "icons.css";
 </style>

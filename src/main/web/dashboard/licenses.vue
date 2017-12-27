@@ -5,16 +5,19 @@
     <table class="data zebra">
       <thead>
       <tr>
-        <th>Name</th>
         <th>Identifier</th>
+        <th>Name</th>
         <th>Allowed</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="license in licenses">
-        <td>{{license.name}}</td>
         <td>{{license.identifier}}</td>
-        <td>{{license.status}}</td>
+        <td>{{license.name}}</td>
+        <td>
+          <span :class="{ 'icon-license-ok': license.status === 'true', 'icon-license-nok': license.status !== 'true' }"></span>
+          {{license.status}}
+        </td>
       </tr>
       </tbody>
     </table>
@@ -28,5 +31,5 @@
 </script>
 
 <style>
-
+  @import "icons.css";
 </style>
