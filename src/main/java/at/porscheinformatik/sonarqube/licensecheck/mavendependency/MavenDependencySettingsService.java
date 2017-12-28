@@ -84,12 +84,12 @@ public class MavenDependencySettingsService
         Collections.sort(mavenDependencies);
 
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for (int i = 0; i < mavenDependencies.size(); i++)
-        {
-            jsonArray.add(
-                Json.createObjectBuilder().add("nameMatches", mavenDependencies.get(i).getKey()).add("license",
-                    mavenDependencies.get(i).getLicense()));
-        }
+        mavenDependencies.stream()
+            .map(mavenDependency ->
+                Json.createObjectBuilder()
+                    .add("nameMatches", mavenDependency.getKey())
+                    .add("license", mavenDependency.getLicense()))
+            .forEach(jsonArray::add);
 
         String newJsonDependency = jsonArray.build().toString();
         settings.setProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);

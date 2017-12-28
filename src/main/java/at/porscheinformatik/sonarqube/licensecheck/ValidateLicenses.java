@@ -7,18 +7,18 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.BatchSide;
-import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
-import org.sonar.api.resources.Project;
 import org.sonar.api.rule.RuleKey;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
-@BatchSide
+@ScannerSide
 public class ValidateLicenses
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateLicenses.class);
@@ -30,27 +30,26 @@ public class ValidateLicenses
         this.licenseService = licenseService;
     }
 
-    public Set<Dependency> validateLicenses(Set<Dependency> dependencies, Project module, SensorContext context)
+    public Set<Dependency> validateLicenses(Set<Dependency> dependencies, SensorContext context)
     {
         for (Dependency dependency : dependencies)
         {
             if (StringUtils.isBlank(dependency.getLicense()))
             {
-                licenseNotFoundIssue(module, context, dependency);
+                licenseNotFoundIssue(context, dependency);
             }
             else
             {
-                checkForLicenses(module, context, dependency);
+                checkForLicenses(context, dependency);
             }
         }
         return dependencies;
     }
 
-    public Set<License> getUsedLicenses(Set<Dependency> dependencies, Project module)
+    public Set<License> getUsedLicenses(Set<Dependency> dependencies, ProjectDefinition project)
     {
         Set<License> usedLicenseList = new TreeSet<>();
-        
-        List<License> licenses = licenseService.getLicenses(module.getRoot());
+        List<License> licenses = licenseService.getLicenses(project);
 
         for (Dependency dependency : dependencies)
         {
@@ -66,9 +65,10 @@ public class ValidateLicenses
         return usedLicenseList;
     }
 
-    private void checkForLicenses(Project module, SensorContext context, Dependency dependency)
+    private void checkForLicenses(SensorContext context, Dependency dependency)
     {
-        for (License license : licenseService.getLicenses(module.getRoot()))
+        DefaultInputModule module = (DefaultInputModule) context.module();
+        for (License license : licenseService.getLicenses(module.definition().getParent()))
         {
             if (license.getIdentifier().equals(dependency.getLicense()))
             {
@@ -84,7 +84,7 @@ public class ValidateLicenses
                         .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
                             LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY))
                         .at(new DefaultIssueLocation()
-                            .on(new DefaultInputModule(module.definition()))
+                            .on(context.module())
                             .message("Dependency "
                             + dependency.getName()
                             + " uses a not allowed license "
@@ -95,7 +95,7 @@ public class ValidateLicenses
         }
     }
 
-    private static void licenseNotFoundIssue(Project module, SensorContext context, Dependency dependency)
+    private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
         if (StringUtils.isBlank(dependency.getLicense()))
         {
@@ -106,7 +106,7 @@ public class ValidateLicenses
                 .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
                     LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
                 .at(new DefaultIssueLocation()
-                    .on(new DefaultInputModule(module.definition()))
+                    .on(context.module())
                     .message("No License found for Dependency: " + dependency.getName()));
             issue.save();
         }

@@ -3,8 +3,8 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import java.util.Arrays;
 import java.util.List;
 
+import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
-import org.sonar.api.SonarPlugin;
 import org.sonar.api.config.PropertyDefinition;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -20,9 +20,14 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.Ma
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
 
-public class LicenseCheckPlugin extends SonarPlugin
+public class LicenseCheckPlugin implements Plugin
 {
     @Override
+    public void define(Context context)
+    {
+        context.addExtensions(getExtensions());
+    }
+
     public List getExtensions()
     {
         return Arrays.asList(

@@ -12,7 +12,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Mave
 
 class MavenDependencyAddAction implements RequestHandler
 {
-    private MavenDependencySettingsService mavenDependencySettingsService;
+    private final MavenDependencySettingsService mavenDependencySettingsService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyAddAction.class);
 
     public MavenDependencyAddAction(MavenDependencySettingsService mavenDependencySettingsService)

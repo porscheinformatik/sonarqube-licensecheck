@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 
 @ServerSide
-@BatchSide
+@ScannerSide
 public class MavenLicenseService
 {
     private final Settings settings;

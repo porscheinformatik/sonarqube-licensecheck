@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.config.Settings;
-import org.sonar.api.resources.Project;
 import org.sonar.api.server.ServerSide;
 
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
@@ -27,7 +27,7 @@ public class LicenseService
         this.projectLicenseService = projectLicenseService;
     }
 
-    public List<License> getLicenses(Project module)
+    public List<License> getLicenses(ProjectDefinition module)
     {
         List<License> globalLicenses = getLicenses();
 

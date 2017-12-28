@@ -17,11 +17,11 @@ import java.util.Set;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
+import org.sonar.api.batch.fs.internal.DefaultInputModule;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
-import org.sonar.api.resources.Project;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -30,33 +30,39 @@ public class ValidateLicensesTest
 {
     private static final License APACHE_LICENSE = new License("Apache-2.0", "Apache-2.0", "true");
     private ValidateLicenses validateLicenses;
-    private Project module;
+    private ProjectDefinition projectDefinition;
 
     @Before
     public void setup()
     {
-        module = mock(Project.class);
-        final Project root = mock(Project.class);
-        when(module.getRoot()).thenReturn(root);
-        ProjectDefinition projectDefintion = mock(ProjectDefinition.class);
-        when(projectDefintion.getBaseDir()).thenReturn(new File("."));
-        when(projectDefintion.getWorkDir()).thenReturn(new File("."));
-        when(module.definition()).thenReturn(projectDefintion);
+        projectDefinition = mock(ProjectDefinition.class);
+        when(projectDefinition.getBaseDir()).thenReturn(new File("."));
+        when(projectDefinition.getWorkDir()).thenReturn(new File("."));
+        when(projectDefinition.getParent()).thenReturn(projectDefinition);
         final LicenseService licenseService = mock(LicenseService.class);
-        when(licenseService.getLicenses(root)).thenReturn(Arrays.asList(
+        when(licenseService.getLicenses(projectDefinition)).thenReturn(Arrays.asList(
             new License("MIT", "MIT", "false"),
             APACHE_LICENSE));
         validateLicenses = new ValidateLicenses(licenseService);
     }
 
+    private SensorContext createContext()
+    {
+        SensorContext context = mock(SensorContext.class);
+        DefaultInputModule inputModule = mock(DefaultInputModule.class);
+        when(inputModule.definition()).thenReturn(projectDefinition);
+        when(context.module()).thenReturn(inputModule);
+        return context;
+    }
+
     @Test
     public void licenseNotAllowed()
     {
-        final SensorContext context = mock(SensorContext.class);
+        SensorContext context = createContext();
         DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), module, context);
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
@@ -65,10 +71,10 @@ public class ValidateLicensesTest
     @Test
     public void licenseAllowed()
     {
-        final SensorContext context = mock(SensorContext.class);
+        SensorContext context = createContext();
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Apache-2.0"),
-            new Dependency("another", "2.0", "Apache-2.0")), module, context);
+            new Dependency("another", "2.0", "Apache-2.0")), context);
 
         verify(context, never()).newIssue();
     }
@@ -76,11 +82,11 @@ public class ValidateLicensesTest
     @Test
     public void licenseNotFound()
     {
-        final SensorContext context = mock(SensorContext.class);
+        SensorContext context = createContext();
         DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), module, context);
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
@@ -89,11 +95,11 @@ public class ValidateLicensesTest
     @Test
     public void getUsedLicenses()
     {
-        assertThat(validateLicenses.getUsedLicenses(deps(), module).size(), is(0));
+        assertThat(validateLicenses.getUsedLicenses(deps(), projectDefinition).size(), is(0));
 
         Set<License> usedLicensesApache = validateLicenses.getUsedLicenses(
             deps(new Dependency("thing", "1.0", "Apache-2.0"),
-                new Dependency("another", "2.0", "Apache-2.0")), module);
+                new Dependency("another", "2.0", "Apache-2.0")), projectDefinition);
 
         assertThat(usedLicensesApache.size(), is(1));
         assertThat(usedLicensesApache, CoreMatchers.hasItem(APACHE_LICENSE));

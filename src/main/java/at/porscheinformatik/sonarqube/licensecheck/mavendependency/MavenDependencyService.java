@@ -11,12 +11,12 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 
 @ServerSide
-@BatchSide
+@ScannerSide
 public class MavenDependencyService
 {
     private final Settings settings;
