@@ -28,7 +28,7 @@ public class LicenseCheckPlugin implements Plugin
         context.addExtensions(getExtensions());
     }
 
-    public List getExtensions()
+    private List<?> getExtensions()
     {
         return Arrays.asList(
             ValidateLicenses.class,
@@ -37,7 +37,6 @@ public class LicenseCheckPlugin implements Plugin
             LicenseCheckPageDefinition.class,
             LicenseCheckMeasureComputer.class,
             LicenseCheckRulesDefinition.class,
-            LicenseCheckPropertyKeys.class,
             LicenseService.class,
             LicenseSettingsService.class,
             LicenseWs.class,
