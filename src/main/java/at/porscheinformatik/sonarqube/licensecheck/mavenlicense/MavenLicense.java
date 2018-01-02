@@ -101,13 +101,17 @@ public class MavenLicense implements Comparable<MavenLicense>
                     String regex = null;
                     try 
                     {
-                        regex = licenseJson.getString("regex");                        
+                        regex = licenseJson.getString("regex");
                     }
                     catch (NullPointerException e)
                     {
-                        regex = licenseJson.getString("licenseNameRegex");
+                        regex = licenseJson.getString("licenseNameRegEx", null);
                     }
-                    mavenLicenses.add(new MavenLicense(regex, licenseJson.getString("license")));
+
+                    if (regex != null)
+                    {
+                        mavenLicenses.add(new MavenLicense(regex, licenseJson.getString("license")));
+                    }
                 }
             }
         }
