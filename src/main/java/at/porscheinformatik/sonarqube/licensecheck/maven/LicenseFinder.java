@@ -23,7 +23,7 @@ class LicenseFinder
     {
     }
 
-    public static List<License> getLicenses(File filePath)
+    public static List<License> getLicenses(File filePath, String userSettings, String globalSettings)
     {
         try
         {
@@ -40,7 +40,9 @@ class LicenseFinder
                     Parent parent = model.getParent();
                     Dependency dependency =
                         new Dependency(parent.getGroupId() + ":" + parent.getArtifactId(), parent.getVersion(), null);
-                    return getLicenses(DirectoryFinder.getPomPath(dependency, DirectoryFinder.getMavenRepsitoryDir()));
+                    return getLicenses(DirectoryFinder.getPomPath(dependency,
+                        DirectoryFinder.getMavenRepsitoryDir(userSettings, globalSettings)),
+                        userSettings, globalSettings);
                 }
                 else
                 {

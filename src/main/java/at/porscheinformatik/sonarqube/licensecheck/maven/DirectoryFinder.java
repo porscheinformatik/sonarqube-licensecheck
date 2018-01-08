@@ -12,9 +12,9 @@ class DirectoryFinder
 
     public static File getPomPath(Dependency findPathOfDependency, File mavenRepositoryDir)
     {
-        String[] IDs = findPathOfDependency.getName().split(":");
-        String groupId = IDs[0];
-        String artifactId = IDs[1];
+        String[] ids = findPathOfDependency.getName().split(":");
+        String groupId = ids[0];
+        String artifactId = ids[1];
 
         String tmp = groupId.replace(".", "/")
             + "/"
@@ -30,14 +30,27 @@ class DirectoryFinder
         return new File(mavenRepositoryDir, tmp);
     }
 
-    public static File getMavenRepsitoryDir()
+    public static File getMavenRepsitoryDir(String userSettings, String globalSettings)
     {
         File mavenConfFile = new File(System.getProperty("user.home"), ".m2/settings.xml");
-        if (!mavenConfFile.exists())
+        if (userSettings != null)
         {
-            mavenConfFile = new File(System.getenv("MAVEN_HOME"), "conf/settings.xml");
+            mavenConfFile = new File(userSettings);
+        }
+        if (mavenConfFile.exists() && mavenConfFile.isFile())
+        {
+            File localRepositoryPath = SettingsXmlParser.parseXmlFile(mavenConfFile).getLocalRepositoryPath();
+            if (localRepositoryPath != null)
+            {
+                return localRepositoryPath;
+            }
         }
 
+        mavenConfFile = new File(System.getenv("MAVEN_HOME"), "conf/settings.xml");
+        if (globalSettings != null)
+        {
+            mavenConfFile = new File(globalSettings);
+        }
         if (mavenConfFile.exists() && mavenConfFile.isFile())
         {
             File localRepositoryPath = SettingsXmlParser.parseXmlFile(mavenConfFile).getLocalRepositoryPath();
