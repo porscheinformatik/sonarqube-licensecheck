@@ -99,9 +99,9 @@ public class MavenDependencyScanner implements Scanner
         properties.setProperty("outputFile", tempFile.toAbsolutePath().toString());
         properties.setProperty("outputAbsoluteArtifactFilename", "true");
         properties.setProperty("includeScope", "runtime"); // only runtime (scope compile + runtime)
-		if (System.getProperty("maven.repo.local") != null) 
-		{
-        	properties.setProperty("maven.repo.local", System.getProperty("maven.repo.local"));
+        if (System.getProperty("maven.repo.local") != null)
+        {
+            properties.setProperty("maven.repo.local", System.getProperty("maven.repo.local"));
         }
         request.setProperties(properties);
 

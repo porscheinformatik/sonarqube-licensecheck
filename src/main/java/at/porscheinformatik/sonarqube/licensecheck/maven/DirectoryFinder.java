@@ -35,7 +35,7 @@ class DirectoryFinder
         if (System.getProperty("maven.repo.local") != null) 
         {
             return new File(System.getProperty("maven.repo.local"));
-    	}
+        }
  
         File mavenConfFile = new File(System.getProperty("user.home"), ".m2/settings.xml");
         if (userSettings != null)
