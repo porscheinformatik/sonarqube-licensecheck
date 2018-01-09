@@ -32,6 +32,11 @@ class DirectoryFinder
 
     public static File getMavenRepsitoryDir(String userSettings, String globalSettings)
     {
+        if (System.getProperty("maven.repo.local") != null) 
+        {
+            return new File(System.getProperty("maven.repo.local"));
+    	}
+ 
         File mavenConfFile = new File(System.getProperty("user.home"), ".m2/settings.xml");
         if (userSettings != null)
         {
