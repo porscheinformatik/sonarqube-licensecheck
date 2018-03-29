@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+repositories {
+  mavenCentral()
+}
+
+configurations {
+  customConfig
+}
+
+dependencies {
+  // resolve custom config's depedency license
+  customConfig 'ch.qos.logback:logback-core:1.1.6'
+
+  // resolve from regular config
+  compile 'org.codehaus.groovy:groovy-all:2.3.1'
+  compile "org.apache.avro:avro:1.8.1"
+
+  // todo: resolve license from different location (not pom)
+
+  // resolve with groovy map notation, transitive junit
+  testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+}

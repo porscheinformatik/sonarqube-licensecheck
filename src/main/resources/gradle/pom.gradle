@@ -1,0 +1,32 @@
+allprojects {
+  configurations {
+    pomResolver
+  }
+
+  task resolvePomDeps {
+    doLast {
+      configurations.each { conf ->
+        if (!(conf.name in ['pomResolver',
+                            'apiElements',
+                            'implementation',
+                            'runtimeElements',
+                            'runtimeOnly',
+                            'testImplementation',
+                            'testRuntimeOnly']))
+          conf.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            def group = artifact.moduleVersion.id.group
+            def name = artifact.moduleVersion.id.name
+            def version = artifact.moduleVersion.id.version
+            project.dependencies.pomResolver(group: group, name: name, version: version, ext: 'pom') {
+              transitive = true
+            }
+          }
+      }
+    }
+  }
+
+  task copyPoms(type: Copy, dependsOn: resolvePomDeps) {
+    into "${buildDir}/poms"
+    from configurations.pomResolver
+  }
+}

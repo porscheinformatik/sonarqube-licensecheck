@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.sample</groupId>
+  <artifactId>my-artifact</artifactId>
+  <version>1.0</version>
+  <licenses>
+    <license>
+      <name>The Apache Software License 2.0</name>
+    </license>
+  </licenses>
+</project>
