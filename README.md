@@ -1,7 +1,7 @@
 SonarQube License-Check
 ===================
 
-[![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck)
+[![Build Status](https://circleci.com/gh/xellsys/sonarqube-licensecheck/tree/master.png?style=shield)](https://circleci.com/gh/xellsys/sonarqube-licensecheck/)
 
 This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of
 standard libraries and versions. This enables the governance of the used libraries and licences.
@@ -24,7 +24,11 @@ restart the server to install the plugin. Activate the rules of this plugin ("Li
 
 ## Execution
 
+### Maven
 When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
+
+### Gradle
+When a project is analyzed using the official gradle sonarqube plugin via `gradlew sonarqube` extension is started automatically.
 
 ## Configuration
 
@@ -49,6 +53,7 @@ The plugin scans for dependencies defined in your project including all transiti
 
 Currently supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
+* Gradle dependencies - all dependencies in all configurations are being checked
 * NPM package.json files - all dependencies (except "devDependencies") are checked
 
 ### Project Dashboard
