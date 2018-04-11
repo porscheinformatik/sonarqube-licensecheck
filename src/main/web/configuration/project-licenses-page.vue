@@ -91,7 +91,7 @@ export default {
   },
   computed: {
     displayedItems() {
-      if (!this.searchText || this.searchText.length == 0) {
+      if (!this.searchText || this.searchText.length === 0) {
         return this.items;
       }
 
@@ -119,7 +119,7 @@ export default {
             if (license) {
               item.licenseName = license.name;
             }
-            let project = this.projects.find(project => project.key = item.projectKey);
+            let project = this.projects.find(project => project.key === item.projectKey);
             if (project) {
               item.projectName = project.name;
             }
