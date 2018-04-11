@@ -40,36 +40,13 @@ public class LicenseCheckSensor implements Sensor
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 
-    @Override
-    public void describe(SensorDescriptor descriptor)
+    private static ProjectDefinition getRootProject(ProjectDefinition definition)
     {
-        descriptor.name("License Check")
-            .createIssuesForRuleRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY);
-    }
-
-    @Override
-    public void execute(SensorContext context)
-    {
-        if (settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
+        while (definition != null && definition.getParent() != null && !definition.equals(definition.getParent()))
         {
-            Set<Dependency> dependencies = new TreeSet<>();
-
-            for (Scanner scanner : scanners)
-            {
-                dependencies.addAll(scanner.scan(fs.baseDir()));
-            }
-
-            ProjectDefinition project = ((DefaultInputModule) context.module()).definition().getParent();
-            Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
-            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
-
-            saveDependencies(context, validatedDependencies);
-            saveLicenses(context, usedLicenses);
+            definition = definition.getParent();
         }
-        else
-        {
-            LOGGER.info("Scanner is set to inactive. No scan possible.");
-        }
+        return definition;
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
@@ -95,6 +72,38 @@ public class LicenseCheckSensor implements Sensor
                 .withValue(License.createString(licenses))
                 .on(sensorContext.module())
                 .save();
+        }
+    }
+
+    @Override
+    public void describe(SensorDescriptor descriptor)
+    {
+        descriptor.name("License Check")
+            .createIssuesForRuleRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY);
+    }
+
+    @Override
+    public void execute(SensorContext context)
+    {
+        if (settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
+        {
+            Set<Dependency> dependencies = new TreeSet<>();
+
+            for (Scanner scanner : scanners)
+            {
+                dependencies.addAll(scanner.scan(fs.baseDir()));
+            }
+
+            ProjectDefinition project = getRootProject(((DefaultInputModule) context.module()).definition());
+            Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
+            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
+
+            saveDependencies(context, validatedDependencies);
+            saveLicenses(context, usedLicenses);
+        }
+        else
+        {
+            LOGGER.info("Scanner is set to inactive. No scan possible.");
         }
     }
 }
