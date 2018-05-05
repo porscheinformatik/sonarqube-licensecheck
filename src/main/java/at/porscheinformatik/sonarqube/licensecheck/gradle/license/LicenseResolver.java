@@ -20,14 +20,22 @@ public class LicenseResolver {
 
     public String byPackage(String packageName) {
         if (mavenDependencies != null) {
-            for (MavenDependency allowedDependency : mavenDependencies) {
-                String matchString = allowedDependency.getKey();
-                if (packageName.matches(matchString)) {
-                    return allowedDependency.getLicense();
-                }
+            String allowedDependency = findDependency(packageName);
+            if (allowedDependency != null) {
+                return allowedDependency;
             }
         }
         LOGGER.debug("Could not find matching license for package name: " + packageName);
         return "";
+    }
+
+    private String findDependency(String packageName) {
+        for (MavenDependency allowedDependency : mavenDependencies) {
+            String matchString = allowedDependency.getKey();
+            if (packageName.matches(matchString)) {
+                return allowedDependency.getLicense();
+            }
+        }
+        return null;
     }
 }

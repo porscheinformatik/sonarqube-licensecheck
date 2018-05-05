@@ -1,5 +1,25 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.License;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,29 +36,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.model.License;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-
-public class MavenDependencyScanner implements Scanner
-{
+public class MavenDependencyScanner implements Scanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
 
     private final MavenLicenseService mavenLicenseService;
@@ -46,26 +44,21 @@ public class MavenDependencyScanner implements Scanner
     private final MavenDependencyService mavenDependencyService;
 
     public MavenDependencyScanner(MavenLicenseService mavenLicenseService,
-        MavenDependencyService mavenDependencyService)
-    {
+                                  MavenDependencyService mavenDependencyService) {
         this.mavenLicenseService = mavenLicenseService;
         this.mavenDependencyService = mavenDependencyService;
     }
 
     @Override
-    public List<Dependency> scan(File moduleDir)
-    {
+    public List<Dependency> scan(File moduleDir) {
         String userSettings = null;
         String globalSettings = null;
         CommandLine cmd = getCommandLineArgs();
-        if (cmd != null)
-        {
-            if (cmd.hasOption("s"))
-            {
+        if (cmd != null) {
+            if (cmd.hasOption("s")) {
                 userSettings = cmd.getOptionValue("s");
             }
-            if (cmd.hasOption("gs"))
-            {
+            if (cmd.hasOption("gs")) {
                 globalSettings = cmd.getOptionValue("gs");
             }
         }
@@ -76,83 +69,76 @@ public class MavenDependencyScanner implements Scanner
             .collect(Collectors.toList());
     }
 
-    private Stream<Dependency> readDependencyList(File moduleDir, String userSettings, String globalSettings)
-    {
+    private Stream<Dependency> readDependencyList(File moduleDir, String userSettings, String globalSettings) {
         Path tempFile = createTempFile();
-        if (tempFile == null)
-        {
+        if (tempFile == null) {
             return Stream.empty();
         }
 
+        InvocationRequest request = buildInvocationRequest(moduleDir, userSettings, globalSettings, tempFile);
+
+        Invoker invoker = new DefaultInvoker();
+        invoker.setOutputHandler(null); // not interested in Maven output itself
+
+        try {
+            InvocationResult result = invoker.execute(request);
+            if (result.getExitCode() != 0) {
+                LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
+            }
+
+            return findDependenciesInFile(tempFile);
+        } catch (MavenInvocationException e) {
+            LOGGER.warn("Could not get dependency list via maven", e);
+        } catch (Exception e) {
+            LOGGER.warn("Error reading file", e);
+        }
+        return Stream.empty();
+    }
+
+    private Stream<Dependency> findDependenciesInFile(Path tempFile) throws IOException {
+        return Files.lines(tempFile)
+            .filter(StringUtils::isNotBlank)
+            .map(MavenDependencyScanner::findDependency)
+            .filter(Objects::nonNull);
+    }
+
+    private InvocationRequest buildInvocationRequest(File moduleDir, String userSettings, String globalSettings, Path tempFile) {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(new File(moduleDir, "pom.xml"));
         request.setGoals(Collections.singletonList("dependency:list"));
-        if (userSettings != null)
-        {
+        if (userSettings != null) {
             request.setUserSettingsFile(new File(userSettings));
         }
-        if (globalSettings != null)
-        {
+        if (globalSettings != null) {
             request.setGlobalSettingsFile(new File(globalSettings));
         }
         Properties properties = new Properties();
         properties.setProperty("outputFile", tempFile.toAbsolutePath().toString());
         properties.setProperty("outputAbsoluteArtifactFilename", "true");
         properties.setProperty("includeScope", "runtime"); // only runtime (scope compile + runtime)
-        if (System.getProperty("maven.repo.local") != null)
-        {
+        if (System.getProperty("maven.repo.local") != null) {
             properties.setProperty("maven.repo.local", System.getProperty("maven.repo.local"));
         }
         request.setProperties(properties);
-
-        Invoker invoker = new DefaultInvoker();
-        invoker.setOutputHandler(null); // not interested in Maven output itself
-
-        try
-        {
-            InvocationResult result = invoker.execute(request);
-            if (result.getExitCode() != 0)
-            {
-                LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
-            }
-
-            return Files.lines(tempFile)
-                .filter(StringUtils::isNotBlank)
-                .map(MavenDependencyScanner::findDependency)
-                .filter(Objects::nonNull);
-        }
-        catch (MavenInvocationException e)
-        {
-            LOGGER.warn("Could not get dependency list via maven", e);
-        }
-        catch (Exception e)
-        {
-            LOGGER.warn("Error reading file", e);
-        }
-        return Stream.empty();
+        return request;
     }
 
-    private Path createTempFile()
-    {
-        try
-        {
+    private Path createTempFile() {
+        try {
             Path tempFile = Files.createTempFile("dependencies", ".txt");
             tempFile.toFile().deleteOnExit();
             return tempFile;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             LOGGER.error("Could not create temp file for dependencies: {}", e.getMessage());
             return null;
         }
     }
 
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("\\s*([^:]*):([^:]*):[^:]*:([^:]*):[^:]*:(.*)");
-    private static Dependency findDependency(String line)
-    {
+
+    private static Dependency findDependency(String line) {
         Matcher matcher = DEPENDENCY_PATTERN.matcher(line);
-        if (matcher.find())
-        {
+        if (matcher.find()) {
             String groupId = matcher.group(1);
             String artifactId = matcher.group(2);
             String version = matcher.group(3);
@@ -165,36 +151,28 @@ public class MavenDependencyScanner implements Scanner
     }
 
     private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap, String userSettings,
-        String globalSettings)
-    {
+                                                                String globalSettings) {
         return (Dependency dependency) ->
         {
             String path = dependency.getLocalPath();
-            if (path == null)
-            {
+            if (path == null) {
                 return dependency;
             }
 
             int lastDotIndex = path.lastIndexOf('.');
-            if (lastDotIndex > 0)
-            {
+            if (lastDotIndex > 0) {
                 String pomPath = path.substring(0, lastDotIndex) + ".pom";
                 List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), userSettings, globalSettings);
-                if (licenses.isEmpty())
-                {
+                if (licenses.isEmpty()) {
                     LOGGER.info("No licenses found in dependency {}", dependency.getName());
                     return dependency;
                 }
 
-                for (License license : licenses)
-                {
+                for (License license : licenses) {
                     String licenseName = license.getName();
-                    if (StringUtils.isNotBlank(licenseName))
-                    {
-                        for (Entry<Pattern, String> entry : licenseMap.entrySet())
-                        {
-                            if (entry.getKey().matcher(licenseName).matches())
-                            {
+                    if (StringUtils.isNotBlank(licenseName)) {
+                        for (Entry<Pattern, String> entry : licenseMap.entrySet()) {
+                            if (entry.getKey().matcher(licenseName).matches()) {
                                 dependency.setLicense(entry.getValue());
                                 return dependency;
                             }
@@ -208,15 +186,11 @@ public class MavenDependencyScanner implements Scanner
         };
     }
 
-    private Dependency mapMavenDependencyToLicense(Dependency dependency)
-    {
-        if (StringUtils.isBlank(dependency.getLicense()))
-        {
-            for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies())
-            {
+    private Dependency mapMavenDependencyToLicense(Dependency dependency) {
+        if (StringUtils.isBlank(dependency.getLicense())) {
+            for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies()) {
                 String matchString = allowedDependency.getKey();
-                if (dependency.getName().matches(matchString))
-                {
+                if (dependency.getName().matches(matchString)) {
                     dependency.setLicense(allowedDependency.getLicense());
                 }
             }
@@ -224,20 +198,16 @@ public class MavenDependencyScanner implements Scanner
         return dependency;
     }
 
-    private static CommandLine getCommandLineArgs()
-    {
+    private static CommandLine getCommandLineArgs() {
         CommandLine cmd = null;
-        try
-        {
+        try {
             String commandArgs = System.getProperty("sun.java.command");
             CommandLineParser parser = new DefaultParser();
             Options options = new Options();
             options.addOption("s", "settings", true, "Alternate path for the user settings file");
             options.addOption("gs", "global-settings", true, "Alternate path for the global settings file");
             cmd = parser.parse(options, commandArgs.split(" "));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // ignore unparsable command line args
         }
         return cmd;

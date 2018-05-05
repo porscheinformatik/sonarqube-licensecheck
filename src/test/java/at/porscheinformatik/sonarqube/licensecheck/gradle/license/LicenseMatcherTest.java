@@ -16,7 +16,7 @@ public class LicenseMatcherTest {
     public void handleNullMavenLicenseService() {
         LicenseMatcher licenseMatcher = new LicenseMatcher(null);
 
-        Assert.assertFalse(licenseMatcher.licenseHasMatchInLicenseMap(license("some license")));
+        Assert.assertNull(licenseMatcher.findLicenseFromLicenseMap("some license"));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class LicenseMatcherTest {
 
         License license = license("Some Apache Software License in version 1");
 
-        Assert.assertTrue(underTest.licenseHasMatchInLicenseMap(license));
+        Assert.assertEquals(underTest.findLicenseFromLicenseMap(license.getName()), "Apache-1.0");
         Assert.assertEquals("Apache-1.0", underTest.viaLicenseMap(license.getName()));
     }
 
@@ -43,7 +43,7 @@ public class LicenseMatcherTest {
 
         License license = license("This is my personal license");
 
-        Assert.assertFalse(underTest.licenseHasMatchInLicenseMap(license));
+        Assert.assertEquals(underTest.findLicenseFromLicenseMap(license.getName()), null);
         Assert.assertEquals("This is my personal license", underTest.viaLicenseMap(license.getName()));
     }
 }

@@ -38,7 +38,6 @@ public class PomDependenyMapperTest {
     @Test
     public void matcherMatches() {
         LicenseMatcher licenseMatcher = Mockito.mock(LicenseMatcher.class);
-        when(licenseMatcher.licenseHasMatchInLicenseMap(any())).thenReturn(true);
         when(licenseMatcher.viaLicenseMap("The Apache Software License 2.0")).thenReturn("Apache-2.0");
 
         PomDependencyMapper pomDependencyMapper = new PomDependencyMapper(licenseMatcher);
@@ -52,7 +51,6 @@ public class PomDependenyMapperTest {
     @Test
     public void returnFirstLicenseIfThereIsNoMatch() {
         LicenseMatcher licenseMatcher = Mockito.mock(LicenseMatcher.class);
-        when(licenseMatcher.licenseHasMatchInLicenseMap(any())).thenReturn(false);
         when(licenseMatcher.viaLicenseMap(any())).thenReturn("");
 
         PomDependencyMapper pomDependencyMapper = new PomDependencyMapper(licenseMatcher);

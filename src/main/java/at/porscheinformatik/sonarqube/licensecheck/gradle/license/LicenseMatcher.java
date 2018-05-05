@@ -1,7 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle.license;
 
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-import org.apache.maven.model.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,24 +17,24 @@ public class LicenseMatcher {
     }
 
     public String viaLicenseMap(String licenseName) {
-        if (licenseMap != null) {
-            for (Map.Entry<Pattern, String> entry : licenseMap.entrySet()) {
-                if (entry.getKey().matcher(licenseName).matches()) {
-                    return entry.getValue();
-                }
-            }
+        String license = findLicenseFromLicenseMap(licenseName);
+        if (license != null) {
+            LOGGER.debug("Could match license: " + licenseName + " to license " + license);
+            return license;
+        } else {
+            LOGGER.debug("Could not match license: " + licenseName);
+            return licenseName;
         }
-        LOGGER.debug("Could not match license: " + licenseName);
-        return licenseName;
     }
 
-    public boolean licenseHasMatchInLicenseMap(License license) {
+    String findLicenseFromLicenseMap(String licenseName) {
         if (licenseMap == null) {
-            return false;
+            return null;
         }
         return licenseMap.entrySet().stream()
-            .map(entry -> entry.getKey().matcher(license.getName()).matches())
+            .filter(entry -> entry.getKey().matcher(licenseName).matches())
+            .map(Map.Entry::getValue)
             .findFirst()
-            .orElse(false);
+            .orElse(null);
     }
 }
