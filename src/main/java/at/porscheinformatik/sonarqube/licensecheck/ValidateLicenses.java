@@ -68,7 +68,7 @@ public class ValidateLicenses
     private void checkForLicenses(SensorContext context, Dependency dependency)
     {
         DefaultInputModule module = (DefaultInputModule) context.module();
-        for (License license : licenseService.getLicenses(module.definition().getParent()))
+        for (License license : licenseService.getLicenses(LicenseCheckPlugin.getRootProject(module.definition())))
         {
             if (license.getIdentifier().equals(dependency.getLicense()))
             {
