@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="boxed-group boxed-group-inner">
     <header class="page-header">
       <h1 class="page-title">License Check - Project Licenses</h1>
       <div class="page-description">Allow/disallow licences for specific projects.</div>
@@ -13,7 +13,7 @@
         <input style="background: none; width: 100%; border: none" v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
       </div>
     </div>
-    <div class="boxed-group boxed-group-inner">
+    <div>
       <table class="data zebra">
         <thead>
           <tr>
