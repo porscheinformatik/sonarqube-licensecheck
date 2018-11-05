@@ -7,7 +7,7 @@ deploy:
   skip_cleanup: true
   api_key:
     secure: OZ+Mpt/xGsBRN8bOYWE0ikA+m+JWNZZFX8OoJUoEBjtA4FYq+SLEM2DIIGEMVyY5Kf/bO/pqOHT0qUOxKhH9Pqin/tWSFgMeS5BQg5bmOialePRJPzU0Tiw5e2UFWwvU1UHv7INIqTxeJQRAnWljHdsZYf/pdyiHSCNb4/XnYMP6Quw0nHTZyp6zvI7CR5HLM9C8TtyBcNZQlrakyT4uOEtmaPyTIO+Tks6v14oTeLQK7pouME+AtsZRMkLK9GSJXnxNVIGdoHL5ri9ybcA5LO2SdwXtBzI2CpTqeqgOlTHf9f3pGKdJ3J9NSOhLD0EhF7pP4iOy0yjYQL2OTYGACl/I9GTgw9E4m3I/gwsYKO6ndgvWL29KU8gD5KUWiF1IS5/490fBMY0DkHkHBonEhzt+Bkl9bTwNwyiGEOpYk0ocLMJeEgWXGE7K3QuolW7eXy5KjRWvyhGNov13+5FEoX5kfHOOxOr0hLcp1xQ1PZqvGMONly4RNbrJAa7HWFzPxRued/CiKWzsKwwznPngoTQ+RIXwuJPrIJutYDOtcvw2Bu05JGCl3cFXiQD801P2CrJ7ZNFypF+2tpgyUtav9BaYpvaPOC0SZlrH79W+74EKiBNyLEBetCXkN9JnnD1o8LMjgPTNY6APlbKH+D8OWuIRtuNq4rn/XLFGQsMbr2s=
-  file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG}.jar
+  file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG#?}.jar
   on:
     repo: porscheinformatik/sonarqube-licensecheck
     tags: true
