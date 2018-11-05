@@ -1,22 +1,20 @@
 <template>
-  <div>
+  <div class="boxed-group boxed-group-inner">
     <header class="page-header">
       <h1 class="page-title">License Check - Licenses</h1>
       <div class="page-description">Add and administer licenses, allow or disallow globally.</div>
       <div class="page-actions">
-        <div class="button-group">
-          <button id="item-add" @click="showAddDialog()">Add License</button>
-        </div>
+        <button id="item-add" @click="showAddDialog()" class="button">Add License</button>
       </div>
     </header>
-    <div>
-      <div class="panel panel-vertical bordered-bottom spacer-bottom">
-        <button class="search-box-submit button-clean"><i class="icon-search"></i></button>
-        <input v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
+    <div class="panel panel-vertical bordered-bottom spacer-bottom">
+      <div class="search-box">
+        <svgicon icon="magnify" width="15" height="16" style="padding-left: 5px; margin-top: 4px; fill: #999;"></svgicon>
+        <input style="background: none; width: 100%; border: none" v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
       </div>
     </div>
     <div>
-      <table class="data zebra" width="100%">
+      <table class="data zebra">
         <thead>
           <tr>
             <th>Identifier</th>
@@ -27,12 +25,16 @@
         </thead>
         <tbody>
           <tr v-for="item in displayedItems" :key="item.identifier">
-            <td class="thin">{{item.identifier}}</td>
+            <td class="thin ">{{item.identifier}}</td>
             <td>{{item.name}}</td>
             <td class="thin">{{item.status}}</td>
-            <td class="thin">
-              <a class="icon-edit" @click="showEditDialog(item)" title="Edit item"></a>
-              <a class="icon-delete" @click="showDeleteDialog(item)" title="Delete item"></a>
+            <td class="thin nowrap">
+              <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
+                <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
+              </a>
+              <a class="button button-link" @click="showDeleteDialog(item)" title="Delete item">
+                <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
+              </a>
             </td>
           </tr>
           <tr v-show="!displayedItems">
@@ -60,16 +62,18 @@
           </select>
         </div>
       </div>
-      <span slot="footer"><button @click="saveItem(itemToEdit)">Save</button></span>
+      <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
     </modal-dialog>
     <modal-dialog header="Delete license" :show="!!itemToDelete" @close="cancelDelete()">
       <div slot="body" v-if="itemToDelete">Are you sure you want to delete the license &quot;{{itemToDelete.identifier}}&quot; / &quot;{{itemToDelete.name}}&quot;?</div>
-      <span slot="footer"><button @click="deleteItem(itemToDelete)">Delete</button></span>
+      <span slot="footer"><button class="button" @click="deleteItem(itemToDelete)">Delete</button></span>
     </modal-dialog>
   </div>
 </template>
 
 <script>
+import "../../../compiled-icons";
+
 const focus = {
   inserted(el, binding) {
     if (binding.value)
@@ -128,7 +132,7 @@ export default {
         .post(`/api/licensecheck/licenses/${this.editMode}`, item)
         .then(() => {
           this.load()
-        });
+      });
       this.itemToEdit = null;
     },
     showDeleteDialog(item) {
@@ -142,7 +146,7 @@ export default {
         .post('/api/licensecheck/licenses/delete', { identifier: item.identifier })
         .then(() => {
           this.load()
-        });
+      });
       this.itemToDelete = null;
     }
   },

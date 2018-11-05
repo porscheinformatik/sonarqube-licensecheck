@@ -4,11 +4,13 @@ import MavenDependenciesPage from './configuration/maven-dependencies-page';
 import MavenLicensesPage from './configuration/maven-licenses-page';
 import ProjectLicensesPage from './configuration/project-licenses-page';
 import ModalDialog from './modal-dialog';
+import VueSVGIcon from 'vue-svgicon'
+
+Vue.use(VueSVGIcon)
 
 window.registerExtension('licensecheck/configuration', function (options) {
 
   Vue.component('modal-dialog', ModalDialog);
-
   const app = new Vue({
     el: options.el,
     data: () => {
@@ -31,7 +33,7 @@ window.registerExtension('licensecheck/configuration', function (options) {
         }
       }
     },
-    components: { LicensesPage, MavenDependenciesPage, MavenLicensesPage, ProjectLicensesPage },
+    components: { LicensesPage, MavenDependenciesPage, MavenLicensesPage, ProjectLicensesPage},
     template: `<div class="page page-limited">
   <ul class="tabs">
     <li><a href="?category=licenses" :class="{selected: currentRoute==='licenses'}" @click="activateCategory($event, 'licenses')">Licenses</a></li>

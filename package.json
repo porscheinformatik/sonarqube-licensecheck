@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "webpack -p",
-    "watch": "concurrently --kill-others \"webpack -w\" \"node test-server.js\""
+    "watch": "concurrently --kill-others \"webpack -w\" \"node test-server.js\"",
+    "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons"
   },
   "author": "Christian Köberl",
   "license": "Apache-2.0",
@@ -16,6 +17,7 @@
     "css-loader": "^0.28.7",
     "http-proxy": "^1.16.2",
     "vue-loader": "^13.5.0",
+    "vue-svgicon": "^3.2.1",
     "vue-template-compiler": "^2.5.9",
     "webpack": "^3.9.0"
   },

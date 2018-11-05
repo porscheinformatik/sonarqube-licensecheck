@@ -9,7 +9,7 @@
       </div>
       <div class="modal-foot">
         <slot name="footer"></slot>
-        <a href="#" v-on:click="close()">Cancel</a>
+        <a href="#" class="button button-link" @click="close()">Cancel</a>
       </div>
     </div>
     <div class="modal-overlay in"></div>
