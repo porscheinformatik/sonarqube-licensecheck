@@ -1,8 +1,9 @@
 .icon-license-ok, .icon-license-nok, .icon-license-unknown {
   display: inline-block;
   speak: none;
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
+  margin-bottom: 3px;
 }
 
 .icon-license-ok {
