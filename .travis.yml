@@ -1,7 +1,11 @@
 language: java
-script: mvn verify
 jdk:
 - oraclejdk8
+addons:
+  sonarcloud:
+    organization: "porscheinformatik"
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 deploy:
   - provider: releases
     skip_cleanup: true
