@@ -40,9 +40,8 @@ public class ValidateLicensesTest
         when(projectDefinition.getWorkDir()).thenReturn(new File("."));
         when(projectDefinition.getParent()).thenReturn(projectDefinition);
         final LicenseService licenseService = mock(LicenseService.class);
-        when(licenseService.getLicenses(projectDefinition)).thenReturn(Arrays.asList(
-            new License("MIT", "MIT", "false"),
-            APACHE_LICENSE));
+        when(licenseService.getLicenses(projectDefinition)).thenReturn(Arrays.asList(new License("MIT", "MIT", "false"),
+            new License("LGPL is fantastic", "LGPL", "true"), APACHE_LICENSE));
         validateLicenses = new ValidateLicenses(licenseService);
     }
 
@@ -73,14 +72,88 @@ public class ValidateLicensesTest
     {
         SensorContext context = createContext();
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Apache-2.0"),
-            new Dependency("another", "2.0", "Apache-2.0")), context);
+        validateLicenses.validateLicenses(
+            deps(new Dependency("thing", "1.0", "Apache-2.0"), new Dependency("another", "2.0", "Apache-2.0")),
+            context);
+
+        verify(context, never()).newIssue();
+    }
+
+    //  (LGPL OR Apache-2.0) AND (LGPL OR Apache-2.0)    
+    @Test
+    public void checkSpdxOrCombination()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(deps(new Dependency("another", "2.0", "(LGPL OR Apache-2.0)"),
+            new Dependency("thing", "1.0", "(MIT OR Apache-2.0)")), context);
 
         verify(context, never()).newIssue();
     }
 
     @Test
-    public void licenseNotFound()
+    public void checkSpdxSeveralOrCombination()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(
+            deps(new Dependency("thing", "1.0", "(Apache-2.0 OR MIT OR Apache-2.0 OR LGPL)")), context);
+
+        verify(context, never()).newIssue();
+    }
+
+    @Test
+    public void checkSpdxAndCombination()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(LGPL AND Apache-2.0)")), context);
+
+        verify(context, never()).newIssue();
+    }
+
+    @Test
+    public void checkSpdxAndCombinationNotAllowed()
+    {
+        SensorContext context = createContext();
+        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        validateLicenses.validateLicenses(
+            deps(new Dependency("another", "2.0", "LGPL"), new Dependency("thing", "1.0", "(Apache-2.0 AND MIT)")),
+            context);
+
+        verify(context).newIssue();
+        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+    }
+
+    @Test
+    public void checkSpdxAndCombinationNotFound()
+    {
+        SensorContext context = createContext();
+        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)")), context);
+
+        verify(context).newIssue();
+        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    //  LGPL OR Apache-2.0 AND MIT
+    @Test
+    public void checkSpdxOrAndCombination()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(LGPL OR (Apache-2.0 AND MIT))")),
+            context);
+
+        verify(context, never()).newIssue();
+    }
+
+    @Test
+    public void licenseNull()
     {
         SensorContext context = createContext();
         DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
@@ -93,13 +166,26 @@ public class ValidateLicensesTest
     }
 
     @Test
+    public void licenseUnknown()
+    {
+        SensorContext context = createContext();
+        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Mamamia")), context);
+
+        verify(context).newIssue();
+        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    @Test
     public void getUsedLicenses()
     {
         assertThat(validateLicenses.getUsedLicenses(deps(), projectDefinition).size(), is(0));
 
         Set<License> usedLicensesApache = validateLicenses.getUsedLicenses(
-            deps(new Dependency("thing", "1.0", "Apache-2.0"),
-                new Dependency("another", "2.0", "Apache-2.0")), projectDefinition);
+            deps(new Dependency("thing", "1.0", "Apache-2.0"), new Dependency("another", "2.0", "Apache-2.0")),
+            projectDefinition);
 
         assertThat(usedLicensesApache.size(), is(1));
         assertThat(usedLicensesApache, CoreMatchers.hasItem(APACHE_LICENSE));
