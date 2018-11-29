@@ -41,6 +41,8 @@ public class MavenDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
 
+    private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
+
     private final MavenLicenseService mavenLicenseService;
 
     private final MavenDependencyService mavenDependencyService;
@@ -100,9 +102,9 @@ public class MavenDependencyScanner implements Scanner
         properties.setProperty("outputFile", tempFile.toAbsolutePath().toString());
         properties.setProperty("outputAbsoluteArtifactFilename", "true");
         properties.setProperty("includeScope", "runtime"); // only runtime (scope compile + runtime)
-        if (System.getProperty("maven.repo.local") != null)
+        if (System.getProperty(MAVEN_REPO_LOCAL) != null)
         {
-            properties.setProperty("maven.repo.local", System.getProperty("maven.repo.local"));
+            properties.setProperty(MAVEN_REPO_LOCAL, System.getProperty(MAVEN_REPO_LOCAL));
         }
         request.setProperties(properties);
 
@@ -176,37 +178,53 @@ public class MavenDependencyScanner implements Scanner
                 return dependency;
             }
 
-            int lastDotIndex = path.lastIndexOf('.');
-            if (lastDotIndex > 0)
-            {
-                String pomPath = path.substring(0, lastDotIndex) + ".pom";
-                List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), userSettings, globalSettings);
-                if (licenses.isEmpty())
-                {
-                    LOGGER.info("No licenses found in dependency {}", dependency.getName());
-                    return dependency;
-                }
+            return loadLicense(licenseMap, userSettings, globalSettings, dependency);
+        };
+    }
 
-                for (License license : licenses)
-                {
-                    String licenseName = license.getName();
-                    if (StringUtils.isNotBlank(licenseName))
-                    {
-                        for (Entry<Pattern, String> entry : licenseMap.entrySet())
-                        {
-                            if (entry.getKey().matcher(licenseName).matches())
-                            {
-                                dependency.setLicense(entry.getValue());
-                                return dependency;
-                            }
-                        }
-                    }
-                    LOGGER.info("No licenses found for '{}'", licenseName);
-                }
+    private Dependency loadLicense(Map<Pattern, String> licenseMap, String userSettings, String globalSettings,
+        Dependency dependency)
+    {
+        String path = dependency.getLocalPath();
+        int lastDotIndex = path.lastIndexOf('.');
+        if (lastDotIndex > 0)
+        {
+            String pomPath = path.substring(0, lastDotIndex) + ".pom";
+            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), userSettings, globalSettings);
+            if (licenses.isEmpty())
+            {
+                LOGGER.info("No licenses found in dependency {}", dependency.getName());
+                return dependency;
             }
 
+            for (License license : licenses)
+            {
+                licenseMatcher(licenseMap, dependency, license);
+            }
+        }
+        return dependency;
+    }
+
+    private Dependency licenseMatcher(Map<Pattern, String> licenseMap, Dependency dependency, License license)
+    {
+        String licenseName = license.getName();
+        if (StringUtils.isBlank(licenseName))
+        {
+            LOGGER.info("Dependency '{}' has no license set.", dependency.getName());
             return dependency;
-        };
+        }
+
+        for (Entry<Pattern, String> entry : licenseMap.entrySet())
+        {
+            if (entry.getKey().matcher(licenseName).matches())
+            {
+                dependency.setLicense(entry.getValue());
+                return dependency;
+            }
+        }
+
+        LOGGER.info("No licenses found for '{}'", licenseName);
+        return dependency;
     }
 
     private Dependency mapMavenDependencyToLicense(Dependency dependency)
