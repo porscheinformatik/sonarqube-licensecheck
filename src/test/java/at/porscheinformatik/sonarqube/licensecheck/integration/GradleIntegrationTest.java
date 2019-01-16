@@ -9,6 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -21,12 +23,13 @@ import java.util.regex.Pattern;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(Parameterized.class)
 public class GradleIntegrationTest {
 
     private static File projectRoot;
 
     @Before
-    public void setup() throws IOException {
+    public void setup() throws IOException, InterruptedException {
         projectRoot = new File("target/testProject");
         FileUtils.deleteDirectory(projectRoot);
         projectRoot.mkdirs();
@@ -39,8 +42,18 @@ public class GradleIntegrationTest {
     }
 
 
+    @Parameterized.Parameters
+    public static List<String> data() {
+        return Arrays.asList("5.1.1", "4.10.3", "3.5.1");
+    }
+
+    @Parameterized.Parameter
+    public String version;
+
     @Test
-    public void scanWithMatch() {
+    public void scanWithMatch() throws IOException {
+        GradleWrapperResolver.loadGradleWrapper(projectRoot, version);
+
         Map<Pattern, String> licenseMap = new HashMap<>();
         licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
         MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);

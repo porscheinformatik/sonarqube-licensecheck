@@ -37,8 +37,8 @@ public class MavenIntegrationTest {
         if (!buildGradleTrg.exists()) {
             FileUtils.copyFile(buildGradleSrc, buildGradleTrg);
         }
+        GradleWrapperResolver.loadGradleWrapper(projectRoot);
     }
-
 
     @Test
     public void scan() {
