@@ -1,22 +1,20 @@
 <template>
-  <div>
+  <div class="boxed-group boxed-group-inner">
     <header class="page-header">
       <h1 class="page-title">License Check - Project Licenses</h1>
       <div class="page-description">Allow/disallow licences for specific projects.</div>
       <div class="page-actions">
-        <div class="button-group">
-          <button id="license-add" @click="showAddDialog()">Add License</button>
-        </div>
+        <button class="button" id="license-add" @click="showAddDialog()">Add License</button>
       </div>
     </header>
-    <div>
-      <div class="panel panel-vertical bordered-bottom spacer-bottom">
-        <button class="search-box-submit button-clean"><i class="icon-search"></i></button>
-        <input v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
+    <div class="panel panel-vertical bordered-bottom spacer-bottom">
+      <div class="search-box">
+        <svgicon icon="magnify" width="15" height="16" style="padding-left: 5px; margin-top: 4px; fill: #999;"></svgicon>
+        <input style="background: none; width: 100%; border: none" v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
       </div>
     </div>
     <div>
-      <table class="data zebra" width="100%">
+      <table class="data zebra">
         <thead>
           <tr>
             <th>Project</th>
@@ -30,9 +28,13 @@
             <td><span :title="item.projectKey">{{item.projectName}}</span></td>
             <td>{{item.license}} / {{item.licenseName}}</td>
             <td>{{item.status}}</td>
-            <td>
-              <a class="icon-edit" @click="showEditDialog(item)" title="Edit License"></a>
-              <a class="icon-delete" @click="showDeleteDialog(item)" title="Delete License"></a>
+            <td class="thin nowrap">
+              <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
+                <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
+              </a>
+              <a class="button button-link" @click="showDeleteDialog(item)" title="Delete item">
+                <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
+              </a>
             </td>
           </tr>
           <tr v-show="!displayedItems.length">
@@ -67,16 +69,18 @@
           </select>
         </div>
       </div>
-      <span slot="footer"><button @click="saveItem(itemToEdit)">Save</button></span>
+      <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
     </modal-dialog>
     <modal-dialog header="Delete License" :show="!!itemToDelete" @close="cancelDelete()">
       <div slot="body" v-if="itemToDelete">Are you sure you want to delete the license mapping &quot;{{itemToDelete.projectName}}&quot; / &quot;{{itemToDelete.license}}&quot;?</div>
-      <span slot="footer"><button @click="deleteItem(itemToDelete)">Delete</button></span>
+      <span slot="footer"><button class="button" @click="deleteItem(itemToDelete)">Delete</button></span>
     </modal-dialog>
   </div>
 </template>
 
 <script>
+import '../../../compiled-icons';
+
 export default {
   data() {
     return {
@@ -136,7 +140,7 @@ export default {
     },
     loadProjects() {
       return window.SonarRequest
-        .getJSON('/api/components/search?qualifiers=TRK&pageSize=10000')
+        .getJSON('/api/components/search?qualifiers=TRK&pageSize=500')
         .then(response => {
           this.projects = response.components;
         });

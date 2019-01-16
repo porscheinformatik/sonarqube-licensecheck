@@ -1,22 +1,20 @@
 <template>
-  <div>
+  <div class="boxed-group boxed-group-inner">
     <header class="page-header">
       <h1 class="page-title">License Check - Maven Licenses</h1>
       <div class="page-description">Map strings entered in Maven POM license name to licenses.</div>
       <div class="page-actions">
-        <div class="button-group">
-          <button id="license-add" @click="showAddDialog()">Add Maven License</button>
-        </div>
+        <button id="license-add" @click="showAddDialog()" class="button">Add Maven License</button>
       </div>
     </header>
-    <div>
-      <div class="panel panel-vertical bordered-bottom spacer-bottom">
-        <button class="search-box-submit button-clean"><i class="icon-search"></i></button>
-        <input v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
+    <div class="panel panel-vertical bordered-bottom spacer-bottom">
+      <div class="search-box">
+        <svgicon icon="magnify" width="15" height="16" style="padding-left: 5px; margin-top: 4px; fill: #999;"></svgicon>
+        <input style="background: none; width: 100%; border: none" v-model="searchText" class="search-box-input" type="search" maxlength="100" placeholder="Search" autocomplete="off">
       </div>
     </div>
     <div>
-      <table class="data zebra" width="100%">
+      <table class="data zebra">
         <thead>
           <tr>
             <th>License Text Regex</th>
@@ -28,9 +26,13 @@
           <tr v-for="item in displayedItems" :key="item.key">
             <td>{{item.regex}}</td>
             <td>{{item.license}} / {{item.licenseName}}</td>
-            <td>
-              <a class="icon-edit" @click="showEditDialog(item)" title="Edit Maven License"></a>
-              <a class="icon-delete" @click="showDeleteDialog(item)" title="Delete Maven License"></a>
+            <td class="thin nowrap">
+              <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
+                <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
+              </a>
+              <a class="button button-link" @click="showDeleteDialog(item)" title="Delete item">
+                <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
+              </a>
             </td>
           </tr>
           <tr v-show="!displayedItems.length">
@@ -55,16 +57,18 @@
           </select>
         </div>
       </div>
-      <span slot="footer"><button @click="saveItem(itemToEdit)">Save</button></span>
+      <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
     </modal-dialog>
     <modal-dialog header="Delete Maven License" :show="!!itemToDelete" @close="cancelDelete()">
       <div slot="body" v-if="itemToDelete">Are you sure you want to delete the Maven license mapping &quot;{{itemToDelete.regex}}&quot; / &quot;{{itemToDelete.license}}&quot;?</div>
-      <span slot="footer"><button @click="deleteItem(itemToDelete)">Delete</button></span>
+      <span slot="footer"><button class="button" @click="deleteItem(itemToDelete)">Delete</button></span>
     </modal-dialog>
   </div>
 </template>
 
 <script>
+import '../../../compiled-icons';
+
 export default {
   data() {
     return {
@@ -78,14 +82,14 @@ export default {
   },
   computed: {
     displayedItems() {
-      if (!this.searchText || this.searchText.length == 0) {
+      if (!this.searchText || this.searchText.length === 0) {
         return this.items;
       }
 
       let search = this.searchText.toLowerCase();
       return this.items.filter(
         item =>
-          item.rgex.toLowerCase().indexOf(search) >= 0 ||
+          item.regex.toLowerCase().indexOf(search) >= 0 ||
           item.license.toLowerCase().indexOf(search) >= 0
       );
     }

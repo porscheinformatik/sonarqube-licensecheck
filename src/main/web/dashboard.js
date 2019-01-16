@@ -3,7 +3,7 @@ import Licenses from './dashboard/licenses.vue';
 import Dependencies from './dashboard/dependencies.vue';
 import saveAs from 'file-saverjs';
 import buildExcel from './dashboard/excel-builder';
-
+ 
 window.registerExtension('licensecheck/dashboard', function (options) {
 
   const app = new Vue({

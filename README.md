@@ -15,7 +15,7 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
 This plugin is compatible:
  
  * 1.x versions with SonarQube >= 5.3 and < 6.
- * 2.x version with SonarQube >= 6.5.
+ * 2.x version with SonarQube >= 6.5 and < 7.
 
 ## Installation
 

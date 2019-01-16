@@ -38,15 +38,6 @@ public class LicenseCheckSensor implements Sensor
         this.scanners = ScannerResolver.resolveScanners(fs.baseDir(), mavenLicenseService, mavenDependencyService);
     }
 
-    private static ProjectDefinition getRootProject(ProjectDefinition definition)
-    {
-        while (definition != null && definition.getParent() != null && !definition.equals(definition.getParent()))
-        {
-            definition = definition.getParent();
-        }
-        return definition;
-    }
-
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
         if (!dependencies.isEmpty())
@@ -92,7 +83,7 @@ public class LicenseCheckSensor implements Sensor
                 dependencies.addAll(scanner.scan(fs.baseDir()));
             }
 
-            ProjectDefinition project = getRootProject(((DefaultInputModule) context.module()).definition());
+            ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
             Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
             Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
