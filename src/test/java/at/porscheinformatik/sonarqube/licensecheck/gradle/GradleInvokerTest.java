@@ -5,27 +5,30 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+
+import static at.porscheinformatik.sonarqube.licensecheck.gradle.GradleProjectResolver.prepareGradleProject;
 
 public class GradleInvokerTest {
 
-    private static String root;
+    private static File root;
 
     @Before
-    public void setup() {
-        root = new File(this.getClass().getClassLoader().getResource("gradle/build.gradle").getFile()).getParent();
+    public void setup() throws IOException {
+        root = prepareGradleProject();
     }
 
     @Test
     public void invokeTasks() throws Exception {
-        GradleInvoker gradleInvoker = new GradleInvoker(root);
+        GradleInvoker gradleInvoker = new GradleInvoker(root.getAbsolutePath());
 
-        Assert.assertEquals(true, gradleInvoker.invoke("tasks").contains("build"));
+        Assert.assertTrue(gradleInvoker.invoke("tasks").contains("build"));
     }
 
     @Test
     public void invokeDependenciesBare() throws Exception {
-        GradleInvoker gradleInvoker = new GradleInvoker(root);
+        GradleInvoker gradleInvoker = new GradleInvoker(root.getAbsolutePath());
 
-        Assert.assertEquals(gradleInvoker.invoke("dependencies").contains("groovy"), true);
+        Assert.assertTrue(gradleInvoker.invoke("dependencies").contains("groovy"));
     }
 }

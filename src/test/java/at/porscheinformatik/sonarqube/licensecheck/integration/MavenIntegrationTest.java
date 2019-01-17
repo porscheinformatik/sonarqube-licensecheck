@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.integration;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleProjectResolver;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
@@ -28,16 +29,13 @@ public class MavenIntegrationTest {
 
     @Before
     public void setup() throws IOException {
-        projectRoot = new File("target/testProject");
-        FileUtils.deleteDirectory(projectRoot);
-        projectRoot.mkdirs();
+        projectRoot = GradleProjectResolver.prepareGradleProject();
 
         File buildGradleSrc = new File(this.getClass().getClassLoader().getResource("maven/pom.xml").getFile());
         File buildGradleTrg = new File(projectRoot, "pom.xml");
         if (!buildGradleTrg.exists()) {
             FileUtils.copyFile(buildGradleSrc, buildGradleTrg);
         }
-        GradleWrapperResolver.loadGradleWrapper(projectRoot);
     }
 
     @Test

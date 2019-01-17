@@ -1,6 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.junit.Assert;
@@ -12,22 +11,16 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static at.porscheinformatik.sonarqube.licensecheck.gradle.GradleProjectResolver.prepareGradleProject;
+
 public class GradlePomResolverTest {
 
 
     private static File projectRoot;
 
-    // todo: mock GradleInvoker
-
     @Before
     public void setup() throws IOException {
-        projectRoot = new File("target/testProject");
-        FileUtils.deleteDirectory(projectRoot);
-        projectRoot.mkdirs();
-
-        File buildGradleSrc = new File(this.getClass().getClassLoader().getResource("gradle/build.gradle").getFile());
-        File buildGradleTrg = new File(projectRoot, "build.gradle");
-        FileUtils.copyFile(buildGradleSrc, buildGradleTrg);
+        projectRoot = prepareGradleProject();
     }
 
     @Test
