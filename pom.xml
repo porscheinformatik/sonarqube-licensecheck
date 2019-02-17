@@ -132,22 +132,25 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.8.0</version>
         <configuration>
-          <!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
       </plugin>
-
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20.1</version>
+        <version>2.22.1</version>
         <configuration>
           <systemPropertyVariables>
             <maven.home>${maven.home}</maven.home>
@@ -157,7 +160,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.9</version>
+        <version>0.8.3</version>
         <executions>
           <execution>
             <id>default-prepare-agent</id>
@@ -170,7 +173,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.6</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -196,8 +199,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v6.9.2</nodeVersion>
-          <npmVersion>3.10.9</npmVersion>
+          <nodeVersion>v10.15.1</nodeVersion>
+          <npmVersion>6.4.1</npmVersion>
         </configuration>
       </plugin>
     </plugins>
