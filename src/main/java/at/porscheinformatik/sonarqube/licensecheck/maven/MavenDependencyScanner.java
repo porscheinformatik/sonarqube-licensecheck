@@ -118,7 +118,6 @@ public class MavenDependencyScanner implements Scanner
             {
                 LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
             }
-
             return Files.lines(tempFile)
                 .filter(StringUtils::isNotBlank)
                 .map(MavenDependencyScanner::findDependency)
@@ -153,6 +152,9 @@ public class MavenDependencyScanner implements Scanner
     private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("\\s*([^:]*):([^:]*):[^:]*:([^:]*):[^:]*:(.*)");
     private static Dependency findDependency(String line)
     {
+        // Remove module info introduced with Maven Dependency Plugin 3.0 (and JDK > 9)
+        line = line.replaceFirst(" -- module .*", "");
+
         Matcher matcher = DEPENDENCY_PATTERN.matcher(line);
         if (matcher.find())
         {
