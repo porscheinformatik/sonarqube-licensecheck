@@ -1,9 +1,12 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +17,6 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.rule.RuleKey;
-import com.hazelcast.util.collection.ArrayUtils;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
@@ -118,7 +120,7 @@ public class ValidateLicenses
         String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
         return licenses
             .stream()
-            .filter(l -> ArrayUtils.contains(orLicenses, l.getIdentifier()))
+            .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
             .filter(l -> Boolean.valueOf(l.getStatus()))
             .findAny()
             .isPresent();
@@ -129,8 +131,9 @@ public class ValidateLicenses
         String[] andLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" AND ");
         long count = andLicenses.length;
         List<License> foundLicenses =
-            licenses.stream().filter(l -> ArrayUtils.contains(andLicenses, l.getIdentifier())).collect(
-                Collectors.toList());
+            licenses.stream()
+                .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
+                .collect(Collectors.toList());
         long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.valueOf(l.getStatus())).count();
         if (count == allowedLicenseCount)
         {
@@ -173,5 +176,17 @@ public class ValidateLicenses
                 .on(context.module())
                 .message("No License found for Dependency: " + dependency.getName()));
         issue.save();
+    }
+
+    private static boolean contains(String[] items, String valueToFind) 
+    {
+        for (String item : items)
+        {
+            if (item != null && item.equals(valueToFind))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
