@@ -36,7 +36,6 @@ public class LicenseCheckPlugin implements Plugin
             LicenseCheckSensor.class,
             LicenseCheckMetrics.class,
             LicenseCheckPageDefinition.class,
-            LicenseCheckMeasureComputer.class,
             LicenseCheckRulesDefinition.class,
             LicenseService.class,
             LicenseSettingsService.class,

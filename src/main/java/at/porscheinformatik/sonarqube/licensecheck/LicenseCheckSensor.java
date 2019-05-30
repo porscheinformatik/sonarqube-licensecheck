@@ -1,7 +1,11 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import static java.util.Collections.newSetFromMap;
+
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +24,7 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
-public class LicenseCheckSensor implements Sensor
+public class LicenseCheckSensor implements Sensor 
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
 
@@ -28,6 +32,10 @@ public class LicenseCheckSensor implements Sensor
     private final Settings settings;
     private final ValidateLicenses validateLicenses;
     private final Scanner[] scanners;
+
+    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
+    private final static Set<Dependency> AGGREGATED_DEPENDENCIES = 
+        newSetFromMap(new ConcurrentHashMap<Dependency, Boolean>());
 
     public LicenseCheckSensor(FileSystem fs, Settings settings, ValidateLicenses validateLicenses,
         MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
@@ -42,11 +50,13 @@ public class LicenseCheckSensor implements Sensor
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
+        LOGGER.debug("Saving depenencies for module {}: {}", sensorContext.module(), dependencies);
+
         if (!dependencies.isEmpty())
         {
             sensorContext
-                .newMeasure()
-                .forMetric(LicenseCheckMetrics.INPUTDEPENDENCY)
+                .<String>newMeasure()
+                .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
                 .on(sensorContext.module())
                 .save();
@@ -55,11 +65,13 @@ public class LicenseCheckSensor implements Sensor
 
     private static void saveLicenses(SensorContext sensorContext, Set<License> licenses)
     {
+        LOGGER.debug("Saving licenses for module {}: {}", sensorContext.module(), licenses);
+
         if (!licenses.isEmpty())
         {
             sensorContext
-                .newMeasure()
-                .forMetric(LicenseCheckMetrics.INPUTLICENSE)
+                .<String>newMeasure()
+                .forMetric(LicenseCheckMetrics.LICENSE)
                 .withValue(License.createString(licenses))
                 .on(sensorContext.module())
                 .save();
@@ -89,8 +101,19 @@ public class LicenseCheckSensor implements Sensor
             Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
             Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
-            saveDependencies(context, validatedDependencies);
-            saveLicenses(context, usedLicenses);
+            AGGREGATED_LICENSES.addAll(usedLicenses);
+            AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
+
+            if (project.getParent() == null)
+            {
+                saveDependencies(context, AGGREGATED_DEPENDENCIES);
+                saveLicenses(context, AGGREGATED_LICENSES);
+            }
+            else
+            {
+                saveDependencies(context, validatedDependencies);
+                saveLicenses(context, usedLicenses);
+            }
         }
         else
         {

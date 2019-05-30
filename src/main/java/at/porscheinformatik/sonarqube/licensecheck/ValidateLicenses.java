@@ -1,12 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ArrayUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +15,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.rule.RuleKey;
+
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
