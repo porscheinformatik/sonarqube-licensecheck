@@ -41,6 +41,7 @@
   </licenses>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
   </properties>
