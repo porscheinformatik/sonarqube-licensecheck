@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "buble": "0.18.0",
-    "buble-loader": "0.4.1",
+    "buble-loader": "0.5.1",
     "concurrently": "3.6.1",
     "css-loader": "0.28.11",
     "http-proxy": "1.17.0",
