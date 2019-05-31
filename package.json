@@ -14,7 +14,7 @@
     "buble": "0.18.0",
     "buble-loader": "0.4.1",
     "concurrently": "3.6.1",
-    "css-loader": "0.28.11",
+    "css-loader": "2.1.1",
     "http-proxy": "1.17.0",
     "vue-loader": "13.7.3",
     "vue-svgicon": "3.2.6",
