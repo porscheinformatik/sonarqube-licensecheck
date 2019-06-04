@@ -24,7 +24,7 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
-public class LicenseCheckSensor implements Sensor 
+public class LicenseCheckSensor implements Sensor
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
 
@@ -34,7 +34,7 @@ public class LicenseCheckSensor implements Sensor
     private final Scanner[] scanners;
 
     private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
-    private final static Set<Dependency> AGGREGATED_DEPENDENCIES = 
+    private final static Set<Dependency> AGGREGATED_DEPENDENCIES =
         newSetFromMap(new ConcurrentHashMap<Dependency, Boolean>());
 
     public LicenseCheckSensor(FileSystem fs, Settings settings, ValidateLicenses validateLicenses,
@@ -88,36 +88,35 @@ public class LicenseCheckSensor implements Sensor
     @Override
     public void execute(SensorContext context)
     {
-        if (settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
+        if (!settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
         {
-            Set<Dependency> dependencies = new TreeSet<>();
+            LOGGER.info("Scanner is set to inactive. No scan possible.");
+            return;
+        }
 
-            for (Scanner scanner : scanners)
-            {
-                dependencies.addAll(scanner.scan(fs.baseDir()));
-            }
+        Set<Dependency> dependencies = new TreeSet<>();
 
-            ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
-            Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
-            Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
+        for (Scanner scanner : scanners)
+        {
+            dependencies.addAll(scanner.scan(fs.baseDir()));
+        }
 
-            AGGREGATED_LICENSES.addAll(usedLicenses);
-            AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
+        ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
+        Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
+        Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
-            if (project.getParent() == null)
-            {
-                saveDependencies(context, AGGREGATED_DEPENDENCIES);
-                saveLicenses(context, AGGREGATED_LICENSES);
-            }
-            else
-            {
-                saveDependencies(context, validatedDependencies);
-                saveLicenses(context, usedLicenses);
-            }
+        AGGREGATED_LICENSES.addAll(usedLicenses);
+        AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
+
+        if (project.getParent() == null)
+        {
+            saveDependencies(context, AGGREGATED_DEPENDENCIES);
+            saveLicenses(context, AGGREGATED_LICENSES);
         }
         else
         {
-            LOGGER.info("Scanner is set to inactive. No scan possible.");
+            saveDependencies(context, validatedDependencies);
+            saveLicenses(context, usedLicenses);
         }
     }
 }
