@@ -1,5 +1,13 @@
 {
   "extends": [
     "config:base"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "org.sonarsource.sonarqube packages",
+      "packagePatterns": ["^org.sonarsource.sonarqube:"],
+      "groupName": "org.sonarsource.sonarqube"
+    } 
   ]
 }
