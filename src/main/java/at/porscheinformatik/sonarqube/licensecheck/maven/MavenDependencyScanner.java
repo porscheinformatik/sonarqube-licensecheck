@@ -57,6 +57,11 @@ public class MavenDependencyScanner implements Scanner
     @Override
     public List<Dependency> scan(File moduleDir)
     {
+        if(!new File(moduleDir, "pom.xml").exists())
+        {
+            return Collections.emptyList();
+        }
+
         String userSettings = null;
         String globalSettings = null;
         CommandLine cmd = getCommandLineArgs();
