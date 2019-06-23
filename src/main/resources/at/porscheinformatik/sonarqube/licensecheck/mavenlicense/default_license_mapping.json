@@ -1,0 +1,31 @@
+[
+  { "regex": "Apple License", "license": "AML" },
+  { "regex": ".*Apache.*1\\.1.*", "license": "Apache-1.1" },
+  { "regex": ".*AL.*2.*", "license": "Apache-2.0" },
+  { "regex": ".*ASF.*2.*", "license": "Apache-2.0" },
+  { "regex": ".*ASL.*", "license": "Apache-2.0" },
+  { "regex": ".*Apache.*2.*", "license": "Apache-2.0" },
+  { "regex": ".*BSD.*", "license": "BSD-3-Clause" },
+  { "regex": "^CC0.*$", "license": "CC0-1.0" },
+  { "regex": ".*CDDL.*", "license": "CDDL-1.0" },
+  { "regex": ".*CDDL.*GPL.*", "license": "(CDDL-1.0 OR GPL-2.0)" },
+  { "regex": ".*CDDL.*1.1.*", "license": "CDDL-1.1" },
+  {
+    "regex": ".*Common Development and Distribution License.*",
+    "license": "CDDL-1.1"
+  },
+  { "regex": ".*Common Public License.*", "license": "CPL-1.0" },
+  { "regex": ".*(EPL|Eclipse Public License).*", "license": "EPL-1.0" },
+  { "regex": ".*LGPL.*2\\.1.*", "license": "LGPL-2.1" },
+  { "regex": ".*Lesser.*Public License.*2\\.1.*", "license": "LGPL-2.1" },
+  { "regex": ".*LGPL.*", "license": "LGPL-3.0" },
+  { "regex": ".*Lesser Public License.*", "license": "LGPL-3.0" },
+  { "regex": ".*MIT.*", "license": "MIT" },
+  { "regex": ".*MPL.*1\\.1.*", "license": "MPL-1.1" },
+  { "regex": ".*Mozilla Public License.*", "license": "MPL-1.1" },
+  { "regex": ".*PostgreSQL License.*", "license": "PostgreSQL" },
+  { "regex": ".*Eclipse.Distribution.License.*.1.0.*", "license": "BSD-3-Clause" },
+  { "regex": ".*GPL2.*CPE.*", "license": "GPL-2.0-with-classpath-exception" },
+  { "regex": ".*JSON.*License.*", "license": "JSON" },
+  { "regex": ".*W3C.Software.*License.*", "license": "W3C"}
+]

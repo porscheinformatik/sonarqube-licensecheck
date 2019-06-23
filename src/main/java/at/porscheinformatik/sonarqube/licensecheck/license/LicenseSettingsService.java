@@ -2,9 +2,7 @@ package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
+
+import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
 
 @ServerSide
 public class LicenseSettingsService
@@ -137,29 +137,16 @@ public class LicenseSettingsService
     {
         String licenseJson = settings.getString(LICENSE_KEY);
 
-        if ((licenseJson != null) && !licenseJson.isEmpty())
+        if (licenseJson != null && !licenseJson.isEmpty())
         {
             return;
         }
 
-        try
+        try(InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json");)
         {
-            InputStream inputStream = LicenseService.class.getResourceAsStream("spdx_license_list.json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder out = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null)
-            {
-                out.append(line);
-            }
-
-            String newJsonLicense = out.toString();
-            settings.setProperty(LICENSE_KEY, newJsonLicense);
-            persistentSettings.saveProperty(LICENSE_KEY, newJsonLicense);
-
-            reader.close();
-            inputStream.close();
+            String spdxLicenseListJson = IOUtils.readToString(inputStream);
+            settings.setProperty(LICENSE_KEY, spdxLicenseListJson);
+            persistentSettings.saveProperty(LICENSE_KEY, spdxLicenseListJson);
         }
         catch (Exception e)
         {
