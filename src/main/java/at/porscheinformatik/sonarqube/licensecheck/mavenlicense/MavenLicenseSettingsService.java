@@ -2,17 +2,24 @@ package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
+import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
+
 @ServerSide
 public class MavenLicenseSettingsService
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenLicenseSettingsService.class);
+
     /** This is not official API */
     private final PersistentSettings persistentSettings;
     private final Settings settings;
@@ -25,6 +32,28 @@ public class MavenLicenseSettingsService
         this.persistentSettings = persistentSettings;
         this.settings = settings;
         this.mavenLicenseService = mavenLicenseService;
+        initMavenLicenses();
+    }
+
+    private void initMavenLicenses()
+    {
+        String mavenLicenseListString = settings.getString(LICENSE_REGEX);
+
+        if (mavenLicenseListString != null && !mavenLicenseListString.isEmpty())
+        {
+            return;
+        }
+
+        try(InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
+        {
+            mavenLicenseListString = IOUtils.readToString(in);
+            settings.setProperty(LICENSE_REGEX, mavenLicenseListString);
+            persistentSettings.saveProperty(LICENSE_REGEX, mavenLicenseListString);
+        }
+        catch(Exception e)
+        {
+            LOGGER.error("Could not load default_license_mapping.json", e);
+        }
     }
 
     public boolean addMavenLicense(String regex, String key)
