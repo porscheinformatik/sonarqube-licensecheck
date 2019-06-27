@@ -29,27 +29,27 @@ public class PackageJsonDependencyScanner implements Scanner
     {
         File packageJsonFile = new File(moduleDir, "package.json");
 
-        if (packageJsonFile.exists())
+        if (!packageJsonFile.exists())
         {
-            LOGGER.info("Scanning for NPM dependencies");
+            LOGGER.info("No package.json file found - skipping NPM dependency scan");
+            return Collections.emptyList();
+        }
 
-            try (InputStream fis = new FileInputStream(packageJsonFile);
-                JsonReader jsonReader = Json.createReader(fis))
+        LOGGER.info("Scanning for NPM dependencies");
+
+        try (InputStream fis = new FileInputStream(packageJsonFile);
+            JsonReader jsonReader = Json.createReader(fis))
+        {
+            JsonObject jsonObject = jsonReader.readObject();
+            JsonObject jsonObjectDependencies = jsonObject.getJsonObject("dependencies");
+            if (jsonObjectDependencies != null)
             {
-                JsonObject jsonObject = jsonReader.readObject();
-                JsonObject jsonObjectDependencies = jsonObject.getJsonObject("dependencies");
-                if (jsonObjectDependencies != null)
-                {
-                    return dependencyParser(jsonObjectDependencies, packageJsonFile);
-                }
-            }
-            catch (IOException e)
-            {
-                LOGGER.error("Error reading package.json", e);
+                return dependencyParser(jsonObjectDependencies, packageJsonFile);
             }
         }
-        else {
-            LOGGER.info("No package.json file found - skipping NPM dependency scan");
+        catch (IOException e)
+        {
+            LOGGER.error("Error reading package.json", e);
         }
         return Collections.emptyList();
     }
