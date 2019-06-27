@@ -9,4 +9,6 @@ public class LicenseCheckPropertyKeys
     public static final String ALLOWED_DEPENDENCIES_KEY = "licensecheck.alloweddependencies";
 
     public static final String PROJECT_LICENSE_KEY = "licensecheck.projectlicense";
+
+    public static final String NPM_RESOLVE_TRANSITVE_DEPS = "licensecheck.npm.resolvetransitive";
 }
