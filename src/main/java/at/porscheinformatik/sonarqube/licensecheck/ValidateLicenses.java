@@ -85,15 +85,15 @@ public class ValidateLicenses
             {
                 String notAllowedLicense = "";
 
-                for(License element : licensesContainingDependency) {
-                    if(element.getStatus() == "false") {
+                for (License element : licensesContainingDependency) {
+                    if (element.getStatus() == "false") {
                         notAllowedLicense += element.getName() + " ";
                     }
                 }
                 licenseNotAllowedIssue(context, dependency, notAllowedLicense);
             }
         }
-    }    
+    }
 
     private boolean checkSpdxLicense(String spdxLicenseString, List<License> licenses)
     {
@@ -115,7 +115,7 @@ public class ValidateLicenses
             .isPresent();
     }
 
-    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses){
+    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses) {
         String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
         return licenses
             .stream()
@@ -138,7 +138,7 @@ public class ValidateLicenses
         {
             return true;
         }
-        else if(foundLicenses.size() == count)
+        else if (foundLicenses.size() == count)
         {
             // NOT ALLOWED
             return false;
@@ -177,7 +177,7 @@ public class ValidateLicenses
         issue.save();
     }
 
-    private static boolean contains(String[] items, String valueToFind) 
+    private static boolean contains(String[] items, String valueToFind)
     {
         for (String item : items)
         {

@@ -35,9 +35,9 @@ public class PackageJsonDependencyScanner implements Scanner
     }
 
     @Override
-    public Set<Dependency> scan(File file)
+    public Set<Dependency> scan(File moduleDir)
     {
-        File packageJsonFile = new File(file, "package.json");
+        File packageJsonFile = new File(moduleDir, "package.json");
 
         if (!packageJsonFile.exists())
         {
