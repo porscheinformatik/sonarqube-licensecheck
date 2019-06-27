@@ -44,7 +44,7 @@ public class LicenseCheckSensor implements Sensor
         this.settings = settings;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
-            new PackageJsonDependencyScanner(),
+            new PackageJsonDependencyScanner(settings),
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 

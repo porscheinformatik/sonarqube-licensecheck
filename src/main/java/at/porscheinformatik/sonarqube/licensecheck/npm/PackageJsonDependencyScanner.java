@@ -7,22 +7,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import org.sonar.api.config.Settings;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
+
+    private final Settings settings;
+
+    public PackageJsonDependencyScanner(Settings settings) {
+        this.settings = settings;
+    }
 
     @Override
     public List<Dependency> scan(File file)
@@ -37,10 +47,9 @@ public class PackageJsonDependencyScanner implements Scanner
                 return Collections.emptyList();
             }
 
-            try (InputStream fis = new FileInputStream(packageJsonFile);
-                JsonReader jsonReader = Json.createReader(fis))
+            try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
             {
-                return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
+                return new ArrayList<>(getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder));
             }
             catch (IOException e)
             {
@@ -50,19 +59,19 @@ public class PackageJsonDependencyScanner implements Scanner
         return Collections.emptyList();
     }
 
-    private static List<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
+    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
     {
         JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
         if (jsonObjectDependencies != null)
         {
             return dependencyParser(jsonObjectDependencies, nodeModulesFolder);
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
-    private static List<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
+    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
     {
-        List<Dependency> dependencies = new ArrayList<>();
+        Set<Dependency> dependencies = new LinkedHashSet<>();
 
         for (String packageName : jsonDependencies.keySet())
         {
@@ -72,7 +81,7 @@ public class PackageJsonDependencyScanner implements Scanner
         return dependencies;
     }
 
-    private static void moduleCheck(File nodeModulesFolder, String packageName, List<Dependency> dependencies)
+    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies)
     {
         File moduleFolder = new File(nodeModulesFolder, packageName);
 
@@ -82,17 +91,17 @@ public class PackageJsonDependencyScanner implements Scanner
 
             try (InputStream fis = new FileInputStream(packageFile); JsonReader jsonReader = Json.createReader(fis))
             {
-                JsonObject jsonObject = jsonReader.readObject();
-                if (jsonObject != null)
+                JsonObject packageJsonObject = jsonReader.readObject();
+                if (packageJsonObject != null)
                 {
                     String license = null;
-                    if (jsonObject.containsKey("license"))
+                    if (packageJsonObject.containsKey("license"))
                     {
-                        license = jsonObject.getString("license");
+                        license = packageJsonObject.getString("license");
                     }
-                    else if (jsonObject.containsKey("licenses"))
+                    else if (packageJsonObject.containsKey("licenses"))
                     {
-                        JsonArray licenses = jsonObject.getJsonArray("licenses");
+                        JsonArray licenses = packageJsonObject.getJsonArray("licenses");
                         if (licenses.size() > 0)
                         {
                             license = licenses.getJsonObject(0).getString("type");
@@ -101,7 +110,12 @@ public class PackageJsonDependencyScanner implements Scanner
 
                     if (license != null)
                     {
-                        dependencies.add(new Dependency(packageName, jsonObject.getString("version"), license));
+                        dependencies.add(new Dependency(packageName, packageJsonObject.getString("version"), license));
+                    }
+
+                    if (settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS))
+                    {
+                        dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder));
                     }
                 }
             }
