@@ -57,10 +57,13 @@ public class MavenDependencyScanner implements Scanner
     @Override
     public List<Dependency> scan(File moduleDir)
     {
-        if(!new File(moduleDir, "pom.xml").exists())
+        if (!new File(moduleDir, "pom.xml").exists())
         {
+            LOGGER.info("No pom.xml file found - skipping Maven dependency scan");
             return Collections.emptyList();
         }
+
+        LOGGER.info("Scanning for Maven dependencies");
 
         String userSettings = null;
         String globalSettings = null;

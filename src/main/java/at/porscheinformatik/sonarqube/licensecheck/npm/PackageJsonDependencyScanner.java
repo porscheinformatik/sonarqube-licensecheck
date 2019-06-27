@@ -31,6 +31,8 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (packageJsonFile.exists())
         {
+            LOGGER.info("Scanning for NPM dependencies");
+
             try (InputStream fis = new FileInputStream(packageJsonFile);
                 JsonReader jsonReader = Json.createReader(fis))
             {
@@ -46,6 +48,9 @@ public class PackageJsonDependencyScanner implements Scanner
             {
                 LOGGER.error("Error reading package.json", e);
             }
+        }
+        else {
+            LOGGER.info("No package.json file found - skipping NPM dependency scan");
         }
         return Collections.emptyList();
     }
