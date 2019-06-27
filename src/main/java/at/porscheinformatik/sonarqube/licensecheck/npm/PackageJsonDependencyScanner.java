@@ -42,7 +42,6 @@ public class PackageJsonDependencyScanner implements Scanner
                 {
                     return dependencyParser(jsonObjectDependencies, packageJsonFile);
                 }
-                jsonReader.close();
             }
             catch (IOException e)
             {
