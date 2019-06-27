@@ -31,7 +31,7 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (!packageJsonFile.exists())
         {
-            LOGGER.info("No package.json file found - skipping NPM dependency scan");
+            LOGGER.info("No package.json file found in {} - skipping NPM dependency scan", moduleDir.getPath());
             return Collections.emptyList();
         }
 

@@ -59,7 +59,7 @@ public class MavenDependencyScanner implements Scanner
     {
         if (!new File(moduleDir, "pom.xml").exists())
         {
-            LOGGER.info("No pom.xml file found - skipping Maven dependency scan");
+            LOGGER.info("No pom.xml file found in {} - skipping Maven dependency scan", moduleDir.getPath());
             return Collections.emptyList();
         }
 
