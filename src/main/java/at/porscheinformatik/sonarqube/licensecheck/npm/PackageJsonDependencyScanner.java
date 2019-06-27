@@ -25,9 +25,9 @@ public class PackageJsonDependencyScanner implements Scanner
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
     @Override
-    public List<Dependency> scan(File file)
+    public List<Dependency> scan(File moduleDir)
     {
-        File packageJsonFile = new File(file, "package.json");
+        File packageJsonFile = new File(moduleDir, "package.json");
 
         if (packageJsonFile.exists())
         {
