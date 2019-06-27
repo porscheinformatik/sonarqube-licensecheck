@@ -80,13 +80,13 @@ public class MavenDependencyScanner implements Scanner
             }
         }
 
-        return this.readDependecyList(moduleDir, userSettings, globalSettings)
+        return this.readDependencyList(moduleDir, userSettings, globalSettings)
             .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), userSettings, globalSettings))
             .map(this::mapMavenDependencyToLicense)
             .collect(Collectors.toList());
     }
 
-    private Stream<Dependency> readDependecyList(File moduleDir, String userSettings, String globalSettings)
+    private Stream<Dependency> readDependencyList(File moduleDir, String userSettings, String globalSettings)
     {
         Path tempFile = createTempFile();
         if (tempFile == null)
