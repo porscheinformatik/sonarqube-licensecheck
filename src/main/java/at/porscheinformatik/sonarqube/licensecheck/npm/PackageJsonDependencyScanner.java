@@ -31,16 +31,16 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (packageJsonFile.exists())
         {
+            File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
+            if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
+            {
+                return Collections.emptyList();
+            }
+
             try (InputStream fis = new FileInputStream(packageJsonFile);
                 JsonReader jsonReader = Json.createReader(fis))
             {
-                JsonObject jsonObject = jsonReader.readObject();
-                JsonObject jsonObjectDependencies = jsonObject.getJsonObject("dependencies");
-                if (jsonObjectDependencies != null)
-                {
-                    return dependencyParser(jsonObjectDependencies, packageJsonFile);
-                }
-                jsonReader.close();
+                return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
             }
             catch (IOException e)
             {
@@ -50,25 +50,31 @@ public class PackageJsonDependencyScanner implements Scanner
         return Collections.emptyList();
     }
 
-    private List<Dependency> dependencyParser(JsonObject jsonDependencies, File packageJsonFile)
+    private static List<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
+    {
+        JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
+        if (jsonObjectDependencies != null)
+        {
+            return dependencyParser(jsonObjectDependencies, nodeModulesFolder);
+        }
+        return Collections.emptyList();
+    }
+
+    private static List<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
     {
         List<Dependency> dependencies = new ArrayList<>();
 
-        File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
-        if (nodeModulesFolder.exists() && nodeModulesFolder.isDirectory())
+        for (String packageName : jsonDependencies.keySet())
         {
-            for (String key : jsonDependencies.keySet())
-            {
-                moduleCheck(nodeModulesFolder, key, dependencies);
-            }
+            moduleCheck(nodeModulesFolder, packageName, dependencies);
         }
 
         return dependencies;
     }
 
-    private static void moduleCheck(File nodeModulesFolder, String identifier, List<Dependency> dependencies)
+    private static void moduleCheck(File nodeModulesFolder, String packageName, List<Dependency> dependencies)
     {
-        File moduleFolder = new File(nodeModulesFolder, identifier);
+        File moduleFolder = new File(nodeModulesFolder, packageName);
 
         if (moduleFolder.exists() && moduleFolder.isDirectory())
         {
@@ -95,10 +101,9 @@ public class PackageJsonDependencyScanner implements Scanner
 
                     if (license != null)
                     {
-                        dependencies.add(new Dependency(identifier, jsonObject.getString("version"), license));
+                        dependencies.add(new Dependency(packageName, jsonObject.getString("version"), license));
                     }
                 }
-                jsonReader.close();
             }
             catch (FileNotFoundException e)
             {
@@ -106,7 +111,7 @@ public class PackageJsonDependencyScanner implements Scanner
             }
             catch (Exception e)
             {
-                LOGGER.error("Error adding dependency " + identifier, e);
+                LOGGER.error("Error adding dependency " + packageName, e);
             }
         }
     }
