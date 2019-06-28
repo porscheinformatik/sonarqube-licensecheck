@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +51,8 @@ public class PackageJsonDependencyScanner implements Scanner
 
             try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
             {
-                return new ArrayList<>(getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder));
+                Deque<String> transitiveStack = new ArrayDeque<>();
+                return new ArrayList<>(getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder, transitiveStack));
             }
             catch (IOException e)
             {
@@ -59,29 +62,29 @@ public class PackageJsonDependencyScanner implements Scanner
         return Collections.emptyList();
     }
 
-    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
+    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder, Deque<String> transitiveStack)
     {
         JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
         if (jsonObjectDependencies != null)
         {
-            return dependencyParser(jsonObjectDependencies, nodeModulesFolder);
+            return dependencyParser(jsonObjectDependencies, nodeModulesFolder, transitiveStack);
         }
         return Collections.emptySet();
     }
 
-    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
+    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder, Deque<String> transitiveStack)
     {
         Set<Dependency> dependencies = new LinkedHashSet<>();
 
         for (String packageName : jsonDependencies.keySet())
         {
-            moduleCheck(nodeModulesFolder, packageName, dependencies);
+            moduleCheck(nodeModulesFolder, packageName, dependencies, transitiveStack);
         }
 
         return dependencies;
     }
 
-    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies)
+    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies, Deque<String> transitiveStack)
     {
         File moduleFolder = new File(nodeModulesFolder, packageName);
 
@@ -115,7 +118,13 @@ public class PackageJsonDependencyScanner implements Scanner
 
                     if (settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS))
                     {
-                        dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder));
+                        if (transitiveStack.contains(packageName)) {
+                            LOGGER.warn("Circular dependency detected in {}.  Current stack of transitive deps: {}", packageName, transitiveStack);
+                        } else {
+                            transitiveStack.push(packageName);
+                            dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder, transitiveStack));
+                            transitiveStack.pop();
+                        }
                     }
                 }
             }

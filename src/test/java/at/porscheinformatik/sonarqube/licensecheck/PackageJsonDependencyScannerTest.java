@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 
 public class PackageJsonDependencyScannerTest
 {
-    final File folder = new File("src/test/resources");
+    private final File folder = new File("src/test/resources");
 
     @Test
     public void testHappyPath()
