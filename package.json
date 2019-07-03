@@ -11,7 +11,7 @@
   "author": "Christian Köberl",
   "license": "Apache-2.0",
   "devDependencies": {
-    "buble": "0.18.0",
+    "buble": "0.19.8",
     "buble-loader": "0.4.1",
     "concurrently": "3.6.1",
     "css-loader": "0.28.11",
