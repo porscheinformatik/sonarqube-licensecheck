@@ -5,12 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.json.Json;
@@ -43,25 +39,26 @@ public class PackageJsonDependencyScanner implements Scanner
     {
         File packageJsonFile = new File(file, "package.json");
 
-        if (packageJsonFile.exists())
+        if (!packageJsonFile.exists())
         {
-            File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
-            if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
-            {
-                return Collections.emptySet();
-            }
-
-            try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
-            {
-                Deque<String> transitiveStack = new ArrayDeque<>();
-                return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
-            }
-            catch (IOException e)
-            {
-                LOGGER.error("Error reading package.json", e);
-            }
+            return Collections.emptySet();
         }
-        return Collections.emptySet();
+
+        File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
+        if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
+        {
+            return Collections.emptySet();
+        }
+
+        try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
+        {
+            return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Error reading package.json", e);
+            return Collections.emptySet();
+        }
     }
 
     private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
