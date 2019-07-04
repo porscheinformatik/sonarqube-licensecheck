@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+
 import org.sonar.api.config.Settings;
 
 public class PackageJsonDependencyScanner implements Scanner
@@ -32,12 +33,13 @@ public class PackageJsonDependencyScanner implements Scanner
 
     private final Settings settings;
 
-    public PackageJsonDependencyScanner(Settings settings) {
+    public PackageJsonDependencyScanner(Settings settings)
+    {
         this.settings = settings;
     }
 
     @Override
-    public List<Dependency> scan(File file)
+    public Set<Dependency> scan(File file)
     {
         File packageJsonFile = new File(file, "package.json");
 
@@ -46,46 +48,52 @@ public class PackageJsonDependencyScanner implements Scanner
             File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
             if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
             {
-                return Collections.emptyList();
+                return Collections.emptySet();
             }
 
             try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
             {
                 Deque<String> transitiveStack = new ArrayDeque<>();
-                return new ArrayList<>(getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder, transitiveStack));
+                return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
             }
             catch (IOException e)
             {
                 LOGGER.error("Error reading package.json", e);
             }
         }
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 
-    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder, Deque<String> transitiveStack)
+    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
     {
         JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
         if (jsonObjectDependencies != null)
         {
-            return dependencyParser(jsonObjectDependencies, nodeModulesFolder, transitiveStack);
+            return dependencyParser(jsonObjectDependencies, nodeModulesFolder);
         }
         return Collections.emptySet();
     }
 
-    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder, Deque<String> transitiveStack)
+    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
     {
         Set<Dependency> dependencies = new LinkedHashSet<>();
 
         for (String packageName : jsonDependencies.keySet())
         {
-            moduleCheck(nodeModulesFolder, packageName, dependencies, transitiveStack);
+            moduleCheck(nodeModulesFolder, packageName, dependencies);
         }
 
         return dependencies;
     }
 
-    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies, Deque<String> transitiveStack)
+    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies)
     {
+        if (dependencies.stream().anyMatch(d -> packageName.equals(d.getName())))
+        {
+            LOGGER.warn("Circular dependency detected in {}. Current stack of transitive deps: {}", packageName, dependencies);
+            return;
+        }
+
         File moduleFolder = new File(nodeModulesFolder, packageName);
 
         if (moduleFolder.exists() && moduleFolder.isDirectory())
@@ -95,37 +103,30 @@ public class PackageJsonDependencyScanner implements Scanner
             try (InputStream fis = new FileInputStream(packageFile); JsonReader jsonReader = Json.createReader(fis))
             {
                 JsonObject packageJsonObject = jsonReader.readObject();
-                if (packageJsonObject != null)
+                if (packageJsonObject == null)
                 {
-                    String license = null;
-                    if (packageJsonObject.containsKey("license"))
-                    {
-                        license = packageJsonObject.getString("license");
-                    }
-                    else if (packageJsonObject.containsKey("licenses"))
-                    {
-                        JsonArray licenses = packageJsonObject.getJsonArray("licenses");
-                        if (licenses.size() > 0)
-                        {
-                            license = licenses.getJsonObject(0).getString("type");
-                        }
-                    }
+                    return;
+                }
 
-                    if (license != null)
+                String license = "";
+                if (packageJsonObject.containsKey("license"))
+                {
+                    license = packageJsonObject.getString("license");
+                }
+                else if (packageJsonObject.containsKey("licenses"))
+                {
+                    JsonArray licenses = packageJsonObject.getJsonArray("licenses");
+                    if (licenses.size() > 0)
                     {
-                        dependencies.add(new Dependency(packageName, packageJsonObject.getString("version"), license));
+                        license = licenses.getJsonObject(0).getString("type");
                     }
+                }
 
-                    if (settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS))
-                    {
-                        if (transitiveStack.contains(packageName)) {
-                            LOGGER.warn("Circular dependency detected in {}.  Current stack of transitive deps: {}", packageName, transitiveStack);
-                        } else {
-                            transitiveStack.push(packageName);
-                            dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder, transitiveStack));
-                            transitiveStack.pop();
-                        }
-                    }
+                dependencies.add(new Dependency(packageName, packageJsonObject.getString("version"), license));
+
+                if (settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS))
+                {
+                    dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder));
                 }
             }
             catch (FileNotFoundException e)

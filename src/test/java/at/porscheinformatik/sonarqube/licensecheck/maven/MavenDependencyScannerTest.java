@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
@@ -39,7 +39,7 @@ public class MavenDependencyScannerTest
         Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
 
         // -
-        List<Dependency> dependencies = scanner.scan(moduleDir);
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), Matchers.greaterThan(0));
 
@@ -66,7 +66,7 @@ public class MavenDependencyScannerTest
 
         File moduleDir = Files.createTempDirectory("lala").toFile();
         moduleDir.deleteOnExit();
-        List<Dependency> dependencies = scanner.scan(moduleDir);
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), is(0));
     }

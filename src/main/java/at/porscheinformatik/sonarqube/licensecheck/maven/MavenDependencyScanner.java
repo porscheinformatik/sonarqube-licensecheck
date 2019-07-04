@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,11 +56,11 @@ public class MavenDependencyScanner implements Scanner
     }
 
     @Override
-    public List<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(File moduleDir)
     {
         if(!new File(moduleDir, "pom.xml").exists())
         {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
         String userSettings = null;
@@ -80,7 +81,7 @@ public class MavenDependencyScanner implements Scanner
         return this.readDependecyList(moduleDir, userSettings, globalSettings)
             .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), userSettings, globalSettings))
             .map(this::mapMavenDependencyToLicense)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     private Stream<Dependency> readDependecyList(File moduleDir, String userSettings, String globalSettings)

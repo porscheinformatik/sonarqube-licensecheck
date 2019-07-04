@@ -2,7 +2,7 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class PackageJsonDependencyScannerTest
     {
         Scanner scanner = new PackageJsonDependencyScanner(new MapSettings());
 
-        List<Dependency> dependencies = scanner.scan(folder);
+        Set<Dependency> dependencies = scanner.scan(folder);
 
         assertThat(dependencies, hasSize(2));
         assertThat(dependencies, contains(
@@ -40,7 +40,7 @@ public class PackageJsonDependencyScannerTest
 
         Scanner scanner = new PackageJsonDependencyScanner(settings);
 
-        List<Dependency> dependencies = scanner.scan(folder);
+        Set<Dependency> dependencies = scanner.scan(folder);
 
         assertThat(dependencies, hasSize(4));
         assertThat(dependencies, contains(
