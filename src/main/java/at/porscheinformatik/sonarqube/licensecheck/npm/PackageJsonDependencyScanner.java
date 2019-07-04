@@ -41,8 +41,11 @@ public class PackageJsonDependencyScanner implements Scanner
 
         if (!packageJsonFile.exists())
         {
+            LOGGER.info("No package.json file found in {} - skipping NPM dependency scan", moduleDir.getPath());
             return Collections.emptySet();
         }
+
+        LOGGER.info("Scanning for NPM dependencies");
 
         File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
         if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
