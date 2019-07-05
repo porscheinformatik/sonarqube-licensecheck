@@ -51,6 +51,7 @@ The plugin scans for dependencies defined in your project including all transiti
 Currently supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
 * NPM package.json files - all dependencies (except "devDependencies") are checked
+  * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
 
 ### Project Dashboard
 

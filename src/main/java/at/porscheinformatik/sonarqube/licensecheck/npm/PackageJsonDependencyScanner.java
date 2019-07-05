@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -24,89 +24,111 @@ public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
-    @Override
-    public List<Dependency> scan(File file)
-    {
-        File packageJsonFile = new File(file, "package.json");
+    private boolean resolveTransitiveDeps;
 
-        if (packageJsonFile.exists())
-        {
-            try (InputStream fis = new FileInputStream(packageJsonFile);
-                JsonReader jsonReader = Json.createReader(fis))
-            {
-                JsonObject jsonObject = jsonReader.readObject();
-                JsonObject jsonObjectDependencies = jsonObject.getJsonObject("dependencies");
-                if (jsonObjectDependencies != null)
-                {
-                    return dependencyParser(jsonObjectDependencies, packageJsonFile);
-                }
-                jsonReader.close();
-            }
-            catch (IOException e)
-            {
-                LOGGER.error("Error reading package.json", e);
-            }
-        }
-        return Collections.emptyList();
+    public PackageJsonDependencyScanner(boolean resolveTransitiveDeps)
+    {
+        this.resolveTransitiveDeps = resolveTransitiveDeps;
     }
 
-    private List<Dependency> dependencyParser(JsonObject jsonDependencies, File packageJsonFile)
+    @Override
+    public Set<Dependency> scan(File moduleDir)
     {
-        List<Dependency> dependencies = new ArrayList<>();
+        File packageJsonFile = new File(moduleDir, "package.json");
 
-        File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
-        if (nodeModulesFolder.exists() && nodeModulesFolder.isDirectory())
+        if (!packageJsonFile.exists())
         {
-            for (String key : jsonDependencies.keySet())
+            LOGGER.info("No package.json file found in {} - skipping NPM dependency scan", moduleDir.getPath());
+            return Collections.emptySet();
+        }
+
+        LOGGER.info("Scanning for NPM dependencies");
+
+        return dependencyParser(moduleDir, packageJsonFile);
+    }
+
+    private Set<Dependency> dependencyParser(File baseDir, File packageJsonFile)
+    {
+        Set<Dependency> dependencies = new HashSet<>();
+
+        try (InputStream fis = new FileInputStream(packageJsonFile);
+            JsonReader jsonReader = Json.createReader(fis))
+        {
+            JsonObject packageJson = jsonReader.readObject();
+
+            JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
+            if (packageJsonDependencies != null)
             {
-                moduleCheck(nodeModulesFolder, key, dependencies);
+                scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
             }
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Error reading package.json", e);
         }
 
         return dependencies;
     }
 
-    private static void moduleCheck(File nodeModulesFolder, String identifier, List<Dependency> dependencies)
+    private void scanDependencies(File baseDir, Set<String> packageNames, Set<Dependency> dependencies)
     {
-        File moduleFolder = new File(nodeModulesFolder, identifier);
+        LOGGER.info("Scanning NPM packages " + packageNames);
 
-        if (moduleFolder.exists() && moduleFolder.isDirectory())
+        for (String packageName : packageNames)
         {
-            File packageFile = new File(moduleFolder, "package.json");
-
-            try (InputStream fis = new FileInputStream(packageFile); JsonReader jsonReader = Json.createReader(fis))
+            if (dependencies.stream().anyMatch(d -> packageName.equals(d.getName())))
             {
-                JsonObject jsonObject = jsonReader.readObject();
-                if (jsonObject != null)
+                LOGGER.debug("Package {} has already been encountered and will not be scanned again", packageName);
+                continue;
+            }
+
+            File packageJsonFile = new File(baseDir, "node_modules/" + packageName + "/package.json");
+            if (!packageJsonFile.exists())
+            {
+                LOGGER.warn("No package.json file found for package {} in node_modules - skipping dependency",
+                        packageName);
+                continue;
+            }
+
+            try (InputStream fis = new FileInputStream(packageJsonFile);
+                JsonReader jsonReader = Json.createReader(fis))
+            {
+                JsonObject packageJson = jsonReader.readObject();
+                if (packageJson != null)
                 {
-                    String license = null;
-                    if (jsonObject.containsKey("license"))
+                    String license = "";
+                    if (packageJson.containsKey("license"))
                     {
-                        license = jsonObject.getString("license");
+                        license = packageJson.getString("license");
                     }
-                    else if (jsonObject.containsKey("licenses"))
+                    else if (packageJson.containsKey("licenses"))
                     {
-                        JsonArray licenses = jsonObject.getJsonArray("licenses");
+                        JsonArray licenses = packageJson.getJsonArray("licenses");
                         if (licenses.size() > 0)
                         {
                             license = licenses.getJsonObject(0).getString("type");
                         }
                     }
 
-                    if (license != null)
+                    dependencies.add(new Dependency(packageName, packageJson.getString("version"), license));
+
+                    if (resolveTransitiveDeps)
                     {
-                        dependencies.add(new Dependency(identifier, jsonObject.getString("version"), license));
+                        JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
+                        if (packageJsonDependencies != null)
+                        {
+                            scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+                        }
                     }
                 }
-                jsonReader.close();
             }
             catch (FileNotFoundException e)
             {
-                LOGGER.error("Could not find package.json", e);
+                LOGGER.error("Could not load package.json", e);
             }
             catch (Exception e)
             {
-                LOGGER.error("Error adding dependency " + identifier, e);
+                LOGGER.error("Could not check NPM package " + packageName, e);
             }
         }
     }

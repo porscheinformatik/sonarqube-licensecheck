@@ -2,7 +2,6 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static java.util.Collections.newSetFromMap;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +43,7 @@ public class LicenseCheckSensor implements Sensor
         this.settings = settings;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
-            new PackageJsonDependencyScanner(),
+            new PackageJsonDependencyScanner(settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS)),
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 
