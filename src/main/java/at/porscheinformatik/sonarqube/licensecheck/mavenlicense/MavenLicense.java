@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -55,37 +56,6 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
     }
 
-    @Override
-    public boolean equals(Object object)
-    {
-        if (this == object)
-        {
-            return true;
-        }
-        if (object == null)
-        {
-            return false;
-        }
-        if (getClass() != object.getClass())
-        {
-            return false;
-        }
-
-        MavenLicense mavenLicense = (MavenLicense) object;
-        return mavenLicense.license.equals(this.license)
-            && mavenLicense.regex.toString().equals(this.regex.toString());
-    }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        result = (prime * result) + ((regex == null) ? 0 : regex.hashCode());
-        return result;
-    }
-
     public static List<MavenLicense> fromString(String mavenLicenseString)
     {
         List<MavenLicense> mavenLicenses = new ArrayList<>();
@@ -99,7 +69,7 @@ public class MavenLicense implements Comparable<MavenLicense>
                 {
                     JsonObject licenseJson = licensesJson.getJsonObject(i);
                     String regex = null;
-                    try 
+                    try
                     {
                         regex = licenseJson.getString("regex");
                     }
@@ -148,5 +118,27 @@ public class MavenLicense implements Comparable<MavenLicense>
         generator.close();
 
         return jsonString.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        MavenLicense that = (MavenLicense) o;
+        return Objects.equals(regex, that.regex) &&
+            Objects.equals(license, that.license);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(regex, license);
     }
 }
