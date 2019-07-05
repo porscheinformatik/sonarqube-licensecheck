@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -14,14 +17,13 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.config.Settings;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-
-import org.sonar.api.config.Settings;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
@@ -55,7 +57,8 @@ public class PackageJsonDependencyScanner implements Scanner
 
         try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
         {
-            return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder);
+            Deque<String> transitiveDependencies = new ArrayDeque<>();
+            return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder, transitiveDependencies);
         }
         catch (IOException e)
         {
@@ -64,31 +67,34 @@ public class PackageJsonDependencyScanner implements Scanner
         }
     }
 
-    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder)
+    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder,
+        Collection<String> transitiveDependencies)
     {
         JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
         if (jsonObjectDependencies != null)
         {
-            return dependencyParser(jsonObjectDependencies, nodeModulesFolder);
+            return dependencyParser(jsonObjectDependencies, nodeModulesFolder, transitiveDependencies);
         }
         return Collections.emptySet();
     }
 
-    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder)
+    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder,
+        Collection<String> transitiveDependencies)
     {
         Set<Dependency> dependencies = new LinkedHashSet<>();
 
         for (String packageName : jsonDependencies.keySet())
         {
-            moduleCheck(nodeModulesFolder, packageName, dependencies);
+            moduleCheck(nodeModulesFolder, packageName, dependencies, transitiveDependencies);
         }
 
         return dependencies;
     }
 
-    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies)
+    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies,
+        Collection<String> transitiveDependencies)
     {
-        if (dependencies.stream().anyMatch(d -> packageName.equals(d.getName())))
+        if (transitiveDependencies.contains(packageName)) {
         {
             LOGGER.warn("Circular dependency detected in {}. Current stack of transitive deps: {}", packageName, dependencies);
             return;
