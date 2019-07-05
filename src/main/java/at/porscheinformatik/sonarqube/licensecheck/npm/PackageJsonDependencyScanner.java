@@ -5,11 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.json.Json;
@@ -19,21 +16,19 @@ import javax.json.JsonReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.config.Settings;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
 
-    private final Settings settings;
+    private boolean resolveTransitiveDeps;
 
-    public PackageJsonDependencyScanner(Settings settings)
+    public PackageJsonDependencyScanner(boolean resolveTransitiveDeps)
     {
-        this.settings = settings;
+        this.resolveTransitiveDeps = resolveTransitiveDeps;
     }
 
     @Override
@@ -49,99 +44,91 @@ public class PackageJsonDependencyScanner implements Scanner
 
         LOGGER.info("Scanning for NPM dependencies");
 
-        File nodeModulesFolder = new File(packageJsonFile.getParentFile(), "node_modules");
-        if (!nodeModulesFolder.exists() || !nodeModulesFolder.isDirectory())
-        {
-            return Collections.emptySet();
-        }
+        return dependencyParser(moduleDir, packageJsonFile);
+    }
 
-        try (InputStream fis = new FileInputStream(packageJsonFile); JsonReader jsonReader = Json.createReader(fis))
+    private Set<Dependency> dependencyParser(File baseDir, File packageJsonFile)
+    {
+        Set<Dependency> dependencies = new HashSet<>();
+
+        try (InputStream fis = new FileInputStream(packageJsonFile);
+            JsonReader jsonReader = Json.createReader(fis))
         {
-            Deque<String> transitiveDependencies = new ArrayDeque<>();
-            return getDependenciesFrom(jsonReader.readObject(), nodeModulesFolder, transitiveDependencies);
+            JsonObject packageJson = jsonReader.readObject();
+
+            JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
+            if (packageJsonDependencies != null)
+            {
+                scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+            }
         }
         catch (IOException e)
         {
             LOGGER.error("Error reading package.json", e);
-            return Collections.emptySet();
-        }
-    }
-
-    private Set<Dependency> getDependenciesFrom(JsonObject packageJsonObject, File nodeModulesFolder,
-        Collection<String> transitiveDependencies)
-    {
-        JsonObject jsonObjectDependencies = packageJsonObject.getJsonObject("dependencies");
-        if (jsonObjectDependencies != null)
-        {
-            return dependencyParser(jsonObjectDependencies, nodeModulesFolder, transitiveDependencies);
-        }
-        return Collections.emptySet();
-    }
-
-    private Set<Dependency> dependencyParser(JsonObject jsonDependencies, File nodeModulesFolder,
-        Collection<String> transitiveDependencies)
-    {
-        Set<Dependency> dependencies = new LinkedHashSet<>();
-
-        for (String packageName : jsonDependencies.keySet())
-        {
-            moduleCheck(nodeModulesFolder, packageName, dependencies, transitiveDependencies);
         }
 
         return dependencies;
     }
 
-    private void moduleCheck(File nodeModulesFolder, String packageName, Set<Dependency> dependencies,
-        Collection<String> transitiveDependencies)
+    private void scanDependencies(File baseDir, Set<String> packageNames, Set<Dependency> dependencies)
     {
-        if (transitiveDependencies.contains(packageName)) {
+        LOGGER.info("Scanning NPM packages " + packageNames);
+
+        for (String packageName : packageNames)
         {
-            LOGGER.warn("Circular dependency detected in {}. Current stack of transitive deps: {}", packageName, dependencies);
-            return;
-        }
-
-        File moduleFolder = new File(nodeModulesFolder, packageName);
-
-        if (moduleFolder.exists() && moduleFolder.isDirectory())
-        {
-            File packageFile = new File(moduleFolder, "package.json");
-
-            try (InputStream fis = new FileInputStream(packageFile); JsonReader jsonReader = Json.createReader(fis))
+            if (dependencies.stream().anyMatch(d -> packageName.equals(d.getName())))
             {
-                JsonObject packageJsonObject = jsonReader.readObject();
-                if (packageJsonObject == null)
-                {
-                    return;
-                }
+                LOGGER.warn("Circular dependency detected in {}. Current dependencies: {}", packageName, dependencies);
+                continue;
+            }
 
-                String license = "";
-                if (packageJsonObject.containsKey("license"))
+            File packageJsonFile = new File(baseDir, "node_modules/" + packageName + "/package.json");
+            if (!packageJsonFile.exists())
+            {
+                LOGGER.warn("No package.json file found for package {} in node_modules - skipping dependency",
+                        packageName);
+                continue;
+            }
+
+            try (InputStream fis = new FileInputStream(packageJsonFile);
+                JsonReader jsonReader = Json.createReader(fis))
+            {
+                JsonObject packageJson = jsonReader.readObject();
+                if (packageJson != null)
                 {
-                    license = packageJsonObject.getString("license");
-                }
-                else if (packageJsonObject.containsKey("licenses"))
-                {
-                    JsonArray licenses = packageJsonObject.getJsonArray("licenses");
-                    if (licenses.size() > 0)
+                    String license = "";
+                    if (packageJson.containsKey("license"))
                     {
-                        license = licenses.getJsonObject(0).getString("type");
+                        license = packageJson.getString("license");
                     }
-                }
+                    else if (packageJson.containsKey("licenses"))
+                    {
+                        JsonArray licenses = packageJson.getJsonArray("licenses");
+                        if (licenses.size() > 0)
+                        {
+                            license = licenses.getJsonObject(0).getString("type");
+                        }
+                    }
 
-                dependencies.add(new Dependency(packageName, packageJsonObject.getString("version"), license));
+                    dependencies.add(new Dependency(packageName, packageJson.getString("version"), license));
 
-                if (settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS))
-                {
-                    dependencies.addAll(getDependenciesFrom(packageJsonObject, nodeModulesFolder));
+                    if (resolveTransitiveDeps)
+                    {
+                        JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
+                        if (packageJsonDependencies != null)
+                        {
+                            scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+                        }
+                    }
                 }
             }
             catch (FileNotFoundException e)
             {
-                LOGGER.error("Could not find package.json", e);
+                LOGGER.error("Could not load package.json", e);
             }
             catch (Exception e)
             {
-                LOGGER.error("Error adding dependency " + packageName, e);
+                LOGGER.error("Could not check NPM package " + packageName, e);
             }
         }
     }
