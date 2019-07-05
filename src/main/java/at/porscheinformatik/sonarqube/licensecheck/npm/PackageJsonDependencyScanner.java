@@ -78,7 +78,7 @@ public class PackageJsonDependencyScanner implements Scanner
         {
             if (dependencies.stream().anyMatch(d -> packageName.equals(d.getName())))
             {
-                LOGGER.warn("Circular dependency detected in {}. Current dependencies: {}", packageName, dependencies);
+                LOGGER.debug("Package {} has already been encountered and will not be scanned again", packageName);
                 continue;
             }
 
