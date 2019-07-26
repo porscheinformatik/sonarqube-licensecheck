@@ -13,7 +13,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
@@ -25,7 +24,6 @@ public class MavenDependencySettingsService
      */
     private final PersistentSettings persistentSettings;
 
-    private final Settings settings;
     private final MavenDependencyService mavenDependencyService;
 
     public MavenDependencySettingsService(PersistentSettings persistentSettings,
@@ -33,7 +31,6 @@ public class MavenDependencySettingsService
     {
         super();
         this.persistentSettings = persistentSettings;
-        this.settings = persistentSettings.getSettings();
         this.mavenDependencyService = mavenDependencyService;
         initMavenDependencies();
     }
@@ -63,7 +60,8 @@ public class MavenDependencySettingsService
     public void deleteMavenDependency(final String key)
     {
         List<MavenDependency> newDependencyList = new ArrayList<>();
-        JsonReader jsonReader = Json.createReader(new StringReader(settings.getString(ALLOWED_DEPENDENCIES_KEY)));
+        JsonReader jsonReader =
+            Json.createReader(new StringReader(persistentSettings.getSettings().getString(ALLOWED_DEPENDENCIES_KEY)));
         JsonArray jsonArray = jsonReader.readArray();
         jsonReader.close();
 
@@ -92,7 +90,7 @@ public class MavenDependencySettingsService
             .forEach(jsonArray::add);
 
         String newJsonDependency = jsonArray.build().toString();
-        settings.setProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
+        persistentSettings.getSettings().setProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
     }
 
@@ -105,14 +103,14 @@ public class MavenDependencySettingsService
             .build();
         String initValueMavenDepependencies = jsonArray.toString();
 
-        String mavenDependencies = settings.getString(ALLOWED_DEPENDENCIES_KEY);
+        String mavenDependencies = persistentSettings.getSettings().getString(ALLOWED_DEPENDENCIES_KEY);
 
         if ((mavenDependencies != null) && !mavenDependencies.isEmpty())
         {
             return;
         }
 
-        settings.setProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
+        persistentSettings.getSettings().setProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
     }
 

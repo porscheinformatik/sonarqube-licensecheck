@@ -11,29 +11,28 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
+import org.sonar.api.scanner.ScannerSide;
 
 @ServerSide
 @ScannerSide
 public class MavenDependencyService
 {
-    private final Settings settings;
+    private final Configuration configuration;
 
-    public MavenDependencyService(Settings settings)
+    public MavenDependencyService(Configuration configuration)
     {
         super();
-        this.settings = settings;
+        this.configuration = configuration;
     }
 
     public List<MavenDependency> getMavenDependencies()
     {
         final List<MavenDependency> mavenDependencies = new ArrayList<>();
-        String dependencyString = settings.getString(ALLOWED_DEPENDENCIES_KEY);
-        initMavenDependencyData(dependencyString);
+        String dependencyString = configuration.get(ALLOWED_DEPENDENCIES_KEY).orElse("[]");
 
-        JsonReader jsonReader = Json.createReader(new StringReader(settings.getString(ALLOWED_DEPENDENCIES_KEY)));
+        JsonReader jsonReader = Json.createReader(new StringReader(dependencyString));
         JsonArray jsonArray = jsonReader.readArray();
         jsonReader.close();
 
@@ -44,19 +43,5 @@ public class MavenDependencyService
                 .add(new MavenDependency(jsonObject.getString("nameMatches"), jsonObject.getString("license")));
         }
         return mavenDependencies;
-    }
-
-    private void initMavenDependencyData(String mavenDependencyString)
-    {
-        if ((mavenDependencyString == null) || mavenDependencyString.isEmpty())
-        {
-            JsonArray jsonArray = Json
-                .createArrayBuilder()
-                .add(Json.createObjectBuilder().add("nameMatches", "org.apache..*").add("license", "Apache-2.0"))
-                .build();
-            String initValueMavenDepependencies = jsonArray.toString();
-
-            settings.setProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
-        }
     }
 }

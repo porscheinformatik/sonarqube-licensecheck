@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
@@ -20,37 +20,39 @@ public class MavenLicenseSettingsService
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenLicenseSettingsService.class);
 
-    /** This is not official API */
+    /**
+     * This is not official API
+     */
     private final PersistentSettings persistentSettings;
-    private final Settings settings;
+    private final Configuration configuration;
     private final MavenLicenseService mavenLicenseService;
 
-    public MavenLicenseSettingsService(PersistentSettings persistentSettings, Settings settings,
+    public MavenLicenseSettingsService(PersistentSettings persistentSettings, Configuration configuration,
         MavenLicenseService mavenLicenseService)
     {
         super();
         this.persistentSettings = persistentSettings;
-        this.settings = settings;
+        this.configuration = configuration;
         this.mavenLicenseService = mavenLicenseService;
         initMavenLicenses();
     }
 
     private void initMavenLicenses()
     {
-        String mavenLicenseListString = settings.getString(LICENSE_REGEX);
+        String mavenLicenseListString = configuration.get(LICENSE_REGEX).orElse(null);
 
         if (mavenLicenseListString != null && !mavenLicenseListString.isEmpty())
         {
             return;
         }
 
-        try(InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
+        try (InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
         {
             mavenLicenseListString = IOUtils.readToString(in);
-            settings.setProperty(LICENSE_REGEX, mavenLicenseListString);
+            persistentSettings.getSettings().setProperty(LICENSE_REGEX, mavenLicenseListString);
             persistentSettings.saveProperty(LICENSE_REGEX, mavenLicenseListString);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             LOGGER.error("Could not load default_license_mapping.json", e);
         }
@@ -113,7 +115,7 @@ public class MavenLicenseSettingsService
     {
         String mavenLicensesString = MavenLicense.createString(mavenLicenses);
 
-        settings.setProperty(LICENSE_REGEX, mavenLicensesString);
+        persistentSettings.getSettings().setProperty(LICENSE_REGEX, mavenLicensesString);
         persistentSettings.saveProperty(LICENSE_REGEX, mavenLicensesString);
     }
 

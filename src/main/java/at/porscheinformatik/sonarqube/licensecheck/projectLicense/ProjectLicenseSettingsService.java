@@ -6,24 +6,23 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.sonar.api.config.Settings;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
 @ServerSide
 public class ProjectLicenseSettingsService
 {
-    /** This is not official API */
+    /**
+     * This is not official API
+     */
     private final PersistentSettings persistentSettings;
-    private final Settings settings;
     private final ProjectLicenseService projectLicenseService;
 
-    public ProjectLicenseSettingsService(PersistentSettings persistentSettings, Settings settings,
+    public ProjectLicenseSettingsService(PersistentSettings persistentSettings,
         ProjectLicenseService projectLicenseService)
     {
         super();
         this.persistentSettings = persistentSettings;
-        this.settings = settings;
         this.projectLicenseService = projectLicenseService;
     }
 
@@ -41,12 +40,6 @@ public class ProjectLicenseSettingsService
         {
             return false;
         }
-    }
-
-    public boolean checkIfListContains(ProjectLicense projectLicense)
-    {
-        List<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList();
-        return projectLicenses.contains(projectLicense);
     }
 
     public void deleteProjectLicense(String projectKey, String license)
@@ -71,7 +64,7 @@ public class ProjectLicenseSettingsService
     {
         Collections.sort(projectLicenses);
         String projectLicensesString = ProjectLicense.createString(projectLicenses);
-        settings.setProperty(PROJECT_LICENSE_KEY, projectLicensesString);
+        persistentSettings.getSettings().setProperty(PROJECT_LICENSE_KEY, projectLicensesString);
         persistentSettings.saveProperty(PROJECT_LICENSE_KEY, projectLicensesString);
     }
 

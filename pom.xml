@@ -48,6 +48,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.26</version>
+    </dependency>
+    <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
       <version>1.1.4</version>
@@ -78,18 +83,18 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>6.7</version>
+      <version>7.9</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-server</artifactId>
-      <version>6.7</version>
+      <version>7.2.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.sonarsource.sonarqube</groupId>
-          <artifactId>sonar-views-bridge</artifactId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -200,8 +205,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v10.15.1</nodeVersion>
-          <npmVersion>6.4.1</npmVersion>
+          <nodeVersion>v10.16.0</nodeVersion>
+          <npmVersion>6.9.0</npmVersion>
         </configuration>
       </plugin>
     </plugins>

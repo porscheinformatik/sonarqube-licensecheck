@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
 import org.sonar.server.platform.PersistentSettings;
 
@@ -25,14 +25,14 @@ public class LicenseSettingsService
      */
     private final PersistentSettings persistentSettings;
 
-    private final Settings settings;
+    private final Configuration configuration;
     private final LicenseService licenseService;
 
-    public LicenseSettingsService(PersistentSettings persistentSettings, LicenseService licenseService)
+    public LicenseSettingsService(PersistentSettings persistentSettings, Configuration configuration, LicenseService licenseService)
     {
         super();
         this.persistentSettings = persistentSettings;
-        this.settings = persistentSettings.getSettings();
+        this.configuration = configuration;
         this.licenseService = licenseService;
 
         initSpdxLicences();
@@ -85,7 +85,7 @@ public class LicenseSettingsService
 
     public boolean deleteLicense(String id)
     {
-        List<License> licenses = License.fromString(settings.getString(LICENSE_KEY));
+        List<License> licenses = License.fromString(configuration.get(LICENSE_KEY).orElse(null));
         List<License> newLicenseList = new ArrayList<>();
         boolean found = false;
         for (License license : licenses)
@@ -129,23 +129,23 @@ public class LicenseSettingsService
     {
         Collections.sort(licenseList);
         String licenseJson = License.createString(licenseList);
-        settings.setProperty(LICENSE_KEY, licenseJson);
+        persistentSettings.getSettings().setProperty(LICENSE_KEY, licenseJson);
         persistentSettings.saveProperty(LICENSE_KEY, licenseJson);
     }
 
     private void initSpdxLicences()
     {
-        String licenseJson = settings.getString(LICENSE_KEY);
+        String licenseJson = configuration.get(LICENSE_KEY).orElse(null);
 
         if (licenseJson != null && !licenseJson.isEmpty())
         {
             return;
         }
 
-        try(InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json");)
+        try (InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json");)
         {
             String spdxLicenseListJson = IOUtils.readToString(inputStream);
-            settings.setProperty(LICENSE_KEY, spdxLicenseListJson);
+            persistentSettings.getSettings().setProperty(LICENSE_KEY, spdxLicenseListJson);
             persistentSettings.saveProperty(LICENSE_KEY, spdxLicenseListJson);
         }
         catch (Exception e)
