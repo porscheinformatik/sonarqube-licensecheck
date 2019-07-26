@@ -1,5 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -7,8 +8,8 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -30,13 +31,10 @@ public class MavenDependencyScannerTest
     {
         File moduleDir = new File(".");
 
-        Map<Pattern, String> licenseMap = new HashMap<>();
-        licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
-        MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
-        when(licenseService.getLicenseMap()).thenReturn(licenseMap);
         final MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
-        when(dependencyService.getMavenDependencies()).thenReturn(Arrays.asList(new MavenDependency("org.apache.*", "Apache-2.0")));
-        Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
+        when(dependencyService.getMavenDependencies()).thenReturn(
+            singletonList(new MavenDependency("org.apache.*", "Apache-2.0")));
+        Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
 
         // -
         Set<Dependency> dependencies = scanner.scan(moduleDir);
@@ -57,6 +55,15 @@ public class MavenDependencyScannerTest
         }
     }
 
+    private MavenLicenseService mockLicenseService()
+    {
+        Map<Pattern, String> licenseMap = new HashMap<>();
+        licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
+        MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
+        when(licenseService.getLicenseMap()).thenReturn(licenseMap);
+        return licenseService;
+    }
+
     @Test
     public void testNullMavenProjectDependencies() throws IOException
     {
@@ -69,5 +76,24 @@ public class MavenDependencyScannerTest
         Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), is(0));
+    }
+
+    @Test
+    public void mavenDependencyMappingHandledBeforePomLicense()
+    {
+        File moduleDir = new File(".");
+        MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
+        List<MavenDependency> mavenDependencies =
+            singletonList(new MavenDependency("org.apache.commons:commons.*", "TEST"));
+        when(dependencyService.getMavenDependencies()).thenReturn(mavenDependencies);
+        Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
+
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
+
+        Dependency commonsLang = dependencies.stream()
+            .filter(d -> "org.apache.commons:commons-lang3".equals(d.getName()))
+            .findFirst().orElse(null);
+
+        assertThat(commonsLang.getLicense(), is("TEST"));
     }
 }
