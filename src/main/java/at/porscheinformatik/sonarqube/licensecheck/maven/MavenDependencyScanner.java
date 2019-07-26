@@ -116,6 +116,11 @@ public class MavenDependencyScanner implements Scanner
         }
         request.setProperties(properties);
 
+        return invokeMaven(request, tempFile);
+    }
+
+    private static Stream<Dependency> invokeMaven(InvocationRequest request, Path mavenOutputFile)
+    {
         try
         {
             StringBuilder mavenExecutionErrors = new StringBuilder();
@@ -134,7 +139,7 @@ public class MavenDependencyScanner implements Scanner
                 LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
                 LOGGER.warn(mavenExecutionErrors.toString());
             }
-            return Files.lines(tempFile)
+            return Files.lines(mavenOutputFile)
                 .filter(StringUtils::isNotBlank)
                 .map(MavenDependencyScanner::findDependency)
                 .filter(Objects::nonNull);
