@@ -28,6 +28,12 @@ restart the server to install the plugin. Activate the rules of this plugin ("Li
 
 When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
 
+Please make sure to have all dependencies installed before launching the SonarQube analysis. So your complete build
+should look something like this:
+
+    mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore install
+    mvn -B sonar:sonar
+
 ## Configuration
 
 After booting the SonarQube Server with the License-Check Plugin two new options can be found in the tab

@@ -117,15 +117,23 @@ public class MavenDependencyScanner implements Scanner
         }
         request.setProperties(properties);
 
-        Invoker invoker = new DefaultInvoker();
-        invoker.setOutputHandler(null); // not interested in Maven output itself
-
         try
         {
+            StringBuilder mavenExecutionErrors = new StringBuilder();
+            Invoker invoker = new DefaultInvoker();
+            invoker.setOutputHandler(line -> {
+                if (line.startsWith("[ERROR] "))
+                {
+                    mavenExecutionErrors
+                        .append(line.substring(8))
+                        .append(System.lineSeparator());
+                }
+            });
             InvocationResult result = invoker.execute(request);
             if (result.getExitCode() != 0)
             {
                 LOGGER.warn("Could not get dependency list via maven", result.getExecutionException());
+                LOGGER.warn(mavenExecutionErrors.toString());
             }
             return Files.lines(tempFile)
                 .filter(StringUtils::isNotBlank)
