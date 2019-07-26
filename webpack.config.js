@@ -1,3 +1,5 @@
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
 module.exports = {
   entry: {
     configuration: './src/main/web/configuration.js',
@@ -21,7 +23,17 @@ module.exports = {
       {
         test: /.js$/,
         loader: 'buble-loader'
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+        ]
       }
     ]
-  }
+  },
+  plugins: [
+    new VueLoaderPlugin(),
+  ],
 };
