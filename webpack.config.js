@@ -1,4 +1,5 @@
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const path = require('path');
 
 module.exports = {
   entry: {
@@ -6,7 +7,8 @@ module.exports = {
     dashboard: './src/main/web/dashboard.js'
   },
   output: {
-    filename: 'target/classes/static/[name].js'
+    path: path.resolve(__dirname, 'target/classes/static/'),
+    filename: '[name].js'
   },
   resolve: {
     alias: {
