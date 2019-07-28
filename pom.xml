@@ -78,13 +78,13 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>6.7</version>
+      <version>7.9.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-server</artifactId>
-      <version>6.7</version>
+      <version>7.2.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
