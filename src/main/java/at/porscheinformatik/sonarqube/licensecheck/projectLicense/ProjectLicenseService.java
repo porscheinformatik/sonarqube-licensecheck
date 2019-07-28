@@ -7,25 +7,25 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.server.ServerSide;
 
 @ServerSide
 @ScannerSide
 public class ProjectLicenseService
 {
-    private final Settings settings;
+    private final Configuration configuration;
 
-    public ProjectLicenseService(Settings settings)
+    public ProjectLicenseService(Configuration configuration)
     {
         super();
-        this.settings = settings;
+        this.configuration = configuration;
     }
 
     public List<ProjectLicense> getProjectLicenseList()
     {
-        String projectLicenseString = settings.getString(PROJECT_LICENSE_KEY);
+        String projectLicenseString = configuration.get(PROJECT_LICENSE_KEY).orElse(null);
 
         if (StringUtils.isNotEmpty(projectLicenseString))
         {

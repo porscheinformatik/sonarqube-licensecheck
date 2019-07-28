@@ -5,9 +5,9 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKe
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.server.ServerSide;
 
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
@@ -17,13 +17,13 @@ import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense
 @ScannerSide
 public class LicenseService
 {
-    private final Settings settings;
+    private final Configuration configuration;
     private final ProjectLicenseService projectLicenseService;
 
-    public LicenseService(Settings settings, ProjectLicenseService projectLicenseService)
+    public LicenseService(Configuration configuration, ProjectLicenseService projectLicenseService)
     {
         super();
-        this.settings = settings;
+        this.configuration = configuration;
         this.projectLicenseService = projectLicenseService;
     }
 
@@ -54,7 +54,7 @@ public class LicenseService
 
     public List<License> getLicenses()
     {
-        String licenseString = settings.getString(LICENSE_KEY);
+        String licenseString = configuration.get(LICENSE_KEY).orElse(null);
         return License.fromString(licenseString);
     }
 }

@@ -14,7 +14,7 @@ import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
@@ -26,24 +26,22 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 public class LicenseCheckSensor implements Sensor
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
-
+    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
+    private final static Set<Dependency> AGGREGATED_DEPENDENCIES = newSetFromMap(new ConcurrentHashMap<>());
     private final FileSystem fs;
-    private final Settings settings;
+    private final Configuration configuration;
     private final ValidateLicenses validateLicenses;
     private final Scanner[] scanners;
 
-    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
-    private final static Set<Dependency> AGGREGATED_DEPENDENCIES =
-        newSetFromMap(new ConcurrentHashMap<Dependency, Boolean>());
-
-    public LicenseCheckSensor(FileSystem fs, Settings settings, ValidateLicenses validateLicenses,
+    public LicenseCheckSensor(FileSystem fs, Configuration configuration, ValidateLicenses validateLicenses,
         MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
     {
         this.fs = fs;
-        this.settings = settings;
+        this.configuration = configuration;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
-            new PackageJsonDependencyScanner(settings.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS)),
+            new PackageJsonDependencyScanner(
+                configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS).orElse(false)),
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 
@@ -87,7 +85,7 @@ public class LicenseCheckSensor implements Sensor
     @Override
     public void execute(SensorContext context)
     {
-        if (!settings.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
+        if (!configuration.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY).orElse(true))
         {
             LOGGER.info("Scanner is set to inactive. No scan possible.");
             return;
@@ -100,7 +98,8 @@ public class LicenseCheckSensor implements Sensor
             dependencies.addAll(scanner.scan(fs.baseDir()));
         }
 
-        ProjectDefinition project = LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
+        ProjectDefinition project =
+            LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
