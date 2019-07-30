@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
@@ -95,5 +96,29 @@ public class MavenDependencyScannerTest
             .findFirst().orElse(null);
 
         assertThat(commonsLang.getLicense(), is("TEST"));
+    }
+
+    @Test
+    public void testFindDependency()
+    {
+        String jarFilePath = new File("src/test/resources/test.jar").getAbsolutePath();
+        Dependency dependency = MavenDependencyScanner.findDependency(
+            "at.porscheinformatik.test:test:jar:1.2.3:compile:" + jarFilePath + " -- module test (auto)");
+
+        assertThat(dependency.getName(), is("at.porscheinformatik.test:test"));
+        assertThat(dependency.getVersion(), is("1.2.3"));
+        assertThat(dependency.getPomPath(), endsWith("test.pom"));
+    }
+
+    @Test
+    public void testFindDependencyWithClassifier()
+    {
+        String jarFilePath = new File("src/test/resources/test-sources.jar").getAbsolutePath();
+        Dependency dependency = MavenDependencyScanner.findDependency(
+            "at.porscheinformatik.test:test:jar:sources:2.2:compile:" + jarFilePath + " -- module test (auto)");
+
+        assertThat(dependency.getName(), is("at.porscheinformatik.test:test"));
+        assertThat(dependency.getVersion(), is("2.2"));
+        assertThat(dependency.getPomPath(), endsWith("test.pom"));
     }
 }

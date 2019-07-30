@@ -20,7 +20,7 @@ public class Dependency implements Comparable<Dependency>
     private String version;
     private String license;
     private String status;
-    private String localPath;
+    private String pomPath;
 
     public Dependency(String name, String version, String license)
     {
@@ -70,14 +70,14 @@ public class Dependency implements Comparable<Dependency>
         return status;
     }
 
-    public String getLocalPath()
+    public String getPomPath()
     {
-        return localPath;
+        return pomPath;
     }
 
-    public void setLocalPath(String localPath)
+    public void setPomPath(String pomPath)
     {
-        this.localPath = localPath;
+        this.pomPath = pomPath;
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -42,7 +43,6 @@ public class MavenDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
-    private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("\\s*([^:]*):([^:]*):[^:]*:([^:]*):[^:]*:(.*)");
 
     private final MavenLicenseService mavenLicenseService;
     private final MavenDependencyService mavenDependencyService;
@@ -170,23 +170,62 @@ public class MavenDependencyScanner implements Scanner
         }
     }
 
-    private static Dependency findDependency(String line)
+    static Dependency findDependency(String line)
+    {
+        String[] items = getItems(line);
+        if (items == null)
+            return null;
+
+        String groupId = items[0];
+        String artifactId = items[1];
+        String version = items[3];
+        String path = items[5];
+
+        String classifier = null;
+        if (items.length > 6)
+        {
+            classifier = items[3];
+            version = items[4];
+            path = items[6];
+        }
+
+        if (classifier != null)
+        {
+            path = path.replace("-" + classifier, "");
+        }
+        int lastDotIndex = path.lastIndexOf('.');
+        if (lastDotIndex > 0)
+        {
+            path = path.substring(0, lastDotIndex) + ".pom";
+        }
+
+        Dependency dependency = new Dependency(groupId + ":" + artifactId, version, null);
+        if (new File(path).exists())
+        {
+            dependency.setPomPath(path);
+        }
+        return dependency;
+    }
+
+    private static String[] getItems(String line)
     {
         // Remove module info introduced with Maven Dependency Plugin 3.0 (and JDK > 9)
         line = line.replaceFirst(" -- module .*", "");
 
-        Matcher matcher = DEPENDENCY_PATTERN.matcher(line);
-        if (matcher.find())
+        String[] items = line.trim().split(":");
+        if (items.length < 4)
         {
-            String groupId = matcher.group(1);
-            String artifactId = matcher.group(2);
-            String version = matcher.group(3);
-            String path = matcher.group(4);
-            Dependency dependency = new Dependency(groupId + ":" + artifactId, version, null);
-            dependency.setLocalPath(path);
-            return dependency;
+            return null;
         }
-        return null;
+
+        // Windows-specific absolute path "C:\my\path"
+        if (items[items.length - 2].length() == 1)
+        {
+            items[items.length - 2] += ":" + items[items.length - 1];
+            items = ArrayUtils.remove(items, items.length - 1);
+        }
+
+        return items;
     }
 
     private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap, String userSettings,
@@ -195,7 +234,7 @@ public class MavenDependencyScanner implements Scanner
         return (Dependency dependency) ->
         {
             if (StringUtils.isNotBlank(dependency.getLicense())
-                || dependency.getLocalPath() == null)
+                || dependency.getPomPath() == null)
             {
                 return dependency;
             }
@@ -207,11 +246,9 @@ public class MavenDependencyScanner implements Scanner
     private static Dependency loadLicense(Map<Pattern, String> licenseMap, String userSettings, String globalSettings,
         Dependency dependency)
     {
-        String path = dependency.getLocalPath();
-        int lastDotIndex = path.lastIndexOf('.');
-        if (lastDotIndex > 0)
+        String pomPath = dependency.getPomPath();
+        if (pomPath != null)
         {
-            String pomPath = path.substring(0, lastDotIndex) + ".pom";
             List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), userSettings, globalSettings);
             if (licenses.isEmpty())
             {
