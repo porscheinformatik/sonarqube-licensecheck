@@ -313,7 +313,7 @@ public class MavenDependencyScanner implements Scanner
             Options options = new Options();
             options.addOption("s", "settings", true, "Alternate path for the user settings file");
             options.addOption("gs", "global-settings", true, "Alternate path for the global settings file");
-            cmd = parser.parse(options, commandArgs.split(" "));
+            cmd = parser.parse(options, commandArgs.split(" "), true);
         }
         catch (Exception e)
         {
