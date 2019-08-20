@@ -9,8 +9,8 @@ import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 
 class ProjectLicenseShowAction implements RequestHandler
 {
