@@ -6,8 +6,8 @@ import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.HTTPConfiguration;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.ProjectLicenseConfiguration;
 
