@@ -19,7 +19,7 @@ import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense
 import at.porscheinformatik.sonarqube.licensecheck.webservice.license.LicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.MavenDependencyWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
-import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
+import at.porscheinformatik.sonarqube.licensecheck.webservice.projectlicense.ProjectLicenseWs;
 
 public class LicenseCheckPlugin implements Plugin
 {

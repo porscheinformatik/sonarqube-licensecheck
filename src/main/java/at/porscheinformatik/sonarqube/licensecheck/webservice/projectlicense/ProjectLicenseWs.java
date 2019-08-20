@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense;
+package at.porscheinformatik.sonarqube.licensecheck.webservice.projectlicense;
 
 import org.sonar.api.server.ws.WebService;
 
