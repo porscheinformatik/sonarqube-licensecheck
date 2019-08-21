@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.webservice.projectlicense;
+package at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;

@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.webservice.projectlicense;
+package at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
