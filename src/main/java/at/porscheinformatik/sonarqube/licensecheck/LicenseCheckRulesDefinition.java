@@ -1,5 +1,5 @@
 /*
- * SonarQube Licencecheck Plugin
+ * SonarQube Licensecheck Plugin
  * Copyright (C) 2016 Porsche Informatik
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
