@@ -16,7 +16,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ProvideSystemProperty;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.mockito.Mockito;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
@@ -110,6 +113,23 @@ public class MavenDependencyScannerTest
         assertThat(dependency.getPomPath(), endsWith("test.pom"));
     }
 
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+    @Rule
+	public final ProvideSystemProperty myPropertyHasMyValue	 = new ProvideSystemProperty("sun.java.command", "-s src/test/resources/settings.xml -gs src/test/resources/settings.xml -X");
+    @Test
+    public void testMavenSettings()
+    {
+        String jarFilePath = new File("src/test/resources/test-sources.jar").getAbsolutePath();
+        Dependency dependency = MavenDependencyScanner.findDependency(
+            "at.porscheinformatik.test:test:jar:sources:2.2:compile:" + jarFilePath + " -- module test (auto)");
+
+        assertThat(dependency.getName(), is("at.porscheinformatik.test:test"));
+        assertThat(dependency.getVersion(), is("2.2"));
+        assertThat(dependency.getPomPath(), endsWith("test.pom"));
+    }
+    
+    
     @Test
     public void testFindDependencyWithClassifier()
     {
