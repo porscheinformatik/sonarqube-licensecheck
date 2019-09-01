@@ -127,7 +127,7 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.15</version>
+        <version>1.18.0.372</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
