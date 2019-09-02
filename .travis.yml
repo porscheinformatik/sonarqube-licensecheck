@@ -1,38 +1,43 @@
 language: java
+install: true
 jdk:
 - openjdk8
 - openjdk11
-if: type != push OR branch = master OR branch =~ /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+
+#if: type != push OR branch = master OR branch =~ /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 addons:
   sonarcloud:
     organization: "janpopan"
-jobs:
-  include:
-    - name: Build
-      script: mvn clean verify
-    - name: Build with SonarCloud
-      if: type != pull_request
+    token:
+      secure: "AVyPUESem3Pe77y6o7cKE4fUcgyevbsS1BH4ul8j3i7z8AYXhbmikZVX0l8vnL8SKNTw3/X9Aa21+HXxABdBM1AsDwb3u7GyWYJxaognE+WmB94vDBS2r9qi8ElnmzBH2aAYssVrIFpcsA3KgEB8YPDKa5foAbeJLc5bdy/3huNEFJTbn/yk6i2RSs8XGo87DPWnxQwh/l7AjwQuPIN4Y6a4ou1E78L8Rldw7RcPkVQ6DanUtGwtjJQanza1xeiIMu6ws3xAO0e3UmXtQasFWnCkWMS1ptFy8GW/4RghZFioDMFW+c0mTEMe7b0qil9jYiXg9IYO7HBfeDTXecnu+mGcTIlB+ZF+CsVPUJuQWyBWUSt0RLJvNWq7XHDw7YsYpgSFbdRhEPlm5sYyqRwFXnOY/qA4twXaA0Z9tsiVeCZQqD/gFF2MLTOdM4wLmCwQP7mooUGrI+sQiRDZEVC0E+sfpFBDsFmHRcE6xPzVyrNtcS1Nt6e0kXupvJHzvQfnN/FszxFFSbyAM2DrYrIiQmLJc7KYYm17WP+ZVQBHOmLwV+IiILgL2WEVkZZXzaCs2eiH8CDjQ+D4PcQmB+MR2v0yTh7LfPy8qS6/hmgVWtYdkbA/loPgU/506C/OQ7mdpg7GMpx/PotMugcyy+eRMMMKUeC3HTg+m8y/r7hTDHU="
+#jobs:
+#  include:
+#    - name: Build
+#      script: mvn clean verify
+#    - name: Build with SonarCloud
+#      if: type != pull_request
+#      script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+#    - name: Release
+#      if: tag IS present
+#      script: echo "Deploying to GitHub releases ..."
+#      deploy:
+#        - provider: releases
+#          skip_cleanup: true
+#          prerelease: true
+#          api_key:
+#            secure: "AVyPUESem3Pe77y6o7cKE4fUcgyevbsS1BH4ul8j3i7z8AYXhbmikZVX0l8vnL8SKNTw3/X9Aa21+HXxABdBM1AsDwb3u7GyWYJxaognE+WmB94vDBS2r9qi8ElnmzBH2aAYssVrIFpcsA3KgEB8YPDKa5foAbeJLc5bdy/3huNEFJTbn/yk6i2RSs8XGo87DPWnxQwh/l7AjwQuPIN4Y6a4ou1E78L8Rldw7RcPkVQ6DanUtGwtjJQanza1xeiIMu6ws3xAO0e3UmXtQasFWnCkWMS1ptFy8GW/4RghZFioDMFW+c0mTEMe7b0qil9jYiXg9IYO7HBfeDTXecnu+mGcTIlB+ZF+CsVPUJuQWyBWUSt0RLJvNWq7XHDw7YsYpgSFbdRhEPlm5sYyqRwFXnOY/qA4twXaA0Z9tsiVeCZQqD/gFF2MLTOdM4wLmCwQP7mooUGrI+sQiRDZEVC0E+sfpFBDsFmHRcE6xPzVyrNtcS1Nt6e0kXupvJHzvQfnN/FszxFFSbyAM2DrYrIiQmLJc7KYYm17WP+ZVQBHOmLwV+IiILgL2WEVkZZXzaCs2eiH8CDjQ+D4PcQmB+MR2v0yTh7LfPy8qS6/hmgVWtYdkbA/loPgU/506C/OQ7mdpg7GMpx/PotMugcyy+eRMMMKUeC3HTg+m8y/r7hTDHU="
+#          file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
+#          on:
+#            repo: Janpopan/sonarqube-licensecheck
+#            tags: true
+#            condition: "$TRAVIS_TAG =~ beta$"
+#        - provider: releases
+#          skip_cleanup: true
+#          api_key:
+#            secure: "AVyPUESem3Pe77y6o7cKE4fUcgyevbsS1BH4ul8j3i7z8AYXhbmikZVX0l8vnL8SKNTw3/X9Aa21+HXxABdBM1AsDwb3u7GyWYJxaognE+WmB94vDBS2r9qi8ElnmzBH2aAYssVrIFpcsA3KgEB8YPDKa5foAbeJLc5bdy/3huNEFJTbn/yk6i2RSs8XGo87DPWnxQwh/l7AjwQuPIN4Y6a4ou1E78L8Rldw7RcPkVQ6DanUtGwtjJQanza1xeiIMu6ws3xAO0e3UmXtQasFWnCkWMS1ptFy8GW/4RghZFioDMFW+c0mTEMe7b0qil9jYiXg9IYO7HBfeDTXecnu+mGcTIlB+ZF+CsVPUJuQWyBWUSt0RLJvNWq7XHDw7YsYpgSFbdRhEPlm5sYyqRwFXnOY/qA4twXaA0Z9tsiVeCZQqD/gFF2MLTOdM4wLmCwQP7mooUGrI+sQiRDZEVC0E+sfpFBDsFmHRcE6xPzVyrNtcS1Nt6e0kXupvJHzvQfnN/FszxFFSbyAM2DrYrIiQmLJc7KYYm17WP+ZVQBHOmLwV+IiILgL2WEVkZZXzaCs2eiH8CDjQ+D4PcQmB+MR2v0yTh7LfPy8qS6/hmgVWtYdkbA/loPgU/506C/OQ7mdpg7GMpx/PotMugcyy+eRMMMKUeC3HTg+m8y/r7hTDHU="
+#          file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
+#          on:
+#            repo: Janpopan/sonarqube-licensecheck
+#            tags: true
+#            condition: "! $TRAVIS_TAG =~ beta$"
       script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
-    - name: Release
-      if: tag IS present
-      script: echo "Deploying to GitHub releases ..."
-      deploy:
-        - provider: releases
-          skip_cleanup: true
-          prerelease: true
-          api_key:
-            secure: "AVyPUESem3Pe77y6o7cKE4fUcgyevbsS1BH4ul8j3i7z8AYXhbmikZVX0l8vnL8SKNTw3/X9Aa21+HXxABdBM1AsDwb3u7GyWYJxaognE+WmB94vDBS2r9qi8ElnmzBH2aAYssVrIFpcsA3KgEB8YPDKa5foAbeJLc5bdy/3huNEFJTbn/yk6i2RSs8XGo87DPWnxQwh/l7AjwQuPIN4Y6a4ou1E78L8Rldw7RcPkVQ6DanUtGwtjJQanza1xeiIMu6ws3xAO0e3UmXtQasFWnCkWMS1ptFy8GW/4RghZFioDMFW+c0mTEMe7b0qil9jYiXg9IYO7HBfeDTXecnu+mGcTIlB+ZF+CsVPUJuQWyBWUSt0RLJvNWq7XHDw7YsYpgSFbdRhEPlm5sYyqRwFXnOY/qA4twXaA0Z9tsiVeCZQqD/gFF2MLTOdM4wLmCwQP7mooUGrI+sQiRDZEVC0E+sfpFBDsFmHRcE6xPzVyrNtcS1Nt6e0kXupvJHzvQfnN/FszxFFSbyAM2DrYrIiQmLJc7KYYm17WP+ZVQBHOmLwV+IiILgL2WEVkZZXzaCs2eiH8CDjQ+D4PcQmB+MR2v0yTh7LfPy8qS6/hmgVWtYdkbA/loPgU/506C/OQ7mdpg7GMpx/PotMugcyy+eRMMMKUeC3HTg+m8y/r7hTDHU="
-          file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
-          on:
-            repo: Janpopan/sonarqube-licensecheck
-            tags: true
-            condition: "$TRAVIS_TAG =~ beta$"
-        - provider: releases
-          skip_cleanup: true
-          api_key:
-            secure: "AVyPUESem3Pe77y6o7cKE4fUcgyevbsS1BH4ul8j3i7z8AYXhbmikZVX0l8vnL8SKNTw3/X9Aa21+HXxABdBM1AsDwb3u7GyWYJxaognE+WmB94vDBS2r9qi8ElnmzBH2aAYssVrIFpcsA3KgEB8YPDKa5foAbeJLc5bdy/3huNEFJTbn/yk6i2RSs8XGo87DPWnxQwh/l7AjwQuPIN4Y6a4ou1E78L8Rldw7RcPkVQ6DanUtGwtjJQanza1xeiIMu6ws3xAO0e3UmXtQasFWnCkWMS1ptFy8GW/4RghZFioDMFW+c0mTEMe7b0qil9jYiXg9IYO7HBfeDTXecnu+mGcTIlB+ZF+CsVPUJuQWyBWUSt0RLJvNWq7XHDw7YsYpgSFbdRhEPlm5sYyqRwFXnOY/qA4twXaA0Z9tsiVeCZQqD/gFF2MLTOdM4wLmCwQP7mooUGrI+sQiRDZEVC0E+sfpFBDsFmHRcE6xPzVyrNtcS1Nt6e0kXupvJHzvQfnN/FszxFFSbyAM2DrYrIiQmLJc7KYYm17WP+ZVQBHOmLwV+IiILgL2WEVkZZXzaCs2eiH8CDjQ+D4PcQmB+MR2v0yTh7LfPy8qS6/hmgVWtYdkbA/loPgU/506C/OQ7mdpg7GMpx/PotMugcyy+eRMMMKUeC3HTg+m8y/r7hTDHU="
-          file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
-          on:
-            repo: Janpopan/sonarqube-licensecheck
-            tags: true
-            condition: "! $TRAVIS_TAG =~ beta$"
