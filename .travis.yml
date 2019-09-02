@@ -5,7 +5,7 @@ jdk:
 if: type != push OR branch = master OR branch =~ /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 addons:
   sonarcloud:
-    organization: "porscheinformatik"
+    organization: "janpopan"
 jobs:
   include:
     - name: Build
@@ -21,7 +21,7 @@ jobs:
           skip_cleanup: true
           prerelease: true
           api_key:
-            secure: OZ+Mpt/xGsBRN8bOYWE0ikA+m+JWNZZFX8OoJUoEBjtA4FYq+SLEM2DIIGEMVyY5Kf/bO/pqOHT0qUOxKhH9Pqin/tWSFgMeS5BQg5bmOialePRJPzU0Tiw5e2UFWwvU1UHv7INIqTxeJQRAnWljHdsZYf/pdyiHSCNb4/XnYMP6Quw0nHTZyp6zvI7CR5HLM9C8TtyBcNZQlrakyT4uOEtmaPyTIO+Tks6v14oTeLQK7pouME+AtsZRMkLK9GSJXnxNVIGdoHL5ri9ybcA5LO2SdwXtBzI2CpTqeqgOlTHf9f3pGKdJ3J9NSOhLD0EhF7pP4iOy0yjYQL2OTYGACl/I9GTgw9E4m3I/gwsYKO6ndgvWL29KU8gD5KUWiF1IS5/490fBMY0DkHkHBonEhzt+Bkl9bTwNwyiGEOpYk0ocLMJeEgWXGE7K3QuolW7eXy5KjRWvyhGNov13+5FEoX5kfHOOxOr0hLcp1xQ1PZqvGMONly4RNbrJAa7HWFzPxRued/CiKWzsKwwznPngoTQ+RIXwuJPrIJutYDOtcvw2Bu05JGCl3cFXiQD801P2CrJ7ZNFypF+2tpgyUtav9BaYpvaPOC0SZlrH79W+74EKiBNyLEBetCXkN9JnnD1o8LMjgPTNY6APlbKH+D8OWuIRtuNq4rn/XLFGQsMbr2s=
+            secure: "nxmck+pjZ8hhgdplflng1+IAe9kIEBBiZ1UCqryDfB5Z343bVMkaH/3yEa1Und9NuDCGcHjn3ATHAcbSW5pcDxFZa5A04dqgP/p4SGuIJveN36c0nNE7z+mAZYvnz8HYkKqr1EvEqgUAvvbh9GoD5RoSIvQr8PKcepNDk892qzeC/i4P9k29l7qzLA121aAPTL6tqSLYQa5D4uzTrMCDL69jFYoa761/IamBl5NyxZ/UaBXaysdYZqXWw1GSeAOjTQzRO+1jdyXUuKVpL7VhYYOk6vhhuaJO10ljGxtfplir7YDenwsQ9MRdLHCafo7vostMisZJMK2AeH2DV/nIn85iYPJvyLe28gr2+1ezZUCWioBxjGnO86XXvcKvcT8G3jE9hvGbB/OBKrvAYakAhwKngk/e/Xt9DsjE19b/Dk/qgcXEE2O5+G/Matw69pYLi4eNCbAMaXxQOLLW1oYttaBhRjnoYCiEzXy0b86opqYlbX56yl7Ts5oDwXB7Lmigk58SapsjdUH/V0r9gh/Tnet2dJDCMDTl1Hr6qfqsbq/22/Vh/WcJL3jeBOe9oxQwmxJ1B3Mfs5SEBPFgPExD3+VChLYDPvrPosdnE0MghAzOIasY76//uZBJ4nJnKIYlSv2qOgJEB6sRE7HcfcXaMUXqNXhdBsmnXbUTDfBuLOc="
           file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
           on:
             repo: porscheinformatik/sonarqube-licensecheck
@@ -30,7 +30,7 @@ jobs:
         - provider: releases
           skip_cleanup: true
           api_key:
-            secure: OZ+Mpt/xGsBRN8bOYWE0ikA+m+JWNZZFX8OoJUoEBjtA4FYq+SLEM2DIIGEMVyY5Kf/bO/pqOHT0qUOxKhH9Pqin/tWSFgMeS5BQg5bmOialePRJPzU0Tiw5e2UFWwvU1UHv7INIqTxeJQRAnWljHdsZYf/pdyiHSCNb4/XnYMP6Quw0nHTZyp6zvI7CR5HLM9C8TtyBcNZQlrakyT4uOEtmaPyTIO+Tks6v14oTeLQK7pouME+AtsZRMkLK9GSJXnxNVIGdoHL5ri9ybcA5LO2SdwXtBzI2CpTqeqgOlTHf9f3pGKdJ3J9NSOhLD0EhF7pP4iOy0yjYQL2OTYGACl/I9GTgw9E4m3I/gwsYKO6ndgvWL29KU8gD5KUWiF1IS5/490fBMY0DkHkHBonEhzt+Bkl9bTwNwyiGEOpYk0ocLMJeEgWXGE7K3QuolW7eXy5KjRWvyhGNov13+5FEoX5kfHOOxOr0hLcp1xQ1PZqvGMONly4RNbrJAa7HWFzPxRued/CiKWzsKwwznPngoTQ+RIXwuJPrIJutYDOtcvw2Bu05JGCl3cFXiQD801P2CrJ7ZNFypF+2tpgyUtav9BaYpvaPOC0SZlrH79W+74EKiBNyLEBetCXkN9JnnD1o8LMjgPTNY6APlbKH+D8OWuIRtuNq4rn/XLFGQsMbr2s=
+            secure: "nxmck+pjZ8hhgdplflng1+IAe9kIEBBiZ1UCqryDfB5Z343bVMkaH/3yEa1Und9NuDCGcHjn3ATHAcbSW5pcDxFZa5A04dqgP/p4SGuIJveN36c0nNE7z+mAZYvnz8HYkKqr1EvEqgUAvvbh9GoD5RoSIvQr8PKcepNDk892qzeC/i4P9k29l7qzLA121aAPTL6tqSLYQa5D4uzTrMCDL69jFYoa761/IamBl5NyxZ/UaBXaysdYZqXWw1GSeAOjTQzRO+1jdyXUuKVpL7VhYYOk6vhhuaJO10ljGxtfplir7YDenwsQ9MRdLHCafo7vostMisZJMK2AeH2DV/nIn85iYPJvyLe28gr2+1ezZUCWioBxjGnO86XXvcKvcT8G3jE9hvGbB/OBKrvAYakAhwKngk/e/Xt9DsjE19b/Dk/qgcXEE2O5+G/Matw69pYLi4eNCbAMaXxQOLLW1oYttaBhRjnoYCiEzXy0b86opqYlbX56yl7Ts5oDwXB7Lmigk58SapsjdUH/V0r9gh/Tnet2dJDCMDTl1Hr6qfqsbq/22/Vh/WcJL3jeBOe9oxQwmxJ1B3Mfs5SEBPFgPExD3+VChLYDPvrPosdnE0MghAzOIasY76//uZBJ4nJnKIYlSv2qOgJEB6sRE7HcfcXaMUXqNXhdBsmnXbUTDfBuLOc="
           file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
           on:
             repo: porscheinformatik/sonarqube-licensecheck
