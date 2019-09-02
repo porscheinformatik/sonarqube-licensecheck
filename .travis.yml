@@ -40,4 +40,4 @@ addons:
 #            repo: Janpopan/sonarqube-licensecheck
 #            tags: true
 #            condition: "! $TRAVIS_TAG =~ beta$"
-      script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+      script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Janpopan_sonarqube-licensecheck -Pcoverage
