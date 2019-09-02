@@ -24,7 +24,7 @@ jobs:
             secure: "nxmck+pjZ8hhgdplflng1+IAe9kIEBBiZ1UCqryDfB5Z343bVMkaH/3yEa1Und9NuDCGcHjn3ATHAcbSW5pcDxFZa5A04dqgP/p4SGuIJveN36c0nNE7z+mAZYvnz8HYkKqr1EvEqgUAvvbh9GoD5RoSIvQr8PKcepNDk892qzeC/i4P9k29l7qzLA121aAPTL6tqSLYQa5D4uzTrMCDL69jFYoa761/IamBl5NyxZ/UaBXaysdYZqXWw1GSeAOjTQzRO+1jdyXUuKVpL7VhYYOk6vhhuaJO10ljGxtfplir7YDenwsQ9MRdLHCafo7vostMisZJMK2AeH2DV/nIn85iYPJvyLe28gr2+1ezZUCWioBxjGnO86XXvcKvcT8G3jE9hvGbB/OBKrvAYakAhwKngk/e/Xt9DsjE19b/Dk/qgcXEE2O5+G/Matw69pYLi4eNCbAMaXxQOLLW1oYttaBhRjnoYCiEzXy0b86opqYlbX56yl7Ts5oDwXB7Lmigk58SapsjdUH/V0r9gh/Tnet2dJDCMDTl1Hr6qfqsbq/22/Vh/WcJL3jeBOe9oxQwmxJ1B3Mfs5SEBPFgPExD3+VChLYDPvrPosdnE0MghAzOIasY76//uZBJ4nJnKIYlSv2qOgJEB6sRE7HcfcXaMUXqNXhdBsmnXbUTDfBuLOc="
           file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
           on:
-            repo: porscheinformatik/sonarqube-licensecheck
+            repo: janpopan/sonarqube-licensecheck
             tags: true
             condition: "$TRAVIS_TAG =~ beta$"
         - provider: releases
@@ -33,6 +33,6 @@ jobs:
             secure: "nxmck+pjZ8hhgdplflng1+IAe9kIEBBiZ1UCqryDfB5Z343bVMkaH/3yEa1Und9NuDCGcHjn3ATHAcbSW5pcDxFZa5A04dqgP/p4SGuIJveN36c0nNE7z+mAZYvnz8HYkKqr1EvEqgUAvvbh9GoD5RoSIvQr8PKcepNDk892qzeC/i4P9k29l7qzLA121aAPTL6tqSLYQa5D4uzTrMCDL69jFYoa761/IamBl5NyxZ/UaBXaysdYZqXWw1GSeAOjTQzRO+1jdyXUuKVpL7VhYYOk6vhhuaJO10ljGxtfplir7YDenwsQ9MRdLHCafo7vostMisZJMK2AeH2DV/nIn85iYPJvyLe28gr2+1ezZUCWioBxjGnO86XXvcKvcT8G3jE9hvGbB/OBKrvAYakAhwKngk/e/Xt9DsjE19b/Dk/qgcXEE2O5+G/Matw69pYLi4eNCbAMaXxQOLLW1oYttaBhRjnoYCiEzXy0b86opqYlbX56yl7Ts5oDwXB7Lmigk58SapsjdUH/V0r9gh/Tnet2dJDCMDTl1Hr6qfqsbq/22/Vh/WcJL3jeBOe9oxQwmxJ1B3Mfs5SEBPFgPExD3+VChLYDPvrPosdnE0MghAzOIasY76//uZBJ4nJnKIYlSv2qOgJEB6sRE7HcfcXaMUXqNXhdBsmnXbUTDfBuLOc="
           file: target/sonarqube-licensecheck-plugin-${TRAVIS_TAG:1}.jar
           on:
-            repo: porscheinformatik/sonarqube-licensecheck
+            repo: janpopan/sonarqube-licensecheck
             tags: true
             condition: "! $TRAVIS_TAG =~ beta$"
