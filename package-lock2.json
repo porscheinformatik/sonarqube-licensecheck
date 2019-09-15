@@ -926,20 +926,20 @@
       }
     },
     "concurrently": {
-      "version": "4.1.2",
-      "resolved": "https://registry.npmjs.org/concurrently/-/concurrently-4.1.2.tgz",
-      "integrity": "sha512-Kim9SFrNr2jd8/0yNYqDTFALzUX1tvimmwFWxmp/D4mRI+kbqIIwE2RkBDrxS2ic25O1UgQMI5AtBqdtX3ynYg==",
+      "version": "4.1.1",
+      "resolved": "https://registry.npmjs.org/concurrently/-/concurrently-4.1.1.tgz",
+      "integrity": "sha512-48+FE5RJ0qc8azwKv4keVQWlni1hZeSjcWr8shBelOBtBHcKj1aJFM9lHRiSc1x7lq416pkvsqfBMhSRja+Lhw==",
       "dev": true,
       "requires": {
-        "chalk": "^2.4.2",
-        "date-fns": "^1.30.1",
-        "lodash": "^4.17.15",
+        "chalk": "^2.4.1",
+        "date-fns": "^1.23.0",
+        "lodash": "^4.17.10",
         "read-pkg": "^4.0.1",
-        "rxjs": "^6.5.2",
+        "rxjs": "^6.3.3",
         "spawn-command": "^0.0.2-1",
         "supports-color": "^4.5.0",
-        "tree-kill": "^1.2.1",
-        "yargs": "^12.0.5"
+        "tree-kill": "^1.1.0",
+        "yargs": "^12.0.1"
       },
       "dependencies": {
         "has-flag": {
@@ -2532,9 +2532,9 @@
       }
     },
     "hosted-git-info": {
-      "version": "2.8.4",
-      "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.4.tgz",
-      "integrity": "sha512-pzXIvANXEFrc5oFFXRMkbLPQ2rXRoDERwDLyrcUxGhaZhgP54BBSl9Oheh7Vv0T090cszWBxPjkQQ5Sq1PbBRQ==",
+      "version": "2.7.1",
+      "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.7.1.tgz",
+      "integrity": "sha512-7T/BxH19zbcCTa8XkMlbK5lTo1WtgkFi3GvdWEyNuc4Vex7/9Dqbnpsf4JMydcfj9HCg4zUWFTL3Za6lapg5/w==",
       "dev": true
     },
     "http-proxy": {
@@ -3918,9 +3918,9 @@
       "dev": true
     },
     "resolve": {
-      "version": "1.12.0",
-      "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.12.0.tgz",
-      "integrity": "sha512-B/dOmuoAik5bKcD6s6nXDCjzUKnaDvdkRyAk6rsmsKLipWj4797iothd7jmmUhWTfinVMU+wc56rYKsit2Qy4w==",
+      "version": "1.11.1",
+      "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.11.1.tgz",
+      "integrity": "sha512-vIpgF6wfuJOZI7KKKSP+HmiKggadPQAdsp5HiC1mvqnfp0gF1vdwgBWZIdrVft9pgqoMFQN+R7BSWZiBxx+BBw==",
       "dev": true,
       "requires": {
         "path-parse": "^1.0.6"
@@ -4051,15 +4051,9 @@
       "dev": true
     },
     "serialize-javascript": {
-<<<<<<< HEAD
-      "version": "1.9.0",
-      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-1.9.0.tgz",
-      "integrity": "sha512-UkGlcYMtw4d9w7YfCtJFgdRTps8N4L0A48R+SmcGL57ki1+yHwJXnalk5bjgrw+ljv6SfzjzPjhohod2qllg/Q==",
-=======
       "version": "1.8.0",
       "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-1.8.0.tgz",
       "integrity": "sha512-3tHgtF4OzDmeKYj6V9nSyceRS0UJ3C7VqyD2Yj28vC/z2j6jG5FmFGahOKMD9CrglxTm3tETr87jEypaYV8DUg==",
->>>>>>> upstream/master
       "dev": true
     },
     "set-blocking": {
@@ -5241,9 +5235,9 @@
       }
     },
     "webpack": {
-      "version": "4.39.3",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.39.3.tgz",
-      "integrity": "sha512-BXSI9M211JyCVc3JxHWDpze85CvjC842EvpRsVTc/d15YJGlox7GIDd38kJgWrb3ZluyvIjgenbLDMBQPDcxYQ==",
+      "version": "4.39.2",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.39.2.tgz",
+      "integrity": "sha512-AKgTfz3xPSsEibH00JfZ9sHXGUwIQ6eZ9tLN8+VLzachk1Cw2LVmy+4R7ZiwTa9cZZ15tzySjeMui/UnSCAZhA==",
       "dev": true,
       "requires": {
         "@webassemblyjs/ast": "1.8.5",

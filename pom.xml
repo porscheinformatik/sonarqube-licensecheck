@@ -50,7 +50,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.27</version>
+      <version>1.7.28</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
@@ -67,6 +67,11 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.9</version>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
@@ -89,7 +94,7 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>7.9</version>
+      <version>7.9.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -122,7 +127,7 @@
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-invoker</artifactId>
-      <version>2.2</version>
+      <version>3.0.1</version>
     </dependency>
   </dependencies>
 
@@ -138,7 +143,7 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.15</version>
+        <version>1.18.0.372</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
@@ -228,6 +233,5 @@
       </plugin>
     </plugins>
   </build>
-
 
 </project>
