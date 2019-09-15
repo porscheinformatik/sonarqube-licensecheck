@@ -38,11 +38,6 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.utils.ExtendedParser;
 
-/**
- * This class is taken from stackoverflow
- * https://stackoverflow.com/a/53296095/12066835
- * the author there is SimoV8
- */
 public class MavenDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
