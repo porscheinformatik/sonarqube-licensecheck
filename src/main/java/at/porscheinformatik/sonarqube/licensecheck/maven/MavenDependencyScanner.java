@@ -12,14 +12,12 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +36,7 @@ import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.utils.ExtendedParser;
 
 public class MavenDependencyScanner implements Scanner
 {
@@ -73,11 +72,17 @@ public class MavenDependencyScanner implements Scanner
             if (cmd.hasOption("s"))
             {
                 userSettings = cmd.getOptionValue("s");
+                LOGGER.debug("-s {}",userSettings);
             }
             if (cmd.hasOption("gs"))
             {
                 globalSettings = cmd.getOptionValue("gs");
+                LOGGER.debug("-gs {}", globalSettings);
             }
+        }
+        else
+        {
+        	LOGGER.debug("no cli");
         }
 
         return readDependencyList(moduleDir, userSettings, globalSettings)
@@ -282,7 +287,7 @@ public class MavenDependencyScanner implements Scanner
             }
         }
 
-        LOGGER.info("No licenses found for '{}'", licenseName);
+        LOGGER.warn("No licenses found for '{}'", licenseName);
     }
 
     private Dependency mapMavenDependencyToLicense(Dependency dependency)
@@ -309,15 +314,15 @@ public class MavenDependencyScanner implements Scanner
         try
         {
             String commandArgs = System.getProperty("sun.java.command");
-            CommandLineParser parser = new DefaultParser();
+            CommandLineParser parser = new ExtendedParser();
             Options options = new Options();
             options.addOption("s", "settings", true, "Alternate path for the user settings file");
             options.addOption("gs", "global-settings", true, "Alternate path for the global settings file");
-            cmd = parser.parse(options, commandArgs.split(" "));
+            cmd = parser.parse(options, commandArgs.split(" "), false);
         }
         catch (Exception e)
         {
-            // ignore unparsable command line args
+            LOGGER.warn(e.toString());
         }
         return cmd;
     }
