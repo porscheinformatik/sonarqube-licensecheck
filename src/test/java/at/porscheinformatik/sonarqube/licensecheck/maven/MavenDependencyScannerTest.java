@@ -121,4 +121,23 @@ public class MavenDependencyScannerTest
         assertThat(dependency.getVersion(), is("2.2"));
         assertThat(dependency.getPomPath(), endsWith("test.pom"));
     }
+
+    @Test
+    public void testSettingsFromMaven()
+    { 
+        String oldVal = System.getProperty("sun.java.command");
+        try
+        {
+            System.setProperty("sun.java.command", "thisisatest -X -s src/test/resources/settings-does-not-exist.xml -gs src/test/resources/settings-does-not-exist.xml -B");
+            Scanner scanner = new MavenDependencyScanner(mockLicenseService(), Mockito.mock(MavenDependencyService.class));
+            
+            Set<Dependency> dependencies = scanner.scan(new File("."));
+
+            assertThat(dependencies.size(), is(0));
+        }
+        finally
+        {
+            System.setProperty("sun.java.command", oldVal);
+        }
+    }
 }
