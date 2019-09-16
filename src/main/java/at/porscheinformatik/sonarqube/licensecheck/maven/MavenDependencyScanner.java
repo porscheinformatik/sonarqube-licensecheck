@@ -11,15 +11,10 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
@@ -61,28 +56,17 @@ public class MavenDependencyScanner implements Scanner
             return Collections.emptyList();
         }
 
-        String userSettings = null;
-        String globalSettings = null;
-        CommandLine cmd = getCommandLineArgs();
-        if (cmd != null)
-        {
-            if (cmd.hasOption("s"))
-            {
-                userSettings = cmd.getOptionValue("s");
-            }
-            if (cmd.hasOption("gs"))
-            {
-                globalSettings = cmd.getOptionValue("gs");
-            }
-        }
+        LOGGER.info("Scanning for Maven dependencies");
 
-        return readDependencyList(moduleDir, userSettings, globalSettings)
+        MavenSettings settings = getSettingsFromCommandLineArgs();
+
+        return readDependencyList(moduleDir, settings)
             .map(this::mapMavenDependencyToLicense)
-            .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), userSettings, globalSettings))
+            .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
             .collect(Collectors.toList());
     }
 
-    private static Stream<Dependency> readDependencyList(File moduleDir, String userSettings, String globalSettings)
+    private static Stream<Dependency> readDependencyList(File moduleDir, MavenSettings settings)
     {
         Path tempFile = createTempFile();
         if (tempFile == null)
@@ -94,13 +78,15 @@ public class MavenDependencyScanner implements Scanner
         request.setRecursive(false);
         request.setPomFile(new File(moduleDir, "pom.xml"));
         request.setGoals(Collections.singletonList("dependency:list"));
-        if (userSettings != null)
+        if (settings.userSettings != null)
         {
-            request.setUserSettingsFile(new File(userSettings));
+            request.setUserSettingsFile(new File(settings.userSettings));
+            LOGGER.info("Using user settings {}", settings.userSettings);
         }
-        if (globalSettings != null)
+        if (settings.globalSettings != null)
         {
-            request.setGlobalSettingsFile(new File(globalSettings));
+            request.setGlobalSettingsFile(new File(settings.globalSettings));
+            LOGGER.info("Using global settings {}", settings.globalSettings);
         }
         Properties properties = new Properties();
         properties.setProperty("outputFile", tempFile.toAbsolutePath().toString());
@@ -224,8 +210,7 @@ public class MavenDependencyScanner implements Scanner
         return items;
     }
 
-    private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap, String userSettings,
-        String globalSettings)
+    private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap, MavenSettings settings)
     {
         return (Dependency dependency) ->
         {
@@ -235,17 +220,17 @@ public class MavenDependencyScanner implements Scanner
                 return dependency;
             }
 
-            return loadLicense(licenseMap, userSettings, globalSettings, dependency);
+            return loadLicense(licenseMap, settings, dependency);
         };
     }
 
-    private static Dependency loadLicense(Map<Pattern, String> licenseMap, String userSettings, String globalSettings,
-        Dependency dependency)
+    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings, Dependency dependency)
     {
         String pomPath = dependency.getPomPath();
         if (pomPath != null)
         {
-            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), userSettings, globalSettings);
+            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings, 
+                settings.globalSettings);
             if (licenses.isEmpty())
             {
                 LOGGER.info("No licenses found in dependency {}", dependency.getName());
@@ -299,22 +284,42 @@ public class MavenDependencyScanner implements Scanner
         return dependency;
     }
 
-    private static CommandLine getCommandLineArgs()
+    private static MavenSettings getSettingsFromCommandLineArgs()
     {
-        CommandLine cmd = null;
-        try
+        String globalSettings = null;
+        String userSettings = null;
+        String commandArgs = System.getProperty("sun.java.command");
+        try(java.util.Scanner scanner = new java.util.Scanner(commandArgs))
         {
-            String commandArgs = System.getProperty("sun.java.command");
-            CommandLineParser parser = new DefaultParser();
-            Options options = new Options();
-            options.addOption("s", "settings", true, "Alternate path for the user settings file");
-            options.addOption("gs", "global-settings", true, "Alternate path for the global settings file");
-            cmd = parser.parse(options, commandArgs.split(" "));
+            while (scanner.hasNext())
+            {
+                String part = scanner.next();
+                if (part.equals("-gs") || part.equals("--global-settings"))
+                {
+                    globalSettings = scanner.next();
+                }
+                else if (part.equals("-s") || part.equals("--settings"))
+                {
+                    userSettings = scanner.next();
+                }
+            }
         }
         catch (Exception e)
         {
-            // ignore unparsable command line args
+            LOGGER.debug("Ignore unparsable command line", e);
         }
-        return cmd;
+        return new MavenSettings(globalSettings, userSettings);
+    }
+}
+
+class MavenSettings
+{
+    final String globalSettings;
+    final String userSettings;
+
+    MavenSettings(String globalSettings, String userSetttings)
+    {
+        this.globalSettings = globalSettings;
+        this.userSettings = userSetttings;
     }
 }
