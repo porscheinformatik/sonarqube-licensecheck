@@ -8,3 +8,4 @@ node/
 package.json
 .idea/
 *.iml
+.vscode/
