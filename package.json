@@ -20,7 +20,7 @@
     "vue-svgicon": "3.2.6",
     "vue-template-compiler": "2.6.10",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.7"
+    "webpack-cli": "3.3.10"
   },
   "dependencies": {
     "file-saverjs": "1.3.6",
