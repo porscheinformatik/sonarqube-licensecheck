@@ -71,7 +71,7 @@ Example for "Dependencies" table:
   <tr><td>org.springframework.boot:spring-boot</td><td>1.4.0.RELEASE</td><td>Apache-2.0</td><td>Allowed</td></tr>
   <tr><td>core-js</td><td>2.4.0</td><td>MIT</td><td>Allowed</td></tr>
   <tr><td>dk.brics.automaton:automaton</td><td>1.11-8</td><td>BSD-3-Clause</td><td>Not Allowed</td></tr>
-  <tr><td>saxon:saxon</td><td>9.1.0.8j</td><td></td><td>Unknwon</td></tr>
+  <tr><td>saxon:saxon</td><td>9.1.0.8j</td><td></td><td>Unknown</td></tr>
 </table>
 
 Example for "Licenses" table:
