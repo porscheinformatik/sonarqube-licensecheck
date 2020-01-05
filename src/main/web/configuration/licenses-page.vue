@@ -15,12 +15,13 @@
     </div>
     <div>
       <table class="data zebra">
+        <caption>Add and administer licenses, allow or disallow globally.</caption>
         <thead>
           <tr>
-            <th>Identifier</th>
-            <th>Name</th>
-            <th>Allowed</th>
-            <th>Actions</th>
+            <th @click="sort('identifier')" scope="col">Identifier</th>
+            <th @click="sort('name')" scope="col">Name</th>
+            <th @click="sort('status')" scope="col">Allowed</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -88,21 +89,32 @@ export default {
       itemToDelete: null,
       itemToEdit: null,
       editMode: null,
-      searchText: null
-    };
+      searchText: null,
+      sortBy: "identifier",
+      sortDirection: "asc"
+};
   },
   computed: {
     displayedItems() {
       if (!this.searchText || this.searchText.length == 0) {
-        return this.items;
+        return this.sortedItems;
       }
 
       let search = this.searchText.toLowerCase();
-      return this.items.filter(
+      return this.sortedItems.filter(
         item =>
           item.name.toLowerCase().indexOf(search) >= 0 ||
           item.identifier.toLowerCase().indexOf(search) >= 0
       );
+	},
+    sortedItems() {
+      return this.items.sort((a, b) => {
+        let modifier = 1;
+        if (this.sortDirection === "desc") modifier = -1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
     }
   },
   created() {
@@ -148,6 +160,12 @@ export default {
           this.load()
       });
       this.itemToDelete = null;
+    },
+    sort(param) {
+      if (param === this.sortBy) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      }
+      this.sortBy = param;
     }
   },
   directives: { focus }
