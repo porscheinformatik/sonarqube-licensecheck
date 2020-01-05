@@ -15,12 +15,13 @@
     </div>
     <div>
       <table class="data zebra">
+        <caption>This is a list of all project specific licenses</caption>
         <thead>
           <tr>
-            <th>Project</th>
-            <th>License</th>
-            <th>Actions</th>
-            <th>Allowed</th>
+            <th @click="sort('projectName')" scope="col">Project</th>
+            <th @click="sort('license')" scope="col">License</th>
+            <th @click="sort('status')" scope="col">Actions</th>
+            <th scope="col">Allowed</th>
           </tr>
         </thead>
         <tbody>
@@ -90,21 +91,32 @@ export default {
       editMode: null,
       searchText: null,
       licenses: [],
-      projects: []
+      projects: [],
+      sortBy: "regex",
+      sortDirection: "asc"
     };
   },
   computed: {
     displayedItems() {
       if (!this.searchText || this.searchText.length === 0) {
-        return this.items;
+        return this.sortedItems;
       }
 
       let search = this.searchText.toLowerCase();
-      return this.items.filter(
+      return this.sortedItems.filter(
         item =>
           item.projectKey.toLowerCase().indexOf(search) >= 0 ||
           item.license.toLowerCase().indexOf(search) >= 0
       );
+    },
+    sortedItems() {
+      return this.items.sort((a, b) => {
+        let modifier = 1;
+        if (this.sortDirection === "desc") modifier = -1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
     }
   },
   created() {
@@ -179,6 +191,12 @@ export default {
           this.loadProjectLicenses();
         });
       this.itemToDelete = null;
+    },
+    sort(param) {
+      if (param === this.sortBy) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      }
+      this.sortBy = param;
     }
   },
   directives: { focus }
