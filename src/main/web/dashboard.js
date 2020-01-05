@@ -12,7 +12,9 @@ window.registerExtension('licensecheck/dashboard', function (options) {
       return {
         licenses: [],
         dependencies: [],
-        component: options.component
+		component: options.component,
+		sortBy:'name',
+            sortDirection:'asc'
       }
     },
     created() {
@@ -46,9 +48,9 @@ window.registerExtension('licensecheck/dashboard', function (options) {
   <h1>License Check</h1>
   <div><a href="#" v-on:click="exportExcel()">Export to Excel</a></div>
   <p>&nbsp;</p>
-  <dependencies :dependencies="dependencies"></dependencies>
-  <p>&nbsp;</p>
   <licenses :licenses="licenses"></licenses>
+  <p>&nbsp;</p>
+  <dependencies :dependencies="dependencies"></dependencies>
 </div>`,
     components: { Licenses, Dependencies },
   });
