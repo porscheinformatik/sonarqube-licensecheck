@@ -25,8 +25,8 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
@@ -36,7 +36,7 @@ import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseServ
 
 public class MavenDependencyScanner implements Scanner
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
+    private static final Logger LOGGER = Loggers.get(MavenDependencyScanner.class);
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
 
     private final MavenLicenseService mavenLicenseService;
