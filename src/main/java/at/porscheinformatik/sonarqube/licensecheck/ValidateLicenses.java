@@ -6,8 +6,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
@@ -15,6 +13,8 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -22,7 +22,7 @@ import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 @ScannerSide
 public class ValidateLicenses
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateLicenses.class);
+    private static final Logger LOGGER = Loggers.get(ValidateLicenses.class);
     private final LicenseService licenseService;
 
     public ValidateLicenses(LicenseService licenseService)

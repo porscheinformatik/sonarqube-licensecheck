@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.sonar.server.platform.PersistentSettings;
 
 import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
@@ -18,7 +18,7 @@ import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
 @ServerSide
 public class LicenseSettingsService
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseSettingsService.class);
+    private static final Logger LOGGER = Loggers.get(LicenseSettingsService.class);
 
     /**
      * This is not official API

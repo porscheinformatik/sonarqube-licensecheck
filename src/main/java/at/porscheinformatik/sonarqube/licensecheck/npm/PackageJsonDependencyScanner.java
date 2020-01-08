@@ -14,15 +14,15 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageJsonDependencyScanner.class);
+    private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
 
     private boolean resolveTransitiveDeps;
 
