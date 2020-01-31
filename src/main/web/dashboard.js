@@ -12,9 +12,7 @@ window.registerExtension('licensecheck/dashboard', function (options) {
       return {
         licenses: [],
         dependencies: [],
-		component: options.component,
-		sortBy:'name',
-            sortDirection:'asc'
+        component: options.component
       }
     },
     created() {
