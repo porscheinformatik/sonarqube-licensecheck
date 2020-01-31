@@ -2,12 +2,12 @@
   <div class="boxed-group boxed-group-inner">
     <h3>Licenses</h3>
     <table class="data zebra">
-      <caption>This is a list of all licenses used in any dependencies listed above.</caption>
+      <caption>This is a list of all licenses used in any dependencies listed below.</caption>
       <thead>
         <tr>
-          <th @click="sort('identifier')" scope="col">Identifier</th>
-          <th @click="sort('name')" scope="col">Name</th>
-          <th @click="sort('status')" scope="col">Allowed</th>
+          <th v-for="license in columns" v-bind:key="license" v-on:click="sort(license)" scope="col"> {{license}} 
+            <div class="arrow" v-if="license == sortBy" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -36,19 +36,25 @@ props: ["licenses"],
         name: "",
         status: ""
       },
-      sortBy: "identifier",
-      sortDirection: "asc"
+      sortBy: 'status',
+      sortDirection: 'asc'
     };
   },
   computed: {
     sortedLicenses() {
       return this.licenses.sort((a, b) => {
         let modifier = 1;
-        if (this.sortDirection === "desc") modifier = -1;
+        if (this.sortDirection === 'desc') modifier = -1;
         if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
         if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
         return 0;
       });
+    },
+    "columns": function columns() {
+      if (this.licenses.length == 0) {
+        return [];
+      }
+      return Object.keys(this.licenses[0])
     }
   },
   methods: {
