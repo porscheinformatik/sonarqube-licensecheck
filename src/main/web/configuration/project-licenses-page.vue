@@ -18,9 +18,9 @@
         <caption>This is a list of all project specific licenses</caption>
         <thead>
           <tr>
-            <th @click="sort('projectName')" scope="col">Project</th>
-            <th @click="sort('license')" scope="col">License</th>
-            <th @click="sort('status')" scope="col">Actions</th>
+            <th @click="sort('projectName')" scope="col">Project<div class="arrow" v-if="sortBy === 'projectName'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('license')" scope="col">License<div class="arrow" v-if="sortBy === 'license'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('status')" scope="col">Actions<div class="arrow" v-if="sortBy === 'status'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th scope="col">Allowed</th>
           </tr>
         </thead>
@@ -92,7 +92,7 @@ export default {
       searchText: null,
       licenses: [],
       projects: [],
-      sortBy: "regex",
+      sortBy: "status",
       sortDirection: "asc"
     };
   },
@@ -202,3 +202,6 @@ export default {
   directives: { focus }
 }
 </script>
+<style>
+  @import "../dashboard/icons.css";
+</style>
