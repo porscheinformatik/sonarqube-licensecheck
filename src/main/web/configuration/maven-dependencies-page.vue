@@ -17,8 +17,8 @@
       <table class="data zebra">
         <thead>
           <tr>
-            <th @click="sort('key')" scope="col">Key Regex</th>
-            <th @click="sort('license')" scope="col">License</th>
+            <th @click="sort('key')" scope="col">Key Regex<div class="arrow" v-if="sortBy === 'key'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('license')" scope="col">License<div class="arrow" v-if="sortBy === 'license'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -174,3 +174,6 @@ export default {
   directives: { focus }
 };
 </script>
+<style>
+  @import "../dashboard/icons.css";
+</style>
