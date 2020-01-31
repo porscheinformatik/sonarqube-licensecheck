@@ -5,10 +5,9 @@
       <caption>Here you see all project dependencies from Maven (including transitive) and NPM.</caption>
       <thead>
         <tr>
-          <th @click="sort('name')" scope="col">Name</th>
-          <th @click="sort('version')" scope="col">Version</th>
-          <th @click="sort('license')" scope="col">License</th>
-          <th @click="sort('status')" scope="col">Status</th>
+          <th v-for="dependency in columns" v-bind:key="dependency" v-on:click="sort(dependency)" scope="col"> {{dependency}} 
+            <div class="arrow" v-if="dependency == sortByDep" v-bind:class="{ 'arrow_up' : sortDirectionDep === 'asc', 'arrow_down' : sortDirectionDep === 'desc'}"></div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -39,27 +38,33 @@ export default {
         license: "",
         status: ""
       },
-      sortBy: "name",
-      sortDirection: "asc"
+      sortByDep: "status",
+      sortDirectionDep: "desc"
     };
   },
   computed: {
     sortedDependencies() {
       return this.dependencies.sort((a, b) => {
         let modifier = 1;
-        if (this.sortDirection === "desc") modifier = -1;
-        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        if (this.sortDirectionDep === "desc") modifier = -1;
+        if (a[this.sortByDep] < b[this.sortByDep]) return -1 * modifier;
+        if (a[this.sortByDep] > b[this.sortByDep]) return 1 * modifier;
         return 0;
       });
+    },
+    "columns": function columns() {
+      if (this.dependencies.length == 0) {
+        return [];
+      }
+      return Object.keys(this.dependencies[0])
     }
   },
   methods: {
     sort(param) {
-      if (param === this.sortBy) {
-        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      if (param === this.sortByDep) {
+        this.sortDirectionDep = this.sortDirectionDep === "asc" ? "desc" : "asc";
       }
-      this.sortBy = param;
+      this.sortByDep = param;
     }
   }
 };
