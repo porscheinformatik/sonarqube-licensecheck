@@ -18,17 +18,17 @@
         <caption>Add and administer licenses, allow or disallow globally.</caption>
         <thead>
           <tr>
-            <th @click="sort('identifier')" scope="col">Identifier</th>
-            <th @click="sort('name')" scope="col">Name</th>
-            <th @click="sort('status')" scope="col">Allowed</th>
+            <th @click="sort('identifier')" scope="col">Identifier<div class="arrow" v-if="sortBy === 'identifier'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('name')" scope="col">Name<div class="arrow" v-if="sortBy === 'name'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('status')" scope="col">Allowed<div class="arrow" v-if="sortBy === 'status'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th scope="col">Actions</th>
-          </tr>
+           </tr>
         </thead>
         <tbody>
           <tr v-for="item in displayedItems" :key="item.identifier">
-            <td class="thin ">{{item.identifier}}</td>
+            <td class="thin">{{item.identifier}}</td>
             <td>{{item.name}}</td>
-            <td class="thin">{{item.status}}</td>
+            <td>{{item.status}}</td>
             <td class="thin nowrap">
               <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
                 <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
@@ -171,3 +171,6 @@ export default {
   directives: { focus }
 };
 </script>
+<style>
+  @import "../dashboard/icons.css";
+</style>
