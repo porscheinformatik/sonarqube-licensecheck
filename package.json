@@ -13,7 +13,7 @@
   "devDependencies": {
     "buble": "0.19.8",
     "buble-loader": "0.5.1",
-    "concurrently": "5.0.2",
+    "concurrently": "5.1.0",
     "css-loader": "3.4.2",
     "http-proxy": "1.18.0",
     "vue-loader": "15.8.3",
