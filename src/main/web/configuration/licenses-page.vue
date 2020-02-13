@@ -15,19 +15,20 @@
     </div>
     <div>
       <table class="data zebra">
+        <caption>Add and administer licenses, allow or disallow globally.</caption>
         <thead>
           <tr>
-            <th>Identifier</th>
-            <th>Name</th>
-            <th>Allowed</th>
-            <th>Actions</th>
-          </tr>
+            <th @click="sort('identifier')" scope="col">Identifier<div class="arrow" v-if="sortBy === 'identifier'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('name')" scope="col">Name<div class="arrow" v-if="sortBy === 'name'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('status')" scope="col">Allowed<div class="arrow" v-if="sortBy === 'status'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th scope="col">Actions</th>
+           </tr>
         </thead>
         <tbody>
           <tr v-for="item in displayedItems" :key="item.identifier">
-            <td class="thin ">{{item.identifier}}</td>
+            <td class="thin">{{item.identifier}}</td>
             <td>{{item.name}}</td>
-            <td class="thin">{{item.status}}</td>
+            <td>{{item.status}}</td>
             <td class="thin nowrap">
               <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
                 <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
@@ -88,21 +89,32 @@ export default {
       itemToDelete: null,
       itemToEdit: null,
       editMode: null,
-      searchText: null
-    };
+      searchText: null,
+      sortBy: "identifier",
+      sortDirection: "asc"
+};
   },
   computed: {
     displayedItems() {
       if (!this.searchText || this.searchText.length == 0) {
-        return this.items;
+        return this.sortedItems;
       }
 
       let search = this.searchText.toLowerCase();
-      return this.items.filter(
+      return this.sortedItems.filter(
         item =>
           item.name.toLowerCase().indexOf(search) >= 0 ||
           item.identifier.toLowerCase().indexOf(search) >= 0
       );
+	},
+    sortedItems() {
+      return this.items.sort((a, b) => {
+        let modifier = 1;
+        if (this.sortDirection === "desc") modifier = -1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
     }
   },
   created() {
@@ -148,8 +160,17 @@ export default {
           this.load()
       });
       this.itemToDelete = null;
+    },
+    sort(param) {
+      if (param === this.sortBy) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      }
+      this.sortBy = param;
     }
   },
   directives: { focus }
 };
 </script>
+<style>
+  @import "../dashboard/icons.css";
+</style>

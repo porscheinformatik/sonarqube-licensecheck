@@ -17,9 +17,9 @@
       <table class="data zebra">
         <thead>
           <tr>
-            <th>License Text Regex</th>
-            <th>License</th>
-            <th>Actions</th>
+            <th @click="sort('regex')" scope="col">License Text Regex<div class="arrow" v-if="sortBy === 'regex'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('license')" scope="col">License<div class="arrow" v-if="sortBy === 'license'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -77,21 +77,32 @@ export default {
       itemToEdit: null,
       editMode: null,
       searchText: null,
-      licenses: []
+      licenses: [],
+      sortBy: "regex",
+      sortDirection: "asc"
     };
   },
   computed: {
     displayedItems() {
       if (!this.searchText || this.searchText.length === 0) {
-        return this.items;
+        return this.sortedItems;
       }
 
       let search = this.searchText.toLowerCase();
-      return this.items.filter(
+      return this.sortedItems.filter(
         item =>
           item.regex.toLowerCase().indexOf(search) >= 0 ||
           item.license.toLowerCase().indexOf(search) >= 0
       );
+    },
+    sortedItems() {
+      return this.items.sort((a, b) => {
+        let modifier = 1;
+        if (this.sortDirection === "desc") modifier = -1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
     }
   },
   created() {
@@ -151,8 +162,17 @@ export default {
           this.loadMavenLicenses();
         });
       this.itemToDelete = null;
+    },
+    sort(param) {
+      if (param === this.sortBy) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      }
+      this.sortBy = param;
     }
   },
   directives: { focus }
 }
 </script>
+<style>
+  @import "../dashboard/icons.css";
+</style>
