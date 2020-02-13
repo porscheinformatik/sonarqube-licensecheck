@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
@@ -86,7 +86,7 @@ public class ValidateLicenses
                 String notAllowedLicense = "";
 
                 for (License element : licensesContainingDependency) {
-                    if (element.getStatus() == "false") {
+                    if (!Boolean.parseBoolean(element.getStatus())) {
                         notAllowedLicense += element.getName() + " ";
                     }
                 }
@@ -110,9 +110,7 @@ public class ValidateLicenses
         return licenses
             .stream()
             .filter(l -> l.getIdentifier().equals(spdxLicenseString))
-            .filter(l -> Boolean.valueOf(l.getStatus()))
-            .findAny()
-            .isPresent();
+            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
     private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses) {
@@ -120,9 +118,7 @@ public class ValidateLicenses
         return licenses
             .stream()
             .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
-            .filter(l -> Boolean.valueOf(l.getStatus()))
-            .findAny()
-            .isPresent();
+            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
     private boolean checkSpdxLicenseWithAnd(String spdxLicenseString, List<License> licenses)
@@ -133,7 +129,7 @@ public class ValidateLicenses
             licenses.stream()
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
-        long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.valueOf(l.getStatus())).count();
+        long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.parseBoolean(l.getStatus())).count();
         if (count == allowedLicenseCount)
         {
             return true;

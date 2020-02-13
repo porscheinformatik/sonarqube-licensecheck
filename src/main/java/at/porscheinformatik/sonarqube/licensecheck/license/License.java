@@ -16,7 +16,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 public class License implements Comparable<License>
 {
@@ -153,8 +153,7 @@ public class License implements Comparable<License>
 
     public static String createString(Collection<License> licenses)
     {
-        TreeSet<License> licenseSet = new TreeSet<>();
-        licenseSet.addAll(licenses);
+        TreeSet<License> licenseSet = new TreeSet<>(licenses);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);

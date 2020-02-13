@@ -85,14 +85,14 @@ public class MavenDependencyScannerTest
         File moduleDir = new File(".");
         MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
         List<MavenDependency> mavenDependencies =
-            singletonList(new MavenDependency("org.apache.commons:commons.*", "TEST"));
+            singletonList(new MavenDependency("org.glassfish:javax.json", "TEST"));
         when(dependencyService.getMavenDependencies()).thenReturn(mavenDependencies);
         Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
 
         Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         Dependency commonsLang = dependencies.stream()
-            .filter(d -> "org.apache.commons:commons-lang3".equals(d.getName()))
+            .filter(d -> "org.glassfish:javax.json".equals(d.getName()))
             .findFirst().orElse(null);
 
         assertThat(commonsLang.getLicense(), is("TEST"));

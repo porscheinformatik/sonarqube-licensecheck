@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -25,6 +23,7 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -206,7 +205,9 @@ public class MavenDependencyScanner implements Scanner
         if (items[items.length - 2].length() == 1)
         {
             items[items.length - 2] += ":" + items[items.length - 1];
-            items = ArrayUtils.remove(items, items.length - 1);
+            String[] newItems = new String[items.length - 1];
+            System.arraycopy(items, 0, newItems, 0, items.length - 1);
+            items = newItems;
         }
 
         return items;
@@ -226,12 +227,13 @@ public class MavenDependencyScanner implements Scanner
         };
     }
 
-    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings, Dependency dependency)
+    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings,
+        Dependency dependency)
     {
         String pomPath = dependency.getPomPath();
         if (pomPath != null)
         {
-            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings, 
+            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings,
                 settings.globalSettings);
             if (licenses.isEmpty())
             {
@@ -291,7 +293,7 @@ public class MavenDependencyScanner implements Scanner
         String globalSettings = null;
         String userSettings = null;
         String commandArgs = System.getProperty("sun.java.command");
-        try(java.util.Scanner scanner = new java.util.Scanner(commandArgs))
+        try (java.util.Scanner scanner = new java.util.Scanner(commandArgs))
         {
             while (scanner.hasNext())
             {
