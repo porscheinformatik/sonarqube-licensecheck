@@ -15,7 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
@@ -68,7 +68,7 @@ public class MavenLicense implements Comparable<MavenLicense>
                 for (int i = 0; i < licensesJson.size(); i++)
                 {
                     JsonObject licenseJson = licensesJson.getJsonObject(i);
-                    String regex = null;
+                    String regex;
                     try
                     {
                         regex = licenseJson.getString("regex");
@@ -101,8 +101,7 @@ public class MavenLicense implements Comparable<MavenLicense>
 
     public static String createString(Collection<MavenLicense> mavenLicenses)
     {
-        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>();
-        mavenLicenseSet.addAll(mavenLicenses);
+        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>(mavenLicenses);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);
