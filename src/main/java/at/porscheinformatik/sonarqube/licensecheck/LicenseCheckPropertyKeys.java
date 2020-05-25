@@ -10,5 +10,5 @@ public class LicenseCheckPropertyKeys
 
     public static final String PROJECT_LICENSE_KEY = "licensecheck.projectlicense";
 
-    public static final String NPM_RESOLVE_TRANSITVE_DEPS = "licensecheck.npm.resolvetransitive";
+    public static final String NPM_RESOLVE_TRANSITIVE_DEPS = "licensecheck.npm.resolvetransitive";
 }
