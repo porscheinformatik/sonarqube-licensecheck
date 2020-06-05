@@ -41,7 +41,7 @@ public class LicenseCheckSensor implements Sensor
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
             new PackageJsonDependencyScanner(
-                configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITVE_DEPS).orElse(false)),
+                configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
     }
 
