@@ -16,12 +16,6 @@ public class GradleDependencyScanner implements Scanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GradleDependencyScanner.class);
 
-    public static void main(String[] args) {
-        GradleDependencyScanner s = new GradleDependencyScanner();
-        List<Dependency> dependencies = s.scan(new File("C:\\Encode\\code\\license-demo-gradle-java11"));
-        dependencies.forEach(System.out::println);
-    }
-
     @Override
     public List<Dependency> scan(File moduleDir) {
         Gson gson = new Gson();

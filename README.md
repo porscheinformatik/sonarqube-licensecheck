@@ -18,6 +18,56 @@ This plugin is compatible:
  * 2.x version with SonarQube >= 6.5 and < 7.
  * 3.x version with SonarQube >= 6.7 LTS and < 8.
 
+## Pre-Requisite
+
+Gradle project mush use JK1 plugin https://github.com/jk1/Gradle-License-Report
+
+Note: Please check above link for instructions or follow as mentioned below
+
+**Step1:** Update _build.gradle_ file with following code for using JK1 plugin
+
+    import com.github.jk1.license.filter.LicenseBundleNormalizer
+    import com.github.jk1.license.render.JsonReportRenderer
+
+    plugins {
+      id 'com.github.jk1.dependency-license-report' version '1.13'
+    }
+
+    licenseReport {
+        allowedLicensesFile = new File("$projectDir/src/main/resources/licenses/allowed-licenses.json")
+        renderers = new JsonReportRenderer('license-details.json', true)
+        filters = [new LicenseBundleNormalizer()]
+        configurations = ALL
+    }
+
+**Step 2:** Update _build.gradle_ file with following code for using sonar-qube plugin
+
+    plugins {
+        id 'org.sonarqube' version "2.7"
+    }
+    
+    jar {
+        enabled = true
+    }
+    
+    sonarqube {
+        properties {
+            property "sonar.host.url", "http://localhost:9000"
+        }
+    }
+    
+    dependencies {
+        implementation "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.0"
+    }
+    
+**Step 3:** run following command  to generate your report _'license-details.json'_ in _build/reports/dependency-license_
+
+    >gradle generateLicenseReport
+    
+**Step 4:** run following command for sonar-qube
+
+    >gradle sonarqube
+    
 ## Installation
 
 Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
