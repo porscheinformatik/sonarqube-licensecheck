@@ -2,6 +2,7 @@ SonarQube License-Check
 ===================
 
 [![Build Status](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck.png?branch=master)](https://travis-ci.org/porscheinformatik/sonarqube-licensecheck)
+[![Maintainability](https://api.codeclimate.com/v1/badges/6ac787bb79b43e39c367/maintainability)](https://codeclimate.com/github/porscheinformatik/sonarqube-licensecheck/maintainability)
 
 This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of
 standard libraries and versions. This enables the governance of the used libraries and licences.
@@ -13,7 +14,7 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
 ## Compatibility
 
 This plugin is compatible:
- 
+
  * 1.x versions with SonarQube >= 5.3 and < 6.
  * 2.x version with SonarQube >= 6.5 and < 7.
  * 3.x version with SonarQube >= 6.7 LTS and < 8.
@@ -39,8 +40,8 @@ After booting the SonarQube Server with the License-Check Plugin two new options
 <b>Administration</b>.
 
 * Within the general settings the plugin can be manually enabled or disabled. By default it is enabled.
-* All other configuration is under License-Check specific settings (Configuration > License Check). 
-  * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses. 
+* All other configuration is under License-Check specific settings (Configuration > License Check).
+  * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
   * Under "Project Licenses" you can allow and disallow licenses for a specific project.
   * Under "Maven Dependencies" you can map the Maven key (groupId:artifactId) to licenses using regular expressions. E.g. `^asm:asm$` to "BSD-3-Clause"
   * Under "Maven Licenses" you can map Maven license texts to licenses using regular expressions, e.g. `.*Apache.*2.*` to "Apache-2.0".
@@ -52,15 +53,16 @@ configuration](docs/licensecheck_configuration.jpg)
 
 ### Analysis
 
-The plugin scans for dependencies defined in your project including all transitive dependencies. 
+The plugin scans for dependencies defined in your project including all transitive dependencies.
 
 Currently supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
 * NPM package.json files - all dependencies (except "devDependencies") are checked
+  * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
 
 ### Project Dashboard
 
-The plugin contains a project dashboard showing a list of dependencies with version and a list of all used licences. Each table shows the status of the license 
+The plugin contains a project dashboard showing a list of dependencies with version and a list of all used licences. Each table shows the status of the license
 (allowed, not allowed, not found). You can also export the data to Excel.
 
 Example for "Dependencies" table:
@@ -69,7 +71,7 @@ Example for "Dependencies" table:
   <tr><td>org.springframework.boot:spring-boot</td><td>1.4.0.RELEASE</td><td>Apache-2.0</td><td>Allowed</td></tr>
   <tr><td>core-js</td><td>2.4.0</td><td>MIT</td><td>Allowed</td></tr>
   <tr><td>dk.brics.automaton:automaton</td><td>1.11-8</td><td>BSD-3-Clause</td><td>Not Allowed</td></tr>
-  <tr><td>saxon:saxon</td><td>9.1.0.8j</td><td></td><td>Unknwon</td></tr>
+  <tr><td>saxon:saxon</td><td>9.1.0.8j</td><td></td><td>Unknown</td></tr>
 </table>
 
 Example for "Licenses" table:

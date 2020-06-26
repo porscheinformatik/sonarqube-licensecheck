@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.json.Json;
@@ -90,7 +91,8 @@ public class ProjectLicense implements Comparable<ProjectLicense>
         {
             return 1;
         }
-        else if (this.getProjectKey().compareTo(o.getProjectKey()) == 0)
+
+        if (this.getProjectKey().compareTo(o.getProjectKey()) == 0)
         {
             if (this.getLicense().compareTo(o.getLicense()) == 0)
             {
@@ -108,35 +110,25 @@ public class ProjectLicense implements Comparable<ProjectLicense>
     }
 
     @Override
-    public boolean equals(Object object)
+    public boolean equals(Object o)
     {
-        if (this == object)
+        if (this == o)
         {
             return true;
         }
-        if (object == null)
+        if (o == null || getClass() != o.getClass())
         {
             return false;
         }
-        if (getClass() != object.getClass())
-        {
-            return false;
-        }
-
-        ProjectLicense projectLicense = (ProjectLicense) object;
-
-        return projectLicense.getLicense().equals(this.getLicense())
-            && projectLicense.getProjectKey().equals(this.getProjectKey());
+        ProjectLicense that = (ProjectLicense) o;
+        return Objects.equals(projectKey, that.projectKey) &&
+            Objects.equals(license, that.license) &&
+            Objects.equals(status, that.status);
     }
 
     @Override
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((getLicense() == null) ? 0 : getLicense().hashCode());
-        result = (prime * result) + ((getProjectKey() == null) ? 0 : getProjectKey().hashCode());
-        result = (prime * result) + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        return result;
+        return Objects.hash(projectKey, license, status);
     }
 }

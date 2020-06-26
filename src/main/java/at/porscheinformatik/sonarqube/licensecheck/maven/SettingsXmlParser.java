@@ -5,13 +5,14 @@ import java.io.File;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 
 class SettingsXmlParser extends SettingsXmlHandler
 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsXmlParser.class);
+    private static final Logger LOGGER = Loggers.get(SettingsXmlParser.class);
 
     private SettingsXmlParser()
     {

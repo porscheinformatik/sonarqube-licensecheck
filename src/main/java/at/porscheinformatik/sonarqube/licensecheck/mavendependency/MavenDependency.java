@@ -1,5 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.mavendependency;
 
+import java.util.Objects;
+
 public class MavenDependency implements Comparable<MavenDependency>
 {
     private String key;
@@ -10,16 +12,6 @@ public class MavenDependency implements Comparable<MavenDependency>
         super();
         this.key = key;
         this.license = license;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((key == null) ? 0 : key.hashCode());
-        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        return result;
     }
 
     public String getKey()
@@ -55,7 +47,8 @@ public class MavenDependency implements Comparable<MavenDependency>
         {
             return 1;
         }
-        else if (this.license.compareTo(o.license) == 0)
+
+        if (this.license.compareTo(o.license) == 0)
         {
             return this.key.compareTo(o.key);
         }
@@ -66,22 +59,24 @@ public class MavenDependency implements Comparable<MavenDependency>
     }
 
     @Override
-    public boolean equals(Object object)
+    public boolean equals(Object o)
     {
-        if (this == object)
+        if (this == o)
         {
             return true;
         }
-        if (object == null)
+        if (o == null || getClass() != o.getClass())
         {
             return false;
         }
-        if (getClass() != object.getClass())
-        {
-            return false;
-        }
+        MavenDependency that = (MavenDependency) o;
+        return Objects.equals(key, that.key) &&
+            Objects.equals(license, that.license);
+    }
 
-        MavenDependency mavenDependency = (MavenDependency) object;
-        return mavenDependency.license.equals(this.license) && mavenDependency.key.equals(this.key);
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(key, license);
     }
 }
