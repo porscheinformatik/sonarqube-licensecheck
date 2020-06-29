@@ -17,13 +17,13 @@ import java.util.Set;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.fs.internal.DefaultInputProject;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
+import org.sonar.api.scanner.fs.InputProject;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -32,12 +32,12 @@ public class ValidateLicensesTest
 {
     private static final License APACHE_LICENSE = new License("Apache-2.0", "Apache-2.0", "true");
     private ValidateLicenses validateLicenses;
-    private ProjectDefinition projectDefinition;
+    private InputProject projectDefinition;
 
     @Before
     public void setup()
     {
-        projectDefinition = mock(ProjectDefinition.class);
+        projectDefinition = mock(InputProject.class);
         when(projectDefinition.getBaseDir()).thenReturn(new File("."));
         when(projectDefinition.getWorkDir()).thenReturn(new File("."));
         when(projectDefinition.getParent()).thenReturn(projectDefinition);

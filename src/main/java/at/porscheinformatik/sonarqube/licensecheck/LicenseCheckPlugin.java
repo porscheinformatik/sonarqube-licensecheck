@@ -7,6 +7,7 @@ import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.scanner.fs.InputProject;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
@@ -73,12 +74,15 @@ public class LicenseCheckPlugin implements Plugin
                 .build());
     }
 
-    static ProjectDefinition getRootProject(ProjectDefinition definition)
+    static InputProject getRootProject(InputProject project)
     {
+        return project;
+        /** TODO
         while (definition != null && definition.getParent() != null && !definition.equals(definition.getParent()))
         {
             definition = definition.getParent();
         }
         return definition;
+         */
     }
 }

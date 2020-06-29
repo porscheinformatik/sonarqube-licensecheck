@@ -9,11 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -49,7 +49,7 @@ public class LicenseCheckSensor implements Sensor
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
-        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.module(), dependencies);
+        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.project(), dependencies);
 
         if (!dependencies.isEmpty())
         {
@@ -57,7 +57,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
@@ -72,7 +72,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.LICENSE)
                 .withValue(License.createString(licenses))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
@@ -99,8 +99,7 @@ public class LicenseCheckSensor implements Sensor
         {
             dependencies.addAll(scanner.scan(fs.baseDir()));
         }
-        ProjectDefinition project =
-            LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
+        InputProject project = context.project();
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
 
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
@@ -108,15 +107,15 @@ public class LicenseCheckSensor implements Sensor
         AGGREGATED_LICENSES.addAll(usedLicenses);
         AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
 
-        if (project.getParent() == null)
+        // TODO if (project.getParent() == null)
         {
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
         }
-        else
-        {
-            saveDependencies(context, validatedDependencies);
-            saveLicenses(context, usedLicenses);
-        }
+        // else
+        // {
+        //     saveDependencies(context, validatedDependencies);
+        //     saveLicenses(context, usedLicenses);
+        // }
     }
 }
