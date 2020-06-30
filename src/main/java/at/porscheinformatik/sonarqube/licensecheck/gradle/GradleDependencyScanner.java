@@ -5,22 +5,21 @@ import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
-import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.config.internal.MapSettings;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -36,22 +35,34 @@ public class GradleDependencyScanner implements Scanner {
 
     @Override
     public Set<Dependency> scan(File moduleDir) {
-        Gson gson = new Gson();
-        String filePath =
-            moduleDir.getPath() + File.separator + "build" + File.separator + "reports" + File.separator
-                + "dependency-license" + File.separator + "license-details.json";
-        try {
-            GradleLicenseDependency gradleLicenseDependency =
-                gson.fromJson(new FileReader(filePath), GradleLicenseDependency.class);
+        Map<Pattern, String> defaultLicenseMap = readDefaultLicenseMappingJsonFile();
+        Set<Dependency> tmpSet = readLicenseDetailsJson(moduleDir.getPath());
+        Set<Dependency> finalSet = tmpSet.stream()
+            .map(this.loadLicenseFromPom(defaultLicenseMap)).collect(Collectors.toSet());
+        finalSet.forEach(System.out::println);
+        return finalSet;
+    }
 
-            Map<Pattern, String> defaultLicenseMap = readDefaultLicenseMappingJsonFile();
-            Set<Dependency> tmpSet = convert2Dependencies(gradleLicenseDependency);
-            Set<Dependency> finalSet = tmpSet.stream()
-                .map(this.loadLicenseFromPom(defaultLicenseMap)).collect(Collectors.toSet());
-            finalSet.forEach(System.out::println);
-            return finalSet;
+    private Set<Dependency> readLicenseDetailsJson(String moduleDirPath) {
+        String filePath =
+            moduleDirPath + File.separator + "build" + File.separator + "reports" + File.separator
+                + "dependency-license" + File.separator + "license-details.json";
+        Set<Dependency> dependencySet = new HashSet<>();
+        try (InputStream fis = new FileInputStream(filePath);
+             JsonReader jsonReader = Json.createReader(fis);) {
+            JsonArray arr = jsonReader.readObject().getJsonArray("dependencies");
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jsoDepObj = arr.get(i).asJsonObject();
+                Dependency dep = new Dependency(jsoDepObj.getString("moduleName"), jsoDepObj.getString("moduleVersion"),
+                    jsoDepObj.getString("moduleLicense"));
+                dep.setPomPath(jsoDepObj.getString("moduleLicenseUrl"));
+                dependencySet.add(dep);
+            }
+            return dependencySet;
         } catch (FileNotFoundException e) {
-            log.error(e.getMessage());
+            log.error("FileNotFoundException "+e.getMessage());
+        } catch (IOException e) {
+            log.error("IOException "+e.getMessage());
         }
         return null;
     }
@@ -90,17 +101,6 @@ public class GradleDependencyScanner implements Scanner {
         return dependency;
     }
 
-    private Set<Dependency> convert2Dependencies(GradleLicenseDependency gradleLicenseDependency) {
-        List<GradleDependency> gDependencies = gradleLicenseDependency.getDependencies();
-        return gDependencies.stream().map(this::convert2Dependency).collect(Collectors.toSet());
-    }
-
-    private Dependency convert2Dependency(GradleDependency gd) {
-        Dependency d = new Dependency(gd.getModuleName(), gd.getModuleVersion(), gd.getModuleLicense());
-        d.setPomPath(gd.getModuleLicenseUrl());
-        return d;
-    }
-
     @Setter
     @Getter
     @NoArgsConstructor
@@ -112,10 +112,8 @@ public class GradleDependencyScanner implements Scanner {
 
     private Map<Pattern, String> readDefaultLicenseMappingJsonFile() {
         Map<Pattern, String> defaultLicenseMap = new HashMap<>();
-
         try (InputStream fis = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json");
              JsonReader jsonReader = Json.createReader(fis)) {
-
             JsonArray arr = jsonReader.readArray();
             for (int i = 0; i < arr.size(); i++) {
                 String regex = arr.get(i).asJsonObject().getString("regex");
