@@ -16,11 +16,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-<<<<<<< HEAD
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-=======
->>>>>>> master
 import org.apache.maven.model.License;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -40,11 +35,7 @@ import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseServ
 
 public class MavenDependencyScanner implements Scanner
 {
-<<<<<<< HEAD
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
-=======
     private static final Logger LOGGER = Loggers.get(MavenDependencyScanner.class);
->>>>>>> master
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
 
     private final MavenLicenseService mavenLicenseService;
@@ -73,11 +64,7 @@ public class MavenDependencyScanner implements Scanner
         return readDependencyList(moduleDir, settings)
             .map(this::mapMavenDependencyToLicense)
             .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
-<<<<<<< HEAD
-            .collect(Collectors.toList());
-=======
             .collect(Collectors.toSet());
->>>>>>> master
     }
 
     private static Stream<Dependency> readDependencyList(File moduleDir, MavenSettings settings)
@@ -218,13 +205,9 @@ public class MavenDependencyScanner implements Scanner
         if (items[items.length - 2].length() == 1)
         {
             items[items.length - 2] += ":" + items[items.length - 1];
-<<<<<<< HEAD
-            items = ArrayUtils.remove(items, items.length - 1);
-=======
             String[] newItems = new String[items.length - 1];
             System.arraycopy(items, 0, newItems, 0, items.length - 1);
             items = newItems;
->>>>>>> master
         }
 
         return items;
@@ -244,21 +227,13 @@ public class MavenDependencyScanner implements Scanner
         };
     }
 
-<<<<<<< HEAD
-    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings, Dependency dependency)
-=======
     private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings,
         Dependency dependency)
->>>>>>> master
     {
         String pomPath = dependency.getPomPath();
         if (pomPath != null)
         {
-<<<<<<< HEAD
-            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings, 
-=======
             List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings,
->>>>>>> master
                 settings.globalSettings);
             if (licenses.isEmpty())
             {
@@ -318,11 +293,7 @@ public class MavenDependencyScanner implements Scanner
         String globalSettings = null;
         String userSettings = null;
         String commandArgs = System.getProperty("sun.java.command");
-<<<<<<< HEAD
-        try(java.util.Scanner scanner = new java.util.Scanner(commandArgs))
-=======
         try (java.util.Scanner scanner = new java.util.Scanner(commandArgs))
->>>>>>> master
         {
             while (scanner.hasNext())
             {

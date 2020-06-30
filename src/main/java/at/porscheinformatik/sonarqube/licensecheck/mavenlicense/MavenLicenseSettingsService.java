@@ -49,7 +49,7 @@ public class MavenLicenseSettingsService
         try (InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
         {
             mavenLicenseListString = IOUtils.readToString(in);
-            persistentSettings.getSettings().setProperty(LICENSE_REGEX, mavenLicenseListString);
+            persistentSettings.saveProperty(LICENSE_REGEX, mavenLicenseListString);
             persistentSettings.saveProperty(LICENSE_REGEX, mavenLicenseListString);
         }
         catch (Exception e)
@@ -115,7 +115,7 @@ public class MavenLicenseSettingsService
     {
         String mavenLicensesString = MavenLicense.createString(mavenLicenses);
 
-        persistentSettings.getSettings().setProperty(LICENSE_REGEX, mavenLicensesString);
+        persistentSettings.saveProperty(LICENSE_REGEX, mavenLicensesString);
         persistentSettings.saveProperty(LICENSE_REGEX, mavenLicensesString);
     }
 
