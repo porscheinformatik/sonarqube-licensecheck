@@ -4,6 +4,7 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +17,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonReader;
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,10 +112,8 @@ public class GradleDependencyScanner implements Scanner {
 
     private Map<Pattern, String> readDefaultLicenseMappingJsonFile() {
         Map<Pattern, String> defaultLicenseMap = new HashMap<>();
-        Path p = Paths.get("src", "main", "resources", "at", "porscheinformatik", "sonarqube",
-            "licensecheck", "mavenlicense", "default_license_mapping.json");
 
-        try (InputStream fis = new FileInputStream(p.toFile().getAbsolutePath());
+        try (InputStream fis = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json");
              JsonReader jsonReader = Json.createReader(fis)) {
 
             JsonArray arr = jsonReader.readArray();
