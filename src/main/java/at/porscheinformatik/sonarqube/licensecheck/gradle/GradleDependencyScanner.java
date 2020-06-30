@@ -11,15 +11,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
-import org.sonar.api.config.Configuration;
-import org.sonar.api.config.internal.MapSettings;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,7 +40,6 @@ public class GradleDependencyScanner implements Scanner {
         Set<Dependency> tmpSet = readLicenseDetailsJson(moduleDir.getPath());
         Set<Dependency> finalSet = tmpSet.stream()
             .map(this.loadLicenseFromPom(defaultLicenseMap)).collect(Collectors.toSet());
-        finalSet.forEach(System.out::println);
         return finalSet;
     }
 
@@ -60,11 +60,11 @@ public class GradleDependencyScanner implements Scanner {
             }
             return dependencySet;
         } catch (FileNotFoundException e) {
-            log.error("FileNotFoundException "+e.getMessage());
+            log.error("FileNotFoundException " + e.getMessage());
         } catch (IOException e) {
-            log.error("IOException "+e.getMessage());
+            log.error("IOException " + e.getMessage());
         }
-        return null;
+        return dependencySet;
     }
 
     private Dependency mapMavenDependencyToLicense(Dependency dependency) {
@@ -101,15 +101,6 @@ public class GradleDependencyScanner implements Scanner {
         return dependency;
     }
 
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    class DefaultLicenseMap {
-        private Pattern regex;
-        private String license;
-    }
-
     private Map<Pattern, String> readDefaultLicenseMappingJsonFile() {
         Map<Pattern, String> defaultLicenseMap = new HashMap<>();
         try (InputStream fis = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json");
@@ -127,5 +118,14 @@ public class GradleDependencyScanner implements Scanner {
             e.printStackTrace();
         }
         return new HashMap<>();
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    class DefaultLicenseMap {
+        private Pattern regex;
+        private String license;
     }
 }

@@ -71,7 +71,7 @@ Note: Please check above link for instructions or follow as mentioned below
     
 ## Installation
 
-Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
+Put the just builted jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
 restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles - otherwise the plugin is not executed.
 
 ## Execution
