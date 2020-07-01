@@ -53,9 +53,11 @@ public class GradleDependencyScanner implements Scanner {
             JsonArray arr = jsonReader.readObject().getJsonArray("dependencies");
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jsoDepObj = arr.get(i).asJsonObject();
-                Dependency dep = new Dependency(jsoDepObj.getString("moduleName"), jsoDepObj.getString("moduleVersion"),
-                    jsoDepObj.getString("moduleLicense"));
-                dep.setPomPath(jsoDepObj.getString("moduleLicenseUrl"));
+                Dependency dep = new Dependency(
+                    jsoDepObj.getString("moduleName", null),
+                    jsoDepObj.getString("moduleVersion", null),
+                    jsoDepObj.getString("moduleLicense", null));
+                dep.setPomPath(jsoDepObj.getString("moduleLicenseUrl", null));
                 dependencySet.add(dep);
             }
             return dependencySet;
@@ -91,13 +93,13 @@ public class GradleDependencyScanner implements Scanner {
         String licenseName = dependency.getLicense();
         if (StringUtils.isBlank(licenseName)) {
             log.info("Dependency '{}' has no license set.", dependency.getName());
+            return dependency;
         }
         for (Map.Entry<Pattern, String> entry : licenseMap.entrySet()) {
             if (entry.getKey().matcher(licenseName).matches()) {
                 dependency.setLicense(entry.getValue());
             }
         }
-        log.info("No licenses found for '{}'", licenseName);
         return dependency;
     }
 
@@ -107,9 +109,13 @@ public class GradleDependencyScanner implements Scanner {
              JsonReader jsonReader = Json.createReader(fis)) {
             JsonArray arr = jsonReader.readArray();
             for (int i = 0; i < arr.size(); i++) {
-                String regex = arr.get(i).asJsonObject().getString("regex");
-                String license = arr.getJsonObject(i).getString("license");
-                defaultLicenseMap.put(Pattern.compile(regex), license);
+                String regex = arr.get(i).asJsonObject().getString("regex", null);
+                String license = arr.getJsonObject(i).getString("license", null);
+                if (StringUtils.isNotBlank(regex) && StringUtils.isNotBlank(license)) {
+                    defaultLicenseMap.put(Pattern.compile(regex), license);
+                } else {
+                    log.info("Missing Reg Expression regex: '{}' and license: {} ", regex, license);
+                }
             }
             return defaultLicenseMap;
         } catch (FileNotFoundException e) {
