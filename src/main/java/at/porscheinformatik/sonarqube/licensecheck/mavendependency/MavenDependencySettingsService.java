@@ -90,7 +90,7 @@ public class MavenDependencySettingsService
             .forEach(jsonArray::add);
 
         String newJsonDependency = jsonArray.build().toString();
-        persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
+        persistentSettings.getSettings().setProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, newJsonDependency);
     }
 
@@ -110,7 +110,7 @@ public class MavenDependencySettingsService
             return;
         }
 
-        persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
+        persistentSettings.getSettings().setProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
         persistentSettings.saveProperty(ALLOWED_DEPENDENCIES_KEY, initValueMavenDepependencies);
     }
 
