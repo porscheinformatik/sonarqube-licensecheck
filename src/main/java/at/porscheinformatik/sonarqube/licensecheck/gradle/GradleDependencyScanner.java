@@ -2,9 +2,7 @@ package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,29 +15,28 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.*;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class GradleDependencyScanner implements Scanner {
 
-    private final MavenDependencyService mavenDependencyService;
+    private final MavenLicenseService mavenLicenseService;
 
-    public GradleDependencyScanner(MavenDependencyService mavenDependencyService) {
-        this.mavenDependencyService = mavenDependencyService;
+    public GradleDependencyScanner(MavenLicenseService mavenLicenseService) {
+        this.mavenLicenseService = mavenLicenseService;
     }
 
     @Override
     public Set<Dependency> scan(File moduleDir) {
-        Map<Pattern, String> defaultLicenseMap = readDefaultLicenseMappingJsonFile();
+        Map<Pattern, String> defaultLicenseMap = mavenLicenseService.getLicenseMap();
         Set<Dependency> tmpSet = readLicenseDetailsJson(moduleDir.getPath());
         Set<Dependency> finalSet = tmpSet.stream()
-            .map(this.loadLicenseFromPom(defaultLicenseMap)).collect(Collectors.toSet());
+            .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
+            .collect(Collectors.toSet());
         return finalSet;
     }
 
@@ -52,12 +49,29 @@ public class GradleDependencyScanner implements Scanner {
              JsonReader jsonReader = Json.createReader(fis);) {
             JsonArray arr = jsonReader.readObject().getJsonArray("dependencies");
             for (int i = 0; i < arr.size(); i++) {
-                JsonObject jsoDepObj = arr.get(i).asJsonObject();
+                JsonObject jsonDepObj = arr.get(i).asJsonObject();
+                JsonArray arrModuleUrls = jsonDepObj.getJsonArray("moduleUrls");
+                JsonArray arrModuleLicenses = jsonDepObj.getJsonArray("moduleLicenses");
+                String moduleLicenseUrl = null;
+                String moduleLicense = null;
+
+                if (arrModuleUrls != null) {
+                    moduleLicenseUrl = arrModuleUrls.getString(0, null);
+                }
+                if (arrModuleLicenses != null) {
+                    JsonObject firstJsonObj = arrModuleLicenses.getJsonObject(0);
+                    if (firstJsonObj != null) {
+                        moduleLicense = firstJsonObj.getString("moduleLicense", null);
+                        if (moduleLicense == null) {
+                            moduleLicense = firstJsonObj.getString("moduleLicenseUrl", null);
+                        }
+                    }
+                }
                 Dependency dep = new Dependency(
-                    jsoDepObj.getString("moduleName", null),
-                    jsoDepObj.getString("moduleVersion", null),
-                    jsoDepObj.getString("moduleLicense", null));
-                dep.setPomPath(jsoDepObj.getString("moduleLicenseUrl", null));
+                    jsonDepObj.getString("moduleName", null),
+                    jsonDepObj.getString("moduleVersion", null),
+                    moduleLicense);
+                dep.setPomPath(moduleLicenseUrl);
                 dependencySet.add(dep);
             }
             return dependencySet;
@@ -69,61 +83,19 @@ public class GradleDependencyScanner implements Scanner {
         return dependencySet;
     }
 
-    private Dependency mapMavenDependencyToLicense(Dependency dependency) {
-        if (StringUtils.isNotBlank(dependency.getLicense())) {
+    private Dependency mapMavenDependencyToLicense(Map<Pattern, String> defaultLicenseMap, Dependency dependency) {
+        if (StringUtils.isBlank(dependency.getLicense())) {
+            log.error(" License not found for Dependency {}", dependency);
             return dependency;
         }
-        for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies()) {
-            String matchString = allowedDependency.getKey();
-            if (dependency.getName().matches(matchString)) {
-                dependency.setLicense(allowedDependency.getLicense());
+
+        for (Map.Entry<Pattern, String> allowedDependency : defaultLicenseMap.entrySet()) {
+            if (allowedDependency.getKey().matcher(dependency.getLicense()).matches()) {
+                dependency.setLicense(allowedDependency.getValue());
+                break;
             }
         }
         return dependency;
-    }
-
-    private Function<Dependency, Dependency> loadLicenseFromPom(Map<Pattern, String> licenseMap) {
-        return (Dependency dependency) ->
-        {
-            return licenseMatcher(licenseMap, dependency);
-        };
-    }
-
-    private static Dependency licenseMatcher(Map<Pattern, String> licenseMap, Dependency dependency) {
-        String licenseName = dependency.getLicense();
-        if (StringUtils.isBlank(licenseName)) {
-            log.info("Dependency '{}' has no license set.", dependency.getName());
-            return dependency;
-        }
-        for (Map.Entry<Pattern, String> entry : licenseMap.entrySet()) {
-            if (entry.getKey().matcher(licenseName).matches()) {
-                dependency.setLicense(entry.getValue());
-            }
-        }
-        return dependency;
-    }
-
-    private Map<Pattern, String> readDefaultLicenseMappingJsonFile() {
-        Map<Pattern, String> defaultLicenseMap = new HashMap<>();
-        try (InputStream fis = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json");
-             JsonReader jsonReader = Json.createReader(fis)) {
-            JsonArray arr = jsonReader.readArray();
-            for (int i = 0; i < arr.size(); i++) {
-                String regex = arr.get(i).asJsonObject().getString("regex", null);
-                String license = arr.getJsonObject(i).getString("license", null);
-                if (StringUtils.isNotBlank(regex) && StringUtils.isNotBlank(license)) {
-                    defaultLicenseMap.put(Pattern.compile(regex), license);
-                } else {
-                    log.info("Missing Reg Expression regex: '{}' and license: {} ", regex, license);
-                }
-            }
-            return defaultLicenseMap;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new HashMap<>();
     }
 
     @Setter

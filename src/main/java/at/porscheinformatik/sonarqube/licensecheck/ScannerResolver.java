@@ -22,7 +22,7 @@ class ScannerResolver {
             scanners.add(new MavenDependencyScanner(mavenLicenseService, mavenDependencyService));
         } else if (hasBuildGradle(baseDir)) {
             LOGGER.info("Found build.gradle in baseDir -> activating gradle dependency scan.");
-            scanners.add(new GradleDependencyScanner(mavenDependencyService));
+            scanners.add(new GradleDependencyScanner(mavenLicenseService));
         } else {
             LOGGER.warn("Found no pom.xml and no build.gradle in base dir: " + baseDir.getAbsolutePath());
         }

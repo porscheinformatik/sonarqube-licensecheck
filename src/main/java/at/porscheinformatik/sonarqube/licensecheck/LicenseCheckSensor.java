@@ -98,7 +98,6 @@ public class LicenseCheckSensor implements Sensor
         ProjectDefinition project =
             LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
-        validatedDependencies.stream().forEach(System.out::println);
 
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
