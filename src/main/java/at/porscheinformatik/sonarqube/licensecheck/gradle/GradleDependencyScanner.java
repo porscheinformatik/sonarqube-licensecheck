@@ -33,47 +33,21 @@ public class GradleDependencyScanner implements Scanner {
     @Override
     public Set<Dependency> scan(File moduleDir) {
         Map<Pattern, String> defaultLicenseMap = mavenLicenseService.getLicenseMap();
-        Set<Dependency> tmpSet = readLicenseDetailsJson(moduleDir.getPath());
+        String filePath = moduleDir.getPath() + File.separator + "build" + File.separator + "reports" + File.separator
+            + "dependency-license" + File.separator + "license-details.json";
+        Set<Dependency> tmpSet = readLicenseDetailsJson(filePath);
         Set<Dependency> finalSet = tmpSet.stream()
             .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
             .collect(Collectors.toSet());
         return finalSet;
     }
 
-    private Set<Dependency> readLicenseDetailsJson(String moduleDirPath) {
-        String filePath =
-            moduleDirPath + File.separator + "build" + File.separator + "reports" + File.separator
-                + "dependency-license" + File.separator + "license-details.json";
+    private Set<Dependency> readLicenseDetailsJson(String filePath) {
         Set<Dependency> dependencySet = new HashSet<>();
         try (InputStream fis = new FileInputStream(filePath);
              JsonReader jsonReader = Json.createReader(fis);) {
             JsonArray arr = jsonReader.readObject().getJsonArray("dependencies");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jsonDepObj = arr.get(i).asJsonObject();
-                JsonArray arrModuleUrls = jsonDepObj.getJsonArray("moduleUrls");
-                JsonArray arrModuleLicenses = jsonDepObj.getJsonArray("moduleLicenses");
-                String moduleLicenseUrl = null;
-                String moduleLicense = null;
-
-                if (arrModuleUrls != null) {
-                    moduleLicenseUrl = arrModuleUrls.getString(0, null);
-                }
-                if (arrModuleLicenses != null) {
-                    JsonObject firstJsonObj = arrModuleLicenses.getJsonObject(0);
-                    if (firstJsonObj != null) {
-                        moduleLicense = firstJsonObj.getString("moduleLicense", null);
-                        if (moduleLicense == null) {
-                            moduleLicense = firstJsonObj.getString("moduleLicenseUrl", null);
-                        }
-                    }
-                }
-                Dependency dep = new Dependency(
-                    jsonDepObj.getString("moduleName", null),
-                    jsonDepObj.getString("moduleVersion", null),
-                    moduleLicense);
-                dep.setPomPath(moduleLicenseUrl);
-                dependencySet.add(dep);
-            }
+            prepareDependencySet(dependencySet, arr);
             return dependencySet;
         } catch (FileNotFoundException e) {
             log.error("FileNotFoundException " + e.getMessage());
@@ -81,6 +55,37 @@ public class GradleDependencyScanner implements Scanner {
             log.error("IOException " + e.getMessage());
         }
         return dependencySet;
+    }
+
+    private void prepareDependencySet(Set<Dependency> dependencySet, JsonArray arr) {
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject jsonDepObj = arr.get(i).asJsonObject();
+            JsonArray arrModuleUrls = jsonDepObj.getJsonArray("moduleUrls");
+            String moduleLicense = getModuleLicense(jsonDepObj);
+            String moduleLicenseUrl = null;
+            if (arrModuleUrls != null) {
+                moduleLicenseUrl = arrModuleUrls.getString(0, null);
+            }
+            Dependency dep = new Dependency(jsonDepObj.getString("moduleName", null),
+                jsonDepObj.getString("moduleVersion", null), moduleLicense);
+            dep.setPomPath(moduleLicenseUrl);
+            dependencySet.add(dep);
+        }
+    }
+
+    private String getModuleLicense(JsonObject jsonDepObj) {
+        String moduleLicense = null;
+        JsonArray arrModuleLicenses = jsonDepObj.getJsonArray("moduleLicenses");
+        if (arrModuleLicenses != null) {
+            JsonObject firstJsonObj = arrModuleLicenses.getJsonObject(0);
+            if (firstJsonObj != null) {
+                moduleLicense = firstJsonObj.getString("moduleLicense", null);
+                if (moduleLicense == null) {
+                    moduleLicense = firstJsonObj.getString("moduleLicenseUrl", null);
+                }
+            }
+        }
+        return moduleLicense;
     }
 
     private Dependency mapMavenDependencyToLicense(Map<Pattern, String> defaultLicenseMap, Dependency dependency) {
