@@ -61,7 +61,7 @@ public class GradleDependencyScanner implements Scanner {
         for (int i = 0; i < arr.size(); i++) {
             JsonObject jsonDepObj = arr.get(i).asJsonObject();
             JsonArray arrModuleUrls = jsonDepObj.getJsonArray("moduleUrls");
-            String moduleLicense = getModuleLicense(jsonDepObj);
+            String moduleLicense = getModuleLicenseFromJsonObject(jsonDepObj);
             String moduleLicenseUrl = null;
             if (arrModuleUrls != null) {
                 moduleLicenseUrl = arrModuleUrls.getString(0, null);
@@ -73,16 +73,22 @@ public class GradleDependencyScanner implements Scanner {
         }
     }
 
-    private String getModuleLicense(JsonObject jsonDepObj) {
+    private String getModuleLicenseFromJsonObject(JsonObject jsonDepObj) {
         String moduleLicense = null;
         JsonArray arrModuleLicenses = jsonDepObj.getJsonArray("moduleLicenses");
         if (arrModuleLicenses != null) {
-            JsonObject firstJsonObj = arrModuleLicenses.getJsonObject(0);
-            if (firstJsonObj != null) {
-                moduleLicense = firstJsonObj.getString("moduleLicense", null);
-                if (moduleLicense == null) {
-                    moduleLicense = firstJsonObj.getString("moduleLicenseUrl", null);
-                }
+            moduleLicense = getModuleLicense(arrModuleLicenses);
+        }
+        return moduleLicense;
+    }
+
+    private String getModuleLicense(JsonArray arrModuleLicenses) {
+        String moduleLicense = null;
+        JsonObject firstJsonObj = arrModuleLicenses.getJsonObject(0);
+        if (firstJsonObj != null) {
+            moduleLicense = firstJsonObj.getString("moduleLicense", null);
+            if (moduleLicense == null) {
+                moduleLicense = firstJsonObj.getString("moduleLicenseUrl", null);
             }
         }
         return moduleLicense;
