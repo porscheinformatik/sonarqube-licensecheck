@@ -65,7 +65,7 @@ Note: Please check above link for instructions or follow as mentioned below
 
     >gradle generateLicenseReport
     
-**Step 4:** run following command for SonarAube
+**Step 4:** run following command for SonarQube
 
     >gradle sonarqube
     
