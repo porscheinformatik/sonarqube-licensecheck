@@ -4,7 +4,7 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>4.0.0-gradle-jk1</version>
+  <version>4.0.0-SNAPSHOT-gradle-jk1</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>7.9.3</version>
+      <version>7.9.3.33150</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
