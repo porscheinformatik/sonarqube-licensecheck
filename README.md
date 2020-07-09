@@ -41,7 +41,7 @@ Note: Please check above link for instructions or follow as mentioned below
         configurations = ALL
     }
 
-**Step 2:** Update _build.gradle_ file with following code for using sonar-qube plugin
+**Step 2:** Update _build.gradle_ file with following code for using SonarQube plugin
 
     plugins {
         id 'org.sonarqube' version "2.7"
@@ -65,13 +65,13 @@ Note: Please check above link for instructions or follow as mentioned below
 
     >gradle generateLicenseReport
     
-**Step 4:** run following command for sonar-qube
+**Step 4:** run following command for SonarAube
 
     >gradle sonarqube
     
 ## Installation
 
-Put the just builted jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
+Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
 restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles - otherwise the plugin is not executed.
 
 ## Execution

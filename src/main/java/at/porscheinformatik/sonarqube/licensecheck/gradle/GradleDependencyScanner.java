@@ -3,12 +3,9 @@ package at.porscheinformatik.sonarqube.licensecheck.gradle;
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -21,9 +18,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class GradleDependencyScanner implements Scanner {
 
+    private static final Logger LOGGER = Loggers.get(GradleDependencyScanner.class);
     private final MavenLicenseService mavenLicenseService;
 
     public GradleDependencyScanner(MavenLicenseService mavenLicenseService) {
@@ -50,9 +47,9 @@ public class GradleDependencyScanner implements Scanner {
             prepareDependencySet(dependencySet, arr);
             return dependencySet;
         } catch (FileNotFoundException e) {
-            log.error("FileNotFoundException " + e.getMessage());
+            LOGGER.error("FileNotFoundException " + e.getMessage());
         } catch (IOException e) {
-            log.error("IOException " + e.getMessage());
+            LOGGER.error("IOException " + e.getMessage());
         }
         return dependencySet;
     }
@@ -96,7 +93,7 @@ public class GradleDependencyScanner implements Scanner {
 
     private Dependency mapMavenDependencyToLicense(Map<Pattern, String> defaultLicenseMap, Dependency dependency) {
         if (StringUtils.isBlank(dependency.getLicense())) {
-            log.error(" License not found for Dependency {}", dependency);
+            LOGGER.error(" License not found for Dependency {}", dependency);
             return dependency;
         }
 
@@ -107,14 +104,5 @@ public class GradleDependencyScanner implements Scanner {
             }
         }
         return dependency;
-    }
-
-    @Setter
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    class DefaultLicenseMap {
-        private Pattern regex;
-        private String license;
     }
 }

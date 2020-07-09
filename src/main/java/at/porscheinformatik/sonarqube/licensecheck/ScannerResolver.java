@@ -7,12 +7,14 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 
 class ScannerResolver {
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ScannerResolver.class);
+    private static final Logger LOGGER = Loggers.get(ScannerResolver.class);
 
     static Scanner[] resolveScanners(Configuration configuration, File baseDir, MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService) {
         java.util.List<Scanner> scanners = new ArrayList<Scanner>();
