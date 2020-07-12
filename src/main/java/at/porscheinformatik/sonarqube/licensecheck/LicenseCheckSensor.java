@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
@@ -39,13 +40,17 @@ public class LicenseCheckSensor implements Sensor
         this.fs = fs;
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
-        this.scanners = ScannerResolver.resolveScanners(configuration, fs.baseDir(), mavenLicenseService, mavenDependencyService);
+        this.scanners = new Scanner[]{
+            new PackageJsonDependencyScanner(
+                configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
+            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService),
+            new GradleDependencyScanner(mavenLicenseService)};
 
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
-        LOGGER.debug("Saving depenencies for module {}: {}", sensorContext.module(), dependencies);
+        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.module(), dependencies);
 
         if (!dependencies.isEmpty())
         {
