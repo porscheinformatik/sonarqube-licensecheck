@@ -27,7 +27,7 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 public class LicenseCheckSensor implements Sensor
 {
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
-    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
+    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<>());
     private final static Set<Dependency> AGGREGATED_DEPENDENCIES = newSetFromMap(new ConcurrentHashMap<>());
     private final FileSystem fs;
     private final Configuration configuration;
@@ -45,7 +45,6 @@ public class LicenseCheckSensor implements Sensor
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
             new MavenDependencyScanner(mavenLicenseService, mavenDependencyService),
             new GradleDependencyScanner(mavenLicenseService)};
-
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
