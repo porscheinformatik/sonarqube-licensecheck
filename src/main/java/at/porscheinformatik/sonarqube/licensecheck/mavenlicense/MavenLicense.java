@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
@@ -55,37 +56,6 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
     }
 
-    @Override
-    public boolean equals(Object object)
-    {
-        if (this == object)
-        {
-            return true;
-        }
-        if (object == null)
-        {
-            return false;
-        }
-        if (getClass() != object.getClass())
-        {
-            return false;
-        }
-
-        MavenLicense mavenLicense = (MavenLicense) object;
-        return mavenLicense.license.equals(this.license)
-            && mavenLicense.regex.toString().equals(this.regex.toString());
-    }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        result = (prime * result) + ((regex == null) ? 0 : regex.hashCode());
-        return result;
-    }
-
     public static List<MavenLicense> fromString(String mavenLicenseString)
     {
         List<MavenLicense> mavenLicenses = new ArrayList<>();
@@ -98,8 +68,8 @@ public class MavenLicense implements Comparable<MavenLicense>
                 for (int i = 0; i < licensesJson.size(); i++)
                 {
                     JsonObject licenseJson = licensesJson.getJsonObject(i);
-                    String regex = null;
-                    try 
+                    String regex;
+                    try
                     {
                         regex = licenseJson.getString("regex");
                     }
@@ -131,8 +101,7 @@ public class MavenLicense implements Comparable<MavenLicense>
 
     public static String createString(Collection<MavenLicense> mavenLicenses)
     {
-        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>();
-        mavenLicenseSet.addAll(mavenLicenses);
+        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>(mavenLicenses);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);
@@ -148,5 +117,27 @@ public class MavenLicense implements Comparable<MavenLicense>
         generator.close();
 
         return jsonString.toString();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        MavenLicense that = (MavenLicense) o;
+        return Objects.equals(regex, that.regex) &&
+            Objects.equals(license, that.license);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(regex, license);
     }
 }

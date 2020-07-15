@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
@@ -37,7 +38,7 @@ public class MavenDependencyScannerTest
         Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
 
         // -
-        List<Dependency> dependencies = scanner.scan(moduleDir);
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), Matchers.greaterThan(0));
 
@@ -73,7 +74,7 @@ public class MavenDependencyScannerTest
 
         File moduleDir = Files.createTempDirectory("lala").toFile();
         moduleDir.deleteOnExit();
-        List<Dependency> dependencies = scanner.scan(moduleDir);
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), is(0));
     }
@@ -84,14 +85,14 @@ public class MavenDependencyScannerTest
         File moduleDir = new File(".");
         MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
         List<MavenDependency> mavenDependencies =
-            singletonList(new MavenDependency("org.apache.commons:commons.*", "TEST"));
+            singletonList(new MavenDependency("org.glassfish:javax.json", "TEST"));
         when(dependencyService.getMavenDependencies()).thenReturn(mavenDependencies);
         Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
 
-        List<Dependency> dependencies = scanner.scan(moduleDir);
+        Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         Dependency commonsLang = dependencies.stream()
-            .filter(d -> "org.apache.commons:commons-lang3".equals(d.getName()))
+            .filter(d -> "org.glassfish:javax.json".equals(d.getName()))
             .findFirst().orElse(null);
 
         assertThat(commonsLang.getLicense(), is("TEST"));
@@ -123,15 +124,14 @@ public class MavenDependencyScannerTest
 
     @Test
     public void testSettingsFromMaven()
-    { 
+    {
         String oldVal = System.getProperty("sun.java.command");
         try
         {
             System.setProperty("sun.java.command", "thisisatest -X -s src/test/resources/settings-does-not-exist.xml -gs src/test/resources/settings-does-not-exist.xml -B");
             Scanner scanner = new MavenDependencyScanner(mockLicenseService(), Mockito.mock(MavenDependencyService.class));
-            
-            List<Dependency> dependencies = scanner.scan(new File("."));
 
+            Set<Dependency> dependencies = scanner.scan(new File("."));
             assertThat(dependencies.size(), is(0));
         }
         finally

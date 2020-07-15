@@ -8,5 +8,4 @@ node/
 package.json
 .idea/
 *.iml
-package-lock.json
 .vscode/

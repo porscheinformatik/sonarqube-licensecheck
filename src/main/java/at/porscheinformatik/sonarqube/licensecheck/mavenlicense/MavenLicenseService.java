@@ -7,25 +7,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.server.ServerSide;
 
 @ServerSide
 @ScannerSide
 public class MavenLicenseService
 {
-    private final Settings settings;
+    private final Configuration configuration;
 
-    public MavenLicenseService(Settings settings)
+    public MavenLicenseService(Configuration configuration)
     {
         super();
-        this.settings = settings;
+        this.configuration = configuration;
     }
 
     public List<MavenLicense> getMavenLicenseList()
     {
-        return MavenLicense.fromString(settings.getString(LICENSE_REGEX));
+        return MavenLicense.fromString(configuration.get(LICENSE_REGEX).orElse(null));
     }
 
     public Map<Pattern, String> getLicenseMap()

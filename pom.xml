@@ -50,23 +50,12 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.json</artifactId>
-      <version>1.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.27</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.27</version>
-      <scope>test</scope>
+      <version>1.1.4</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -84,18 +73,18 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>6.7</version>
+      <version>7.9.3.33150</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-server</artifactId>
-      <version>6.7</version>
+      <version>7.2.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.sonarsource.sonarqube</groupId>
-          <artifactId>sonar-views-bridge</artifactId>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -107,7 +96,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.3.9</version>
+      <version>3.6.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -128,7 +117,7 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.15</version>
+        <version>1.19.0.397</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
@@ -148,7 +137,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -157,7 +146,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.1</version>
+        <version>2.22.2</version>
         <configuration>
           <systemPropertyVariables>
             <maven.home>${maven.home}</maven.home>
@@ -167,12 +156,18 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.3</version>
+        <version>0.8.5</version>
         <executions>
           <execution>
-            <id>default-prepare-agent</id>
+          <id>prepare-agent</id>
+          <goals>
+            <goal>prepare-agent</goal>
+          </goals>
+          </execution>
+          <execution>
+            <id>report</id>
             <goals>
-              <goal>prepare-agent</goal>
+              <goal>report</goal>
             </goals>
           </execution>
         </executions>
@@ -180,7 +175,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.7.6</version>
+        <version>1.10.0</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -206,8 +201,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v10.15.1</nodeVersion>
-          <npmVersion>6.4.1</npmVersion>
+          <nodeVersion>v10.16.0</nodeVersion>
+          <npmVersion>6.9.0</npmVersion>
         </configuration>
       </plugin>
     </plugins>

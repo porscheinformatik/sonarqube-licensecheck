@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.json.Json;
@@ -80,66 +81,26 @@ public class Dependency implements Comparable<Dependency>
     }
 
     @Override
-    public int hashCode()
+    public boolean equals(Object o)
     {
-        final int prime = 31;
-        int result = 1;
-        result = (prime * result) + ((license == null) ? 0 : license.hashCode());
-        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
-        result = (prime * result) + ((version == null) ? 0 : version.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
+        if (this == o)
         {
             return true;
         }
-        if (obj == null)
+        if (o == null || getClass() != o.getClass())
         {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        Dependency other = (Dependency) obj;
-        if (license == null)
-        {
-            if (other.license != null)
-            {
-                return false;
-            }
-        }
-        else if (!license.equals(other.license))
-        {
-            return false;
-        }
-        if (name == null)
-        {
-            if (other.name != null)
-            {
-                return false;
-            }
-        }
-        else if (!name.equals(other.name))
-        {
-            return false;
-        }
-        if (version == null)
-        {
-            if (other.version != null)
-            {
-                return false;
-            }
-        }
-        else if (!version.equals(other.version))
-        {
-            return false;
-        }
-        return true;
+        Dependency that = (Dependency) o;
+        return Objects.equals(name, that.name) &&
+            Objects.equals(version, that.version) &&
+            Objects.equals(license, that.license);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(name, version, license);
     }
 
     @Override

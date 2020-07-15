@@ -6,7 +6,8 @@
   "dependencies": {
     "angular": "^1.4.3",
     "angular-ui-router" : "~0.2.18",
-    "angular-ui-bootstrap" : "1.1.2"
+    "angular-ui-bootstrap" : "1.1.2",
+    "arangojs" : "5.6.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1"

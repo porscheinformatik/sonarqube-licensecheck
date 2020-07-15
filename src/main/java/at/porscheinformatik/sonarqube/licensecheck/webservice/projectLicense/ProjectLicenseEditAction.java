@@ -1,10 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
@@ -14,7 +14,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Proj
 class ProjectLicenseEditAction implements RequestHandler
 {
     private ProjectLicenseSettingsService projectLicenseSettingsService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProjectLicenseEditAction.class);
+    private static final Logger LOGGER = Loggers.get(ProjectLicenseEditAction.class);
 
     public ProjectLicenseEditAction(ProjectLicenseSettingsService projectLicenseSettingsService)
     {

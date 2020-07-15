@@ -1,12 +1,14 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
-import static at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration.*;
+import static at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration.PARAM_IDENTIFIER;
+import static at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration.PARAM_NAME;
+import static at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.LicenseConfiguration.PARAM_STATUS;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.HTTPConfiguration;
@@ -15,7 +17,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Lice
 class LicenseEditAction implements RequestHandler
 {
     private LicenseSettingsService licenseSettingsService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseEditAction.class);
+    private static final Logger LOGGER = Loggers.get(LicenseEditAction.class);
 
     public LicenseEditAction(LicenseSettingsService licenseSettingsService)
     {

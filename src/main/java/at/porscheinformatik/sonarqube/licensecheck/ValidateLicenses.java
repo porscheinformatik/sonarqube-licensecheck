@@ -5,9 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
@@ -15,6 +13,8 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -22,7 +22,7 @@ import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 @ScannerSide
 public class ValidateLicenses
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateLicenses.class);
+    private static final Logger LOGGER = Loggers.get(ValidateLicenses.class);
     private final LicenseService licenseService;
 
     public ValidateLicenses(LicenseService licenseService)
@@ -85,15 +85,15 @@ public class ValidateLicenses
             {
                 String notAllowedLicense = "";
 
-                for(License element : licensesContainingDependency) {
-                    if(element.getStatus() == "false") {
+                for (License element : licensesContainingDependency) {
+                    if (!Boolean.parseBoolean(element.getStatus())) {
                         notAllowedLicense += element.getName() + " ";
                     }
                 }
                 licenseNotAllowedIssue(context, dependency, notAllowedLicense);
             }
         }
-    }    
+    }
 
     private boolean checkSpdxLicense(String spdxLicenseString, List<License> licenses)
     {
@@ -110,19 +110,15 @@ public class ValidateLicenses
         return licenses
             .stream()
             .filter(l -> l.getIdentifier().equals(spdxLicenseString))
-            .filter(l -> Boolean.valueOf(l.getStatus()))
-            .findAny()
-            .isPresent();
+            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
-    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses){
+    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses) {
         String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
         return licenses
             .stream()
             .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
-            .filter(l -> Boolean.valueOf(l.getStatus()))
-            .findAny()
-            .isPresent();
+            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
     private boolean checkSpdxLicenseWithAnd(String spdxLicenseString, List<License> licenses)
@@ -133,12 +129,12 @@ public class ValidateLicenses
             licenses.stream()
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
-        long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.valueOf(l.getStatus())).count();
+        long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.parseBoolean(l.getStatus())).count();
         if (count == allowedLicenseCount)
         {
             return true;
         }
-        else if(foundLicenses.size() == count)
+        else if (foundLicenses.size() == count)
         {
             // NOT ALLOWED
             return false;
@@ -177,7 +173,7 @@ public class ValidateLicenses
         issue.save();
     }
 
-    private static boolean contains(String[] items, String valueToFind) 
+    private static boolean contains(String[] items, String valueToFind)
     {
         for (String item : items)
         {

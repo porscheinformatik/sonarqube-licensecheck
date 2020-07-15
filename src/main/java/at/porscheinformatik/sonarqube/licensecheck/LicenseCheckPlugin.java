@@ -61,6 +61,9 @@ public class LicenseCheckPlugin implements Plugin
             PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY)
                 .type(PropertyType.TEXT)
                 .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
+                .type(PropertyType.BOOLEAN)
+                .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category("License Check")
                 .name("Activate")

@@ -19,8 +19,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
+import org.sonar.api.batch.fs.internal.DefaultInputProject;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
+import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
@@ -58,7 +60,7 @@ public class ValidateLicensesTest
     public void licenseNotAllowed()
     {
         SensorContext context = createContext();
-        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context);
@@ -116,7 +118,7 @@ public class ValidateLicensesTest
     public void checkSpdxAndCombinationNotAllowed()
     {
         SensorContext context = createContext();
-        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
         validateLicenses.validateLicenses(
@@ -131,7 +133,7 @@ public class ValidateLicensesTest
     public void checkSpdxAndCombinationNotFound()
     {
         SensorContext context = createContext();
-        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)")), context);
@@ -156,7 +158,7 @@ public class ValidateLicensesTest
     public void licenseNull()
     {
         SensorContext context = createContext();
-        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context);
@@ -169,7 +171,7 @@ public class ValidateLicensesTest
     public void licenseUnknown()
     {
         SensorContext context = createContext();
-        DefaultIssue issue = new DefaultIssue(mock(SensorStorage.class));
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Mamamia")), context);

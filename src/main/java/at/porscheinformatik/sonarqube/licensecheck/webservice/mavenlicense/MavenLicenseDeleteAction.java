@@ -1,7 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
@@ -13,7 +13,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Mave
 class MavenLicenseDeleteAction implements RequestHandler
 {
     private MavenLicenseSettingsService mavenLicenseSettingsService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenLicenseDeleteAction.class);
+    private static final Logger LOGGER = Loggers.get(MavenLicenseDeleteAction.class);
 
     public MavenLicenseDeleteAction(MavenLicenseSettingsService mavenLicenseSettingsService)
     {

@@ -1,10 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.server.ws.Request;
 import org.sonar.api.server.ws.RequestHandler;
 import org.sonar.api.server.ws.Response;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.HTTPConfiguration;
@@ -13,7 +13,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Lice
 class LicenseDeleteAction implements RequestHandler
 {
     private LicenseSettingsService licenseSettingsService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseDeleteAction.class);
+    private static final Logger LOGGER = Loggers.get(LicenseDeleteAction.class);
 
     public LicenseDeleteAction(LicenseSettingsService licenseSettingsService)
     {

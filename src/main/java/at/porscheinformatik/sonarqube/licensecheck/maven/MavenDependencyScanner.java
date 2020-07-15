@@ -10,13 +10,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.License;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -24,8 +23,9 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
@@ -35,7 +35,7 @@ import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseServ
 
 public class MavenDependencyScanner implements Scanner
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
+    private static final Logger LOGGER = Loggers.get(MavenDependencyScanner.class);
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
 
     private final MavenLicenseService mavenLicenseService;
@@ -49,11 +49,12 @@ public class MavenDependencyScanner implements Scanner
     }
 
     @Override
-    public List<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(File moduleDir)
     {
-        if(!new File(moduleDir, "pom.xml").exists())
+        if (!new File(moduleDir, "pom.xml").exists())
         {
-            return Collections.emptyList();
+            LOGGER.info("No pom.xml file found in {} - skipping Maven dependency scan", moduleDir.getPath());
+            return Collections.emptySet();
         }
 
         LOGGER.info("Scanning for Maven dependencies");
@@ -63,7 +64,7 @@ public class MavenDependencyScanner implements Scanner
         return readDependencyList(moduleDir, settings)
             .map(this::mapMavenDependencyToLicense)
             .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
     }
 
     private static Stream<Dependency> readDependencyList(File moduleDir, MavenSettings settings)
@@ -204,7 +205,9 @@ public class MavenDependencyScanner implements Scanner
         if (items[items.length - 2].length() == 1)
         {
             items[items.length - 2] += ":" + items[items.length - 1];
-            items = ArrayUtils.remove(items, items.length - 1);
+            String[] newItems = new String[items.length - 1];
+            System.arraycopy(items, 0, newItems, 0, items.length - 1);
+            items = newItems;
         }
 
         return items;
@@ -224,12 +227,13 @@ public class MavenDependencyScanner implements Scanner
         };
     }
 
-    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings, Dependency dependency)
+    private static Dependency loadLicense(Map<Pattern, String> licenseMap, MavenSettings settings,
+        Dependency dependency)
     {
         String pomPath = dependency.getPomPath();
         if (pomPath != null)
         {
-            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings, 
+            List<License> licenses = LicenseFinder.getLicenses(new File(pomPath), settings.userSettings,
                 settings.globalSettings);
             if (licenses.isEmpty())
             {
@@ -289,7 +293,7 @@ public class MavenDependencyScanner implements Scanner
         String globalSettings = null;
         String userSettings = null;
         String commandArgs = System.getProperty("sun.java.command");
-        try(java.util.Scanner scanner = new java.util.Scanner(commandArgs))
+        try (java.util.Scanner scanner = new java.util.Scanner(commandArgs))
         {
             while (scanner.hasNext())
             {
