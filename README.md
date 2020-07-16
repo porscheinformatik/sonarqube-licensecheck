@@ -49,6 +49,60 @@ After booting the SonarQube Server with the License-Check Plugin two new options
 ![License
 configuration](docs/licensecheck_configuration.jpg)
 
+### Maven
+
+Maven works if your project/module has a `pom.xml` on its root level (running with Maven, Gradle or SonarScanner).
+
+### NPM
+
+NPM works if your project/module has a `package.json` on its root level (running with Maven, Gradle or SonarScanner).
+
+### Gradle
+
+Gradle project should use JK1 plugin https://github.com/jk1/Gradle-License-Report
+
+Note: Please check above link for instructions or follow as mentioned below
+
+**Step1:** Update `build.gradle` file with following code for using JK1 plugin
+
+    import com.github.jk1.license.filter.LicenseBundleNormalizer
+    import com.github.jk1.license.render.JsonReportRenderer
+
+    plugins {
+      id 'com.github.jk1.dependency-license-report' version '1.13'
+    }
+
+    licenseReport {
+        allowedLicensesFile = new File("$projectDir/src/main/resources/licenses/allowed-licenses.json")
+        renderers = new JsonReportRenderer('license-details.json', false)
+        filters = [new LicenseBundleNormalizer()]
+    }
+
+**Step 2:** Update `build.gradle` file with following code for using SonarQube plugin
+
+    plugins {
+        id 'org.sonarqube' version "3.0"
+    }
+
+    jar {
+        enabled = true
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.host.url", "http://localhost:9000"
+        }
+    }
+
+**Step 3:** run following command  to generate your report `license-details.json` in  `build/reports/dependency-license`
+
+    > gradle generateLicenseReport
+
+**Step 4:** run following command for SonarQube
+
+    > gradle sonarqube
+
+
 ## Features
 
 ### Analysis

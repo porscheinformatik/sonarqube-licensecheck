@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.internal.DefaultInputModule;
@@ -26,7 +27,7 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 public class LicenseCheckSensor implements Sensor
 {
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
-    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<License, Boolean>());
+    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<>());
     private final static Set<Dependency> AGGREGATED_DEPENDENCIES = newSetFromMap(new ConcurrentHashMap<>());
     private final FileSystem fs;
     private final Configuration configuration;
@@ -42,12 +43,13 @@ public class LicenseCheckSensor implements Sensor
         this.scanners = new Scanner[]{
             new PackageJsonDependencyScanner(
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
-            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService)};
+            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService),
+            new GradleDependencyScanner(mavenLicenseService)};
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
-        LOGGER.debug("Saving depenencies for module {}: {}", sensorContext.module(), dependencies);
+        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.module(), dependencies);
 
         if (!dependencies.isEmpty())
         {
@@ -97,10 +99,10 @@ public class LicenseCheckSensor implements Sensor
         {
             dependencies.addAll(scanner.scan(fs.baseDir()));
         }
-
         ProjectDefinition project =
             LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
+
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
         AGGREGATED_LICENSES.addAll(usedLicenses);

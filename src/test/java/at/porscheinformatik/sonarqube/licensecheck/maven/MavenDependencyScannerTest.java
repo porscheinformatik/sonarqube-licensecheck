@@ -132,7 +132,6 @@ public class MavenDependencyScannerTest
             Scanner scanner = new MavenDependencyScanner(mockLicenseService(), Mockito.mock(MavenDependencyService.class));
             
             Set<Dependency> dependencies = scanner.scan(new File("."));
-
             assertThat(dependencies.size(), is(0));
         }
         finally
