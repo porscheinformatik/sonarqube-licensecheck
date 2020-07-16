@@ -83,25 +83,25 @@ Note: Please check above link for instructions or follow as mentioned below
     plugins {
         id 'org.sonarqube' version "3.0"
     }
-    
+
     jar {
         enabled = true
     }
-    
+
     sonarqube {
         properties {
             property "sonar.host.url", "http://localhost:9000"
         }
     }
-    
+
 **Step 3:** run following command  to generate your report `license-details.json` in  `build/reports/dependency-license`
 
     > gradle generateLicenseReport
-    
+
 **Step 4:** run following command for SonarQube
 
     > gradle sonarqube
-    
+
 
 ## Features
 

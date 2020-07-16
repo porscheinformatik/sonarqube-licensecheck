@@ -41,7 +41,7 @@ public class GradleDependencyScanner implements Scanner
 
         if (!licenseDetailsJsonFile.exists())
         {
-            LOGGER.info("No license-details.json file found in {} - skipping NPM dependency scan",
+            LOGGER.info("No license-details.json file found in {} - skipping Gradle dependency scan",
                 licenseDetailsJsonFile.getPath());
             return Collections.emptySet();
         }
