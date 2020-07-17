@@ -24,6 +24,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.SensorStorage;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
+import org.sonar.api.scanner.fs.InputProject;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
@@ -33,16 +34,15 @@ public class ValidateLicensesTest
     private static final License APACHE_LICENSE = new License("Apache-2.0", "Apache-2.0", "true");
     private ValidateLicenses validateLicenses;
     private ProjectDefinition projectDefinition;
+    private InputProject module;
 
     @Before
     public void setup()
     {
-        projectDefinition = mock(ProjectDefinition.class);
-        when(projectDefinition.getBaseDir()).thenReturn(new File("."));
-        when(projectDefinition.getWorkDir()).thenReturn(new File("."));
-        when(projectDefinition.getParent()).thenReturn(projectDefinition);
+        module = mock(InputProject.class);
+        when(module.key()).thenReturn("at.porscheinformatik.demo:demo");
         final LicenseService licenseService = mock(LicenseService.class);
-        when(licenseService.getLicenses(projectDefinition)).thenReturn(Arrays.asList(new License("MIT", "MIT", "false"),
+        when(licenseService.getLicenses(module)).thenReturn(Arrays.asList(new License("MIT", "MIT", "false"),
             new License("LGPL is fantastic", "LGPL", "true"), APACHE_LICENSE));
         validateLicenses = new ValidateLicenses(licenseService);
     }
@@ -51,6 +51,7 @@ public class ValidateLicensesTest
     {
         SensorContext context = mock(SensorContext.class);
         DefaultInputModule inputModule = mock(DefaultInputModule.class);
+        when(context.project()).thenReturn(module);
         when(inputModule.definition()).thenReturn(projectDefinition);
         when(context.module()).thenReturn(inputModule);
         return context;
@@ -183,11 +184,11 @@ public class ValidateLicensesTest
     @Test
     public void getUsedLicenses()
     {
-        assertThat(validateLicenses.getUsedLicenses(deps(), projectDefinition).size(), is(0));
+        assertThat(validateLicenses.getUsedLicenses(deps(), module).size(), is(0));
 
         Set<License> usedLicensesApache = validateLicenses.getUsedLicenses(
             deps(new Dependency("thing", "1.0", "Apache-2.0"), new Dependency("another", "2.0", "Apache-2.0")),
-            projectDefinition);
+            module);
 
         assertThat(usedLicensesApache.size(), is(1));
         assertThat(usedLicensesApache, CoreMatchers.hasItem(APACHE_LICENSE));

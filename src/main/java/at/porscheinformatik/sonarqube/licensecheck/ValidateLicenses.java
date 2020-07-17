@@ -6,13 +6,11 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.codehaus.plexus.util.StringUtils;
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
-import org.sonar.api.batch.sensor.issue.internal.DefaultIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.scanner.ScannerSide;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -47,7 +45,7 @@ public class ValidateLicenses
         return dependencies;
     }
 
-    public Set<License> getUsedLicenses(Set<Dependency> dependencies, ProjectDefinition project)
+    public Set<License> getUsedLicenses(Set<Dependency> dependencies, InputProject project)
     {
         Set<License> usedLicenseList = new TreeSet<>();
         List<License> licenses = licenseService.getLicenses(project);
@@ -67,14 +65,15 @@ public class ValidateLicenses
 
     private void checkForLicenses(SensorContext context, Dependency dependency)
     {
-        DefaultInputModule module = (DefaultInputModule) context.module();
-        List<License> licenses = licenseService.getLicenses(LicenseCheckPlugin.getRootProject(module.definition()));
+        InputProject module = context.project();
+        // DefaultInputModule module = (DefaultInputModule) context.module();
+        List<License> licenses = licenseService.getLicenses(LicenseCheckPlugin.getRootProject(module));
         if (!checkSpdxLicense(dependency.getLicense(), licenses))
         {
             List<License> licensesContainingDependency = licenses.stream()
-                .filter(l -> dependency.getLicense()
-                    .contains(l.getIdentifier()))
+                .filter(l -> dependency.getLicense().contains(l.getIdentifier()))
                 .collect(Collectors.toList());
+
             String[] andLicenses = dependency.getLicense().replace("(", "").replace(")", "").split(" AND ");
 
             if (licensesContainingDependency.size() != andLicenses.length)
@@ -83,14 +82,16 @@ public class ValidateLicenses
             }
             else
             {
-                String notAllowedLicense = "";
+                StringBuilder notAllowedLicense = new StringBuilder();
 
-                for (License element : licensesContainingDependency) {
-                    if (!Boolean.parseBoolean(element.getStatus())) {
-                        notAllowedLicense += element.getName() + " ";
+                for (License element : licensesContainingDependency)
+                {
+                    if (!Boolean.parseBoolean(element.getStatus()))
+                    {
+                        notAllowedLicense.append(element.getName()).append(" ");
                     }
                 }
-                licenseNotAllowedIssue(context, dependency, notAllowedLicense);
+                licenseNotAllowedIssue(context, dependency, notAllowedLicense.toString());
             }
         }
     }
@@ -113,7 +114,8 @@ public class ValidateLicenses
             .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
-    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses) {
+    private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses)
+    {
         String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
         return licenses
             .stream()
@@ -153,9 +155,9 @@ public class ValidateLicenses
         NewIssue issue = context
             .newIssue()
             .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-                LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY))
-            .at(new DefaultIssueLocation().on(context.module()).message(
-                "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
+                LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+        issue.at(issue.newLocation().on(context.project()).message(
+            "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
         issue.save();
     }
 
@@ -166,10 +168,9 @@ public class ValidateLicenses
         NewIssue issue = context
             .newIssue()
             .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-                LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY))
-            .at(new DefaultIssueLocation()
-                .on(context.module())
-                .message("No License found for Dependency: " + dependency.getName()));
+                LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+        issue.at(issue.newLocation().on(context.project())
+            .message("No License found for Dependency: " + dependency.getName()));
         issue.save();
     }
 

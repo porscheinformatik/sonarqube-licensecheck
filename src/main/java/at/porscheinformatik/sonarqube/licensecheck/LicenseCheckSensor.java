@@ -6,17 +6,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.fs.internal.DefaultInputModule;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
@@ -49,7 +48,7 @@ public class LicenseCheckSensor implements Sensor
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
     {
-        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.module(), dependencies);
+        LOGGER.debug("Saving dependencies for module {}: {}", sensorContext.project(), dependencies);
 
         if (!dependencies.isEmpty())
         {
@@ -99,8 +98,7 @@ public class LicenseCheckSensor implements Sensor
         {
             dependencies.addAll(scanner.scan(fs.baseDir()));
         }
-        ProjectDefinition project =
-            LicenseCheckPlugin.getRootProject(((DefaultInputModule) context.module()).definition());
+        InputProject project = context.project();
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
 
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
@@ -108,7 +106,8 @@ public class LicenseCheckSensor implements Sensor
         AGGREGATED_LICENSES.addAll(usedLicenses);
         AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
 
-        if (project.getParent() == null)
+        // root module?
+        if (context.project().key().equals(context.module().key()))
         {
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);

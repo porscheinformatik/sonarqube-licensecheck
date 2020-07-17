@@ -5,9 +5,9 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKe
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
+import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.server.ServerSide;
 
 import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
@@ -27,7 +27,7 @@ public class LicenseService
         this.projectLicenseService = projectLicenseService;
     }
 
-    public List<License> getLicenses(ProjectDefinition module)
+    public List<License> getLicenses(InputProject module)
     {
         List<License> globalLicenses = getLicenses();
 
@@ -36,7 +36,7 @@ public class LicenseService
             return globalLicenses;
         }
 
-        Collection<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList(module.getKey());
+        Collection<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList(module.key());
 
         for (License license : globalLicenses)
         {

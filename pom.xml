@@ -71,22 +71,30 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>7.9.3.33150</version>
+      <version>8.3.1.34397</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-server</artifactId>
-      <version>7.2.1</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>sonar-webserver-core</artifactId>
+      <version>8.3.1.34397</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/sonar-webserver-core-8.3.1.34397.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.sonarqube</groupId>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <version>8.3.1.34397</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/sonar-plugin-api-impl-8.3.1.34397.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
@@ -201,8 +209,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v10.16.0</nodeVersion>
-          <npmVersion>6.9.0</npmVersion>
+          <nodeVersion>v12.17.0</nodeVersion>
+          <npmVersion>6.14.5</npmVersion>
         </configuration>
       </plugin>
     </plugins>
