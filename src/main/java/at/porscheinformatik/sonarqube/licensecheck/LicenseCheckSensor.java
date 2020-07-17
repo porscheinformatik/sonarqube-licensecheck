@@ -57,7 +57,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
-                .on(sensorContext.project())
+                .on(sensorContext.module())
                 .save();
         }
     }
@@ -72,7 +72,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.LICENSE)
                 .withValue(License.createString(licenses))
-                .on(sensorContext.project())
+                .on(sensorContext.module())
                 .save();
         }
     }
@@ -107,15 +107,16 @@ public class LicenseCheckSensor implements Sensor
         AGGREGATED_LICENSES.addAll(usedLicenses);
         AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
 
-        // TODO if (project.getParent() == null)
+        // root module?
+        if (context.project().key().equals(context.module().key()))
         {
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
         }
-        // else
-        // {
-        //     saveDependencies(context, validatedDependencies);
-        //     saveLicenses(context, usedLicenses);
-        // }
+         else
+         {
+             saveDependencies(context, validatedDependencies);
+             saveLicenses(context, usedLicenses);
+         }
     }
 }
