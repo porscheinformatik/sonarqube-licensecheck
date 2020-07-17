@@ -71,7 +71,9 @@ public class ValidateLicenses
         if (!checkSpdxLicense(dependency.getLicense(), licenses))
         {
             List<License> licensesContainingDependency = licenses.stream()
-                .filter(l -> dependency.getLicense().contains(l.getIdentifier())).collect(Collectors.toList());
+                .filter(l -> dependency.getLicense().contains(l.getIdentifier()))
+                .collect(Collectors.toList());
+
             String[] andLicenses = dependency.getLicense().replace("(", "").replace(")", "").split(" AND ");
 
             if (licensesContainingDependency.size() != andLicenses.length)
@@ -106,14 +108,18 @@ public class ValidateLicenses
             return checkSpdxLicenseWithAnd(spdxLicenseString, licenses);
         }
 
-        return licenses.stream().filter(l -> l.getIdentifier().equals(spdxLicenseString))
+        return licenses
+            .stream()
+            .filter(l -> l.getIdentifier().equals(spdxLicenseString))
             .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
     private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses)
     {
         String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
-        return licenses.stream().filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
+        return licenses
+            .stream()
+            .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
             .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
     }
 
@@ -121,8 +127,10 @@ public class ValidateLicenses
     {
         String[] andLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" AND ");
         long count = andLicenses.length;
-        List<License> foundLicenses = licenses.stream()
-            .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier())).collect(Collectors.toList());
+        List<License> foundLicenses =
+            licenses.stream()
+                .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
+                .collect(Collectors.toList());
         long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.parseBoolean(l.getStatus())).count();
         if (count == allowedLicenseCount)
         {
@@ -144,8 +152,10 @@ public class ValidateLicenses
     {
         LOGGER.info("Dependency " + dependency.getName() + " uses a not allowed license " + notAllowedLicense);
 
-        NewIssue issue = context.newIssue().forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-            LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+        NewIssue issue = context
+            .newIssue()
+            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+                LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
         issue.at(issue.newLocation().on(context.project()).message(
             "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
         issue.save();
@@ -155,8 +165,10 @@ public class ValidateLicenses
     {
         LOGGER.info("No License found for Dependency " + dependency.getName());
 
-        NewIssue issue = context.newIssue().forRule(
-            RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY, LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+        NewIssue issue = context
+            .newIssue()
+            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+                LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
         issue.at(issue.newLocation().on(context.project())
             .message("No License found for Dependency: " + dependency.getName()));
         issue.save();
