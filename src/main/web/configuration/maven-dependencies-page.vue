@@ -27,10 +27,10 @@
             <td>{{item.key}}</td>
             <td>{{item.license}} / {{item.licenseName}}</td>
             <td class="thin nowrap">
-              <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
-                <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
+              <a class="button" @click="showEditDialog(item)" title="Edit item">
+                <svgicon icon="pencil" width="16" height="16" style="fill: currentcolor"></svgicon>
               </a>
-              <a class="button button-link" @click="showDeleteDialog(item)" title="Delete item">
+              <a class="button" @click="showDeleteDialog(item)" title="Delete item">
                 <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
               </a>
             </td>

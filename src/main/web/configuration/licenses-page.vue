@@ -20,7 +20,7 @@
           <tr>
             <th @click="sort('identifier')" scope="col">Identifier<div class="arrow" v-if="sortBy === 'identifier'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th @click="sort('name')" scope="col">Name<div class="arrow" v-if="sortBy === 'name'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
-            <th @click="sort('status')" scope="col">Allowed<div class="arrow" v-if="sortBy === 'status'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('status')" scope="col">Status<div class="arrow" v-if="sortBy === 'status'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th scope="col">Actions</th>
            </tr>
         </thead>
@@ -28,12 +28,15 @@
           <tr v-for="item in displayedItems" :key="item.identifier">
             <td class="thin">{{item.identifier}}</td>
             <td>{{item.name}}</td>
-            <td>{{item.status}}</td>
+            <td>
+              <span :class="{ 'icon-license-ok': item.status === 'true', 'icon-license-nok': item.status === 'false' }"></span>
+              {{item.status === 'true' ? 'Allowed': 'Forbidden'}}
+            </td>
             <td class="thin nowrap">
-              <a class="button button-link" @click="showEditDialog(item)" title="Edit item">
-                <svgicon icon="pencil" width="16" height="16" style="fill: rgb(35, 106, 151)"></svgicon>
+              <a class="button" @click="showEditDialog(item)" title="Edit item">
+                <svgicon icon="pencil" width="16" height="16" style="fill: currentcolor"></svgicon>
               </a>
-              <a class="button button-link" @click="showDeleteDialog(item)" title="Delete item">
+              <a class="button" @click="showDeleteDialog(item)" title="Delete item">
                 <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
               </a>
             </td>
@@ -56,11 +59,11 @@
           <input required v-focus="editMode !== 'add'" v-model="itemToEdit.name" id="itemNameEdit" name="itemNameEdit" type="text" size="50" maxlength="255">
         </div>
         <div class="modal-field">
-          <label for="itemStatusEdit">Status<em class="mandatory">*</em></label>
-          <select required v-model="itemToEdit.status" id="itemStatusEdit" name="itemStatusEdit">
-            <option value="true">true</option>
-            <option value="false">false</option>
-          </select>
+          <label>Status<em class="mandatory">*</em></label>
+          <label for="itemStatusEdit">
+            <input type="checkbox" id="itemStatusEdit" name="itemStatusEdit" v-model="itemToEdit.status" true-value="true" false-value="false">
+            Allowed
+          </label>
         </div>
       </div>
       <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
