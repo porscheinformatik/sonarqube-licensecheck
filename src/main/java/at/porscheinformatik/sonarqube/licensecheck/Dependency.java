@@ -19,7 +19,7 @@ public class Dependency implements Comparable<Dependency>
     private String name;
     private String version;
     private String license;
-    private String status;
+    private Status status;
     private String pomPath;
 
     public Dependency(String name, String version, String license)
@@ -60,12 +60,12 @@ public class Dependency implements Comparable<Dependency>
         this.license = license;
     }
 
-    public void setStatus(final String status)
+    public void setStatus(final Status status)
     {
         this.status = status;
     }
 
-    public String getStatus()
+    public Status getStatus()
     {
         return status;
     }
@@ -165,8 +165,7 @@ public class Dependency implements Comparable<Dependency>
 
     public static String createString(Collection<Dependency> dependencies)
     {
-        TreeSet<Dependency> sortedDependencies = new TreeSet<>();
-        sortedDependencies.addAll(dependencies);
+        TreeSet<Dependency> sortedDependencies = new TreeSet<>(dependencies);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);
@@ -183,5 +182,12 @@ public class Dependency implements Comparable<Dependency>
         generator.writeEnd();
         generator.close();
         return jsonString.toString();
+    }
+
+    public enum Status
+    {
+        Allowed,
+        Forbidden,
+        Unknown
     }
 }

@@ -52,8 +52,7 @@ public class LicenseCheckSensor implements Sensor
 
         if (!dependencies.isEmpty())
         {
-            sensorContext
-                .<String>newMeasure()
+            sensorContext.<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
                 .on(sensorContext.module())
@@ -74,6 +73,41 @@ public class LicenseCheckSensor implements Sensor
                 .on(sensorContext.module())
                 .save();
         }
+    }
+
+    private static void saveMeasures(SensorContext sensorContext, Set<License> licenses, Set<Dependency> dependencies)
+    {
+        sensorContext.<Integer>newMeasure()
+            .forMetric(LicenseCheckMetrics.NO_LICENSES)
+            .withValue(licenses.size())
+            .on(sensorContext.module())
+            .save();
+
+        sensorContext.<Integer>newMeasure()
+            .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
+            .withValue((int) licenses.stream().filter(l -> !"true".equals(l.getStatus())).count())
+            .on(sensorContext.module())
+            .save();
+
+        sensorContext.<Integer>newMeasure()
+            .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES)
+            .withValue(dependencies.size())
+            .on(sensorContext.module())
+            .save();
+
+        sensorContext.<Integer>newMeasure()
+            .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_FORBIDDEN_LICENSE)
+            .withValue(
+                (int) dependencies.stream().filter(d -> Dependency.Status.Forbidden.equals(d.getStatus())).count())
+            .on(sensorContext.module())
+            .save();
+
+        sensorContext.<Integer>newMeasure()
+            .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_UNKNOWN_LICENSE)
+            .withValue(
+                (int) dependencies.stream().filter(d -> Dependency.Status.Unknown.equals(d.getStatus())).count())
+            .on(sensorContext.module())
+            .save();
     }
 
     @Override
@@ -111,11 +145,13 @@ public class LicenseCheckSensor implements Sensor
         {
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
+            saveMeasures(context, AGGREGATED_LICENSES, AGGREGATED_DEPENDENCIES);
         }
         else
         {
             saveDependencies(context, validatedDependencies);
             saveLicenses(context, usedLicenses);
+            saveMeasures(context, usedLicenses, validatedDependencies);
         }
     }
 }

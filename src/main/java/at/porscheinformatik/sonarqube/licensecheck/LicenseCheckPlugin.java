@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
-import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.scanner.fs.InputProject;
 
@@ -72,17 +71,5 @@ public class LicenseCheckPlugin implements Plugin
                 .type(PropertyType.BOOLEAN)
                 .defaultValue("true")
                 .build());
-    }
-
-    static InputProject getRootProject(InputProject project)
-    {
-        return project;
-        /** TODO
-        while (definition != null && definition.getParent() != null && !definition.equals(definition.getParent()))
-        {
-            definition = definition.getParent();
-        }
-        return definition;
-         */
     }
 }

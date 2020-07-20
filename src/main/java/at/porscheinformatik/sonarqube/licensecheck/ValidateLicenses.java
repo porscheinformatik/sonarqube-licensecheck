@@ -33,6 +33,8 @@ public class ValidateLicenses
     {
         for (Dependency dependency : dependencies)
         {
+            dependency.setStatus(Dependency.Status.Allowed);
+
             if (StringUtils.isBlank(dependency.getLicense()))
             {
                 licenseNotFoundIssue(context, dependency);
@@ -65,9 +67,7 @@ public class ValidateLicenses
 
     private void checkForLicenses(SensorContext context, Dependency dependency)
     {
-        InputProject module = context.project();
-        // DefaultInputModule module = (DefaultInputModule) context.module();
-        List<License> licenses = licenseService.getLicenses(LicenseCheckPlugin.getRootProject(module));
+        List<License> licenses = licenseService.getLicenses(context.project());
         if (!checkSpdxLicense(dependency.getLicense(), licenses))
         {
             List<License> licensesContainingDependency = licenses.stream()
@@ -152,6 +152,8 @@ public class ValidateLicenses
     {
         LOGGER.info("Dependency " + dependency.getName() + " uses a not allowed license " + notAllowedLicense);
 
+        dependency.setStatus(Dependency.Status.Forbidden);
+
         NewIssue issue = context
             .newIssue()
             .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
@@ -164,6 +166,8 @@ public class ValidateLicenses
     private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
         LOGGER.info("No License found for Dependency " + dependency.getName());
+
+        dependency.setStatus(Dependency.Status.Unknown);
 
         NewIssue issue = context
             .newIssue()
