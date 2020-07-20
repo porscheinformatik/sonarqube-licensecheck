@@ -5,7 +5,8 @@
     {
       "description": "org.sonarsource.sonarqube packages",
       "packagePatterns": ["^org.sonarsource.sonarqube:"],
-      "groupName": "org.sonarsource.sonarqube"
+      "groupName": "org.sonarsource.sonarqube",
+      "enabled": false
     } 
   ]
 }
