@@ -129,7 +129,6 @@ public class LicenseSettingsService
     {
         Collections.sort(licenseList);
         String licenseJson = License.createString(licenseList);
-        persistentSettings.getSettings().setProperty(LICENSE_KEY, licenseJson);
         persistentSettings.saveProperty(LICENSE_KEY, licenseJson);
     }
 
@@ -145,7 +144,6 @@ public class LicenseSettingsService
         try (InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json");)
         {
             String spdxLicenseListJson = IOUtils.readToString(inputStream);
-            persistentSettings.getSettings().setProperty(LICENSE_KEY, spdxLicenseListJson);
             persistentSettings.saveProperty(LICENSE_KEY, spdxLicenseListJson);
         }
         catch (Exception e)

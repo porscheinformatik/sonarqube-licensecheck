@@ -64,7 +64,6 @@ public class ProjectLicenseSettingsService
     {
         Collections.sort(projectLicenses);
         String projectLicensesString = ProjectLicense.createString(projectLicenses);
-        persistentSettings.getSettings().setProperty(PROJECT_LICENSE_KEY, projectLicensesString);
         persistentSettings.saveProperty(PROJECT_LICENSE_KEY, projectLicensesString);
     }
 

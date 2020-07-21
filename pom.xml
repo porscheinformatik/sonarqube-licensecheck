@@ -85,16 +85,16 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-webserver-core</artifactId>
-      <version>8.3.1.34397</version>
+      <version>8.1.0.31237</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-webserver-core-8.3.1.34397.jar</systemPath>
+      <systemPath>${basedir}/lib/sonar-webserver-core-8.1.0.31237.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>8.3.1.34397</version>
+      <version>8.1.0.31237</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-plugin-api-impl-8.3.1.34397.jar</systemPath>
+      <systemPath>${basedir}/lib/sonar-plugin-api-impl-8.1.0.31237.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
