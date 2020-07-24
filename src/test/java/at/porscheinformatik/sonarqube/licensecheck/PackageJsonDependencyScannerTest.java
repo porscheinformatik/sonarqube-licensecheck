@@ -70,7 +70,7 @@ public class PackageJsonDependencyScannerTest
     {
         final Scanner scanner = new PackageJsonDependencyScanner(false);
 
-        Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_project"));
+        final Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_project"));
 
         assertEquals(1, dependencies.size());
 
@@ -83,7 +83,7 @@ public class PackageJsonDependencyScannerTest
     {
         final Scanner scanner = new PackageJsonDependencyScanner(false);
 
-        Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_multilicense_project"));
+        final Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_multilicense_project"));
 
         assertEquals(1, dependencies.size());
 
