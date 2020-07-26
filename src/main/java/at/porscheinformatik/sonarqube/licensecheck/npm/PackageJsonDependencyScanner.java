@@ -13,6 +13,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -119,10 +120,15 @@ public class PackageJsonDependencyScanner implements Scanner
                         else if (licenses.size() > 1)
                         {
                             license = "(";
-                            for (int i = 0; i < licenses.size(); i++) {
-                                final String licensePart = licenses.getJsonObject(i).getString("type", "");
-                                if (!licensePart.trim().isEmpty()) {
-                                    license += license.length() > 1 ? (" AND " + licensePart) : licensePart;
+                            for (JsonValue licenseObj : licenses)
+                            {
+                                if (licenseObj instanceof JsonObject)
+                                {
+                                    String licensePart = licenseObj.asJsonObject().getString("type", "");
+                                    if (!licensePart.trim().isEmpty())
+                                    {
+                                        license += license.length() > 1 ? (" OR " + licensePart) : licensePart;
+                                    }
                                 }
                             }
                             license = license.length() == 1 ? "" : (license + ")");
