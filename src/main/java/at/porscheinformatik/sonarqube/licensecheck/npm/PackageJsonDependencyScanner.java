@@ -99,14 +99,33 @@ public class PackageJsonDependencyScanner implements Scanner
                     String license = "";
                     if (packageJson.containsKey("license"))
                     {
-                        license = packageJson.getString("license", null);
+                        final Object licenceObj = packageJson.get("license");
+                        if (licenceObj instanceof JsonObject)
+                        {
+                            license = ((JsonObject) licenceObj).getString("type", "");
+                        }
+                        else
+                        {
+                            license = packageJson.getString("license", "");
+                        }
                     }
                     else if (packageJson.containsKey("licenses"))
                     {
-                        JsonArray licenses = packageJson.getJsonArray("licenses");
-                        if (licenses.size() > 0)
+                        final JsonArray licenses = packageJson.getJsonArray("licenses");
+                        if (licenses.size() == 1) 
                         {
-                            license = licenses.getJsonObject(0).getString("type", null);
+                            license = licenses.getJsonObject(0).getString("type", "");
+                        }
+                        else if (licenses.size() > 1)
+                        {
+                            license = "(";
+                            for (int i = 0; i < licenses.size(); i++) {
+                                final String licensePart = licenses.getJsonObject(i).getString("type", "");
+                                if (!licensePart.trim().isEmpty()) {
+                                    license += license.length() > 1 ? (" AND " + licensePart) : licensePart;
+                                }
+                            }
+                            license = license.length() == 1 ? "" : (license + ")");
                         }
                     }
 
