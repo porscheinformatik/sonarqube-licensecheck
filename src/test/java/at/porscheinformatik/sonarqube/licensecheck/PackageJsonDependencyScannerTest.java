@@ -87,7 +87,7 @@ public class PackageJsonDependencyScannerTest
 
         assertEquals(1, dependencies.size());
 
-        final Dependency expectedDependency = new Dependency("some-module", "1.7.1", "(MIT AND LGPLv3)");
+        final Dependency expectedDependency = new Dependency("some-module", "1.7.1", "(MIT OR LGPLv3)");
         assertEquals(expectedDependency, dependencies.toArray()[0]);
     }
 }
