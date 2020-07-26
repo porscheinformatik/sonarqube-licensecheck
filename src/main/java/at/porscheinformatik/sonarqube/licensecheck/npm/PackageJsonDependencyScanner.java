@@ -101,13 +101,13 @@ public class PackageJsonDependencyScanner implements Scanner
                     {
                         final Object licenceObj = packageJson.get("license");
                         if (licenceObj instanceof JsonObject)
-                       	{
-                       		license = ((JsonObject) licenceObj).getString("type", "");
-                       	}
-                       	else
-                       	{
-                       		license = packageJson.getString("license", "");
-                       	}
+                        {
+                            license = ((JsonObject) licenceObj).getString("type", "");
+                        }
+                        else
+                        {
+                            license = packageJson.getString("license", "");
+                        }
                     }
                     else if (packageJson.containsKey("licenses"))
                     {
