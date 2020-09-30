@@ -1,5 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import at.porscheinformatik.sonarqube.licensecheck.utils.CompareUtil;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -83,16 +85,8 @@ public class Dependency implements Comparable<Dependency>
     @Override
     public boolean equals(Object o)
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
         Dependency that = (Dependency) o;
-        return Objects.equals(name, that.name) &&
+        return CompareUtil.equals(this, o) && Objects.equals(name, that.name) &&
             Objects.equals(version, that.version) &&
             Objects.equals(license, that.license);
     }
@@ -128,35 +122,39 @@ public class Dependency implements Comparable<Dependency>
     {
         List<Dependency> dependencies = new ArrayList<>();
 
-        if (serializedDependencyString != null)
+        if (serializedDependencyString == null)
         {
-            if (serializedDependencyString.startsWith("["))
+            return dependencies;
+        }
+
+        if (serializedDependencyString.startsWith("["))
+        {
+            try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
             {
-                try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
+                JsonArray dependenciesJson = jsonReader.readArray();
+                for (int i = 0; i < dependenciesJson.size(); i++)
                 {
-                    JsonArray dependenciesJson = jsonReader.readArray();
-                    for (int i = 0; i < dependenciesJson.size(); i++)
-                    {
-                        JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
-                        dependencies.add(
-                            new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
-                                dependencyJson.getString("license")));
-                    }
+                    JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
+                    dependencies.add(
+                        new Dependency(
+                            dependencyJson.getString("name"),
+                            dependencyJson.getString("version"),
+                            dependencyJson.getString("license")));
                 }
             }
-            else
-            {
-                // deprecated - remove with later release
-                String[] parts = serializedDependencyString.split(";");
+        }
+        else
+        {
+            // deprecated - remove with later release
+            String[] parts = serializedDependencyString.split(";");
 
-                for (String dependencyString : parts)
-                {
-                    String[] subParts = dependencyString.split("~");
-                    String name = subParts.length > 0 ? subParts[0] : null;
-                    String version = subParts.length > 1 ? subParts[1] : null;
-                    String license = subParts.length > 2 ? subParts[2] : null;
-                    dependencies.add(new Dependency(name, version, license));
-                }
+            for (String dependencyString : parts)
+            {
+                String[] subParts = dependencyString.split("~");
+                String name = subParts.length > 0 ? subParts[0] : null;
+                String version = subParts.length > 1 ? subParts[1] : null;
+                String license = subParts.length > 2 ? subParts[2] : null;
+                dependencies.add(new Dependency(name, version, license));
             }
         }
 

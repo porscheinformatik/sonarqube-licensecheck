@@ -1,5 +1,8 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
+import at.porscheinformatik.sonarqube.licensecheck.utils.CompareUtil;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -15,8 +18,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
-
-import org.codehaus.plexus.util.StringUtils;
 
 public class License implements Comparable<License>
 {
@@ -200,16 +201,8 @@ public class License implements Comparable<License>
     @Override
     public boolean equals(Object o)
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
         License license = (License) o;
-        return Objects.equals(name, license.name) &&
+        return CompareUtil.equals(this, o) && Objects.equals(name, license.name) &&
             Objects.equals(identifier, license.identifier) &&
             Objects.equals(status, license.status);
     }
