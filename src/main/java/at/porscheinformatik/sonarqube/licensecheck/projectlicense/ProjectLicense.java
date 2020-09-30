@@ -45,8 +45,7 @@ public class ProjectLicense implements Comparable<ProjectLicense>
 
     public static String createString(Collection<ProjectLicense> projectLicenses)
     {
-        TreeSet<ProjectLicense> projectLicenseSet = new TreeSet<>();
-        projectLicenseSet.addAll(projectLicenses);
+        TreeSet<ProjectLicense> projectLicenseSet = new TreeSet<>(projectLicenses);
 
         StringWriter jsonString = new StringWriter();
         JsonGenerator generator = Json.createGenerator(jsonString);

@@ -2,7 +2,7 @@
   <div class="boxed-group boxed-group-inner">
     <header class="page-header">
       <h1 class="page-title">License Check - Maven Licenses</h1>
-      <div class="page-description">Map strings entered in Maven POM license name to licenses.</div>
+      <div class="page-description" id="page-description">Map strings entered in Maven POM license name to licenses.</div>
       <div class="page-actions">
         <button id="license-add" @click="showAddDialog()" class="button">Add Maven License</button>
       </div>
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div>
-      <table class="data zebra">
+      <table class="data zebra" aria-describedby="page-description">
         <thead>
           <tr>
             <th @click="sort('regex')" scope="col">License Text Regex<div class="arrow" v-if="sortBy === 'regex'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
@@ -122,7 +122,7 @@ export default {
         .getJSON("/api/licensecheck/maven-licenses/show")
         .then(response => {
           this.items = response.mavenLicenses.map(item => {
-            let license = this.licenses.find(license => license.identifier === item.license);
+            let license = this.licenses.find(usedLicense => usedLicense.identifier === item.license);
             if (license) {
               item.licenseName = license.name;
             }

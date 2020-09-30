@@ -139,11 +139,13 @@ public class ValidateLicenses
         else if (foundLicenses.size() == count)
         {
             // NOT ALLOWED
+            LOGGER.info("Licenses found not allowed.");
             return false;
         }
         else
         {
             // NOT FOUND
+            LOGGER.info("Licenses not found.");
             return false;
         }
     }

@@ -1,5 +1,21 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import org.apache.maven.model.License;
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,23 +31,6 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.maven.model.License;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
-import org.codehaus.plexus.util.StringUtils;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 
 public class MavenDependencyScanner implements Scanner
 {
@@ -156,7 +155,7 @@ public class MavenDependencyScanner implements Scanner
     static Dependency findDependency(String line)
     {
         String[] items = getItems(line);
-        if (items == null)
+        if (items.length == 0)
             return null;
 
         String groupId = items[0];
@@ -198,7 +197,7 @@ public class MavenDependencyScanner implements Scanner
         String[] items = line.trim().split(":");
         if (items.length < 4)
         {
-            return null;
+            return new String[0];
         }
 
         // Windows-specific absolute path "C:\my\path"

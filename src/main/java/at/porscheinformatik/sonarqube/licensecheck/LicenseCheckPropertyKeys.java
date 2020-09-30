@@ -2,6 +2,11 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 public class LicenseCheckPropertyKeys
 {
+    private LicenseCheckPropertyKeys()
+    {
+
+    }
+
     public static final String LICENSE_KEY = "licensecheck.licenses";
     public static final String LICENSE_REGEX = "licensecheck.licensesregex";
 
