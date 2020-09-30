@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
+package at.porscheinformatik.sonarqube.licensecheck.projectLicense;
 
 import java.io.StringReader;
 import java.io.StringWriter;
