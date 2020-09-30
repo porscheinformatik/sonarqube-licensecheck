@@ -156,7 +156,7 @@ public class MavenDependencyScanner implements Scanner
     static Dependency findDependency(String line)
     {
         String[] items = getItems(line);
-        if (items.length == 0)
+        if (items == null)
             return null;
 
         String groupId = items[0];
@@ -198,7 +198,7 @@ public class MavenDependencyScanner implements Scanner
         String[] items = line.trim().split(":");
         if (items.length < 4)
         {
-            return new String[0];
+            return null;
         }
 
         // Windows-specific absolute path "C:\my\path"

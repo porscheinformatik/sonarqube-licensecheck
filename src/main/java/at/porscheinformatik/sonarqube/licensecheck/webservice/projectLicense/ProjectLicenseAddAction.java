@@ -13,7 +13,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Proj
 
 class ProjectLicenseAddAction implements RequestHandler
 {
-    private final ProjectLicenseSettingsService projectLicenseSettingsService;
+    private ProjectLicenseSettingsService projectLicenseSettingsService;
     private static final Logger LOGGER = Loggers.get(ProjectLicenseAddAction.class);
 
     public ProjectLicenseAddAction(ProjectLicenseSettingsService projectLicenseSettingsService)

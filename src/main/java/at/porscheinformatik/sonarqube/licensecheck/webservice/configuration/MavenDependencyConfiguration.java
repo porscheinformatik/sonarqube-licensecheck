@@ -2,11 +2,6 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class MavenDependencyConfiguration
 {
-    private MavenDependencyConfiguration()
-    {
-
-    }
-
     public static final String PARAM_KEY = "key";
     public static final String PARAM_LICENSE = "license";
     public static final String PARAM_OLD_KEY = "old_key";

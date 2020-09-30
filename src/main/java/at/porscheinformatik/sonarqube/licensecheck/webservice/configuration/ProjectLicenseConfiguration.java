@@ -20,7 +20,7 @@ public final class ProjectLicenseConfiguration
 
     public static final String ERROR_EDIT_ALREADY_EXISTS =
         "Edit Project License aborted. Project license already exists!";
-    public static final String ERROR_EDIT_INVALID_INPUT = "Failed to edit project license, due to invalid input: ";
+    public static final String ERROR_EDIT_INVALID_INPUT = "Failed to edit project license , due to invalid input: ";
     public static final String INFO_EDIT_SUCCESS = "Project license edited";
 
     public static final String ERROR_ADD_ALREADY_EXISTS =

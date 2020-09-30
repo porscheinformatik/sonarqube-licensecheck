@@ -2,11 +2,6 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class MavenLicenseConfiguration
 {
-    private MavenLicenseConfiguration()
-    {
-
-    }
-
     public static final String PARAM_REGEX = "regex";
     public static final String PARAM_OLD_REGEX = "old_regex";
     public static final String PARAM_LICENSE = "license";

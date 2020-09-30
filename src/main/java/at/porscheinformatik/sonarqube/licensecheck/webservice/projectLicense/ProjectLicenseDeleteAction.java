@@ -12,7 +12,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Proj
 
 class ProjectLicenseDeleteAction implements RequestHandler
 {
-    private final ProjectLicenseSettingsService projectLicenseSettingsService;
+    private ProjectLicenseSettingsService projectLicenseSettingsService;
     private static final Logger LOGGER = Loggers.get(ProjectLicenseDeleteAction.class);
 
     public ProjectLicenseDeleteAction(ProjectLicenseSettingsService projectLicenseSettingsService)

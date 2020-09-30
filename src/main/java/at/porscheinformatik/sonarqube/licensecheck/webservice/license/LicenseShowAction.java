@@ -3,7 +3,6 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.license;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.sonar.api.server.ws.Request;
@@ -32,7 +31,7 @@ class LicenseShowAction implements RequestHandler
             .setMediaType("application/json")
             .output();
 
-        try (Writer out = new OutputStreamWriter(os, StandardCharsets.UTF_8))
+        try (Writer out = new OutputStreamWriter(os, "UTF-8"))
         {
             out.write(License.createString(licenses));
         }
