@@ -13,8 +13,8 @@ import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependen
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencySettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.license.LicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.MavenDependencyWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;

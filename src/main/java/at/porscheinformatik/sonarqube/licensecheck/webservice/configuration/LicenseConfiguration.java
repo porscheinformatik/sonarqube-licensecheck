@@ -2,6 +2,11 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class LicenseConfiguration
 {
+    private LicenseConfiguration()
+    {
+
+    }
+
     public static final String PARAM_NAME = "name";
     public static final String PARAM_IDENTIFIER = "identifier";
     public static final String PARAM_STATUS = "status";

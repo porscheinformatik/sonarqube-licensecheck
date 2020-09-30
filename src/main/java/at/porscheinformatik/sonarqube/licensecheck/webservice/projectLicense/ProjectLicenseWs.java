@@ -9,7 +9,7 @@ import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.Proj
 public class ProjectLicenseWs implements WebService
 {
     private final ProjectLicenseService projectLicenseService;
-    private ProjectLicenseSettingsService projectLicenseSettingsService;
+    private final ProjectLicenseSettingsService projectLicenseSettingsService;
 
     public ProjectLicenseWs(ProjectLicenseService projectLicenseService,
         ProjectLicenseSettingsService projectLicenseSettingsService)

@@ -10,8 +10,8 @@ import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.server.ServerSide;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 
 @ServerSide
 @ScannerSide

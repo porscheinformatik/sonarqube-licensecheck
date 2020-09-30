@@ -134,11 +134,11 @@ export default {
         .getJSON("/api/licensecheck/project-licenses/show")
         .then(response => {
           this.items = response.map(item => {
-            let license = this.licenses.find(license => license.identifier === item.license);
+            let license = this.licenses.find(usedLicense => usedLicense.identifier === item.license);
             if (license) {
               item.licenseName = license.name;
             }
-            let project = this.projects.find(project => project.key === item.projectKey);
+            let project = this.projects.find(usedProject => usedProject.key === item.projectKey);
             if (project) {
               item.projectName = project.name;
             }
