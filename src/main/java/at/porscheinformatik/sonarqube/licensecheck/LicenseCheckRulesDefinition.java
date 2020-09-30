@@ -19,9 +19,6 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.server.rule.RulesDefinition;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Repository for the rules used in the plugin
  */
@@ -30,30 +27,21 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
     @Override
     public void define(Context context)
     {
-        NewRepository javaRepository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
-        NewRepository javaScriptRepository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "js");
+        NewRepository repository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
+        repository.setName("License Check");
 
-        List<NewRepository> repositoryList = new ArrayList<>();
-        repositoryList.add(javaRepository);
-        repositoryList.add(javaScriptRepository);
+        repository
+            .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
+            .setName("Dependency has unknown license [license-check]")
+            .setHtmlDescription("The dependencies license could not be determined!")
+            .setSeverity(Severity.BLOCKER);
 
-        for (NewRepository repository : repositoryList)
-        {
-            repository.setName("License Check");
+        repository
+            .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
+            .setName("License is not allowed [license-check]")
+            .setHtmlDescription("Violation because the license of the dependency is not allowed.")
+            .setSeverity(Severity.BLOCKER);
 
-            repository
-                .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
-                .setName("Dependency has unknown license [license-check]")
-                .setHtmlDescription("The dependencies license could not be determined!")
-                .setSeverity(Severity.BLOCKER);
-
-            repository
-                .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
-                .setName("License is not allowed [license-check]")
-                .setHtmlDescription("Violation because the license of the dependency is not allowed.")
-                .setSeverity(Severity.BLOCKER);
-
-            repository.done();
-        }
+        repository.done();
     }
 }
