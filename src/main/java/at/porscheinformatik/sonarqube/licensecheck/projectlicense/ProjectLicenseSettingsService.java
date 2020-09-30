@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.projectLicense;
+package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY;
 

@@ -2,8 +2,8 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense;
 
 import org.sonar.api.server.ws.WebService;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.configuration.ProjectLicenseConfiguration;
 
 public class ProjectLicenseWs implements WebService
