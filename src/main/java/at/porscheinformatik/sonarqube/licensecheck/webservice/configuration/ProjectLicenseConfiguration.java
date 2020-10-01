@@ -2,6 +2,11 @@ package at.porscheinformatik.sonarqube.licensecheck.webservice.configuration;
 
 public final class ProjectLicenseConfiguration
 {
+    private ProjectLicenseConfiguration()
+    {
+
+    }
+
     public static final String PARAM_PROJECT_KEY = "projectKey";
     public static final String PARAM_LICENSE = "license";
     public static final String PARAM_STATUS = "status";

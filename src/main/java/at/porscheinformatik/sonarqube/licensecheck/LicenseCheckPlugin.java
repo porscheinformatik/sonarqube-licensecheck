@@ -1,24 +1,23 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.sonar.api.Plugin;
-import org.sonar.api.PropertyType;
-import org.sonar.api.config.PropertyDefinition;
-
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencySettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.license.LicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavendependency.MavenDependencyWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.mavenlicense.MavenLicenseWs;
 import at.porscheinformatik.sonarqube.licensecheck.webservice.projectLicense.ProjectLicenseWs;
+import org.sonar.api.Plugin;
+import org.sonar.api.PropertyType;
+import org.sonar.api.config.PropertyDefinition;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class LicenseCheckPlugin implements Plugin
 {

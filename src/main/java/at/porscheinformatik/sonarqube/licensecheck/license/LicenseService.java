@@ -2,16 +2,15 @@ package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
 
-import java.util.Collection;
-import java.util.List;
-
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.server.ServerSide;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectLicense.ProjectLicenseService;
+import java.util.Collection;
+import java.util.List;
 
 @ServerSide
 @ScannerSide
