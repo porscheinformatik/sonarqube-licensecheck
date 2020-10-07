@@ -1,5 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck.npm;
 
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,12 +19,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
-
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
@@ -135,7 +134,7 @@ public class PackageJsonDependencyScanner implements Scanner
                         }
                     }
 
-                    dependencies.add(new Dependency(packageName, packageJson.getString("version", null), license));
+                    dependencies.add(new PackageJsonDependency(packageName, packageJson.getString("version", null), license));
 
                     if (resolveTransitiveDeps)
                     {

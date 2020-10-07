@@ -1,16 +1,14 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.Metrics;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class LicenseCheckMetrics implements Metrics
 {
-    public static final String LICENSE_CHECK_KEY = "licensecheck";
-
     public static final String LICENSE_CHECK_UNLISTED_KEY = "licensecheck.unlisted";
     public static final String LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
 

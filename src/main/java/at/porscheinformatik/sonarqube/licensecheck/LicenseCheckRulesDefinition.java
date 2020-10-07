@@ -27,11 +27,14 @@ import java.util.List;
  */
 public final class LicenseCheckRulesDefinition implements RulesDefinition
 {
+    public static final String LICENSE_CHECK_REPO_KEY_JAVA = "licensecheck.java";
+    public static final String LICENSE_CHECK_REPO_KEY_JS = "licensecheck.js";
+
     @Override
     public void define(Context context)
     {
-        NewRepository javaRepository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
-        NewRepository javaScriptRepository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "js");
+        NewRepository javaRepository = context.createRepository(LICENSE_CHECK_REPO_KEY_JAVA, "java");
+        NewRepository javaScriptRepository = context.createRepository(LICENSE_CHECK_REPO_KEY_JS, "js");
 
         List<NewRepository> repositoryList = new ArrayList<>();
         repositoryList.add(javaRepository);

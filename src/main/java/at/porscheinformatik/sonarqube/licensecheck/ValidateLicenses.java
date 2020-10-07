@@ -1,10 +1,8 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependency;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
@@ -14,8 +12,10 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @ScannerSide
 public class ValidateLicenses
@@ -156,7 +156,7 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS,
                 LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
         issue.at(issue.newLocation().on(context.project()).message(
             "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
@@ -171,7 +171,7 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
+            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS,
                 LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
         issue.at(issue.newLocation().on(context.project())
             .message("No License found for Dependency: " + dependency.getName()));

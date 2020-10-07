@@ -2,10 +2,13 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static java.util.Collections.newSetFromMap;
 
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -15,13 +18,9 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LicenseCheckSensor implements Sensor
 {
@@ -114,7 +113,10 @@ public class LicenseCheckSensor implements Sensor
     public void describe(SensorDescriptor descriptor)
     {
         descriptor.name("License Check")
-            .createIssuesForRuleRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY);
+            .createIssuesForRuleRepositories(
+                LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JAVA,
+                LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS
+            );
     }
 
     @Override
