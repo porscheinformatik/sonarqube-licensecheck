@@ -24,7 +24,7 @@ public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
 
-    private boolean resolveTransitiveDeps;
+    private final boolean resolveTransitiveDeps;
 
     public PackageJsonDependencyScanner(boolean resolveTransitiveDeps)
     {
@@ -96,17 +96,18 @@ public class PackageJsonDependencyScanner implements Scanner
                 JsonObject packageJson = jsonReader.readObject();
                 if (packageJson != null)
                 {
-                    String license = "";
+                    StringBuilder license = new StringBuilder();
                     if (packageJson.containsKey("license"))
                     {
                         final Object licenceObj = packageJson.get("license");
                         if (licenceObj instanceof JsonObject)
                         {
-                            license = ((JsonObject) licenceObj).getString("type", "");
+                            license = new StringBuilder(
+                                ((JsonObject) licenceObj).getString("type", ""));
                         }
                         else
                         {
-                            license = packageJson.getString("license", "");
+                            license = new StringBuilder(packageJson.getString("license", ""));
                         }
                     }
                     else if (packageJson.containsKey("licenses"))
@@ -114,11 +115,12 @@ public class PackageJsonDependencyScanner implements Scanner
                         final JsonArray licenses = packageJson.getJsonArray("licenses");
                         if (licenses.size() == 1) 
                         {
-                            license = licenses.getJsonObject(0).getString("type", "");
+                            license = new StringBuilder(
+                                licenses.getJsonObject(0).getString("type", ""));
                         }
                         else if (licenses.size() > 1)
                         {
-                            license = "(";
+                            license = new StringBuilder("(");
                             for (JsonValue licenseObj : licenses)
                             {
                                 if (licenseObj instanceof JsonObject)
@@ -126,15 +128,19 @@ public class PackageJsonDependencyScanner implements Scanner
                                     String licensePart = licenseObj.asJsonObject().getString("type", "");
                                     if (!licensePart.trim().isEmpty())
                                     {
-                                        license += license.length() > 1 ? (" OR " + licensePart) : licensePart;
+                                        license.append(
+                                            license.length() > 1 ? (" OR " + licensePart) :
+                                                licensePart);
                                     }
                                 }
                             }
-                            license = license.length() == 1 ? "" : (license + ")");
+                            license = new StringBuilder(
+                                license.length() == 1 ? "" : (license + ")"));
                         }
                     }
 
-                    dependencies.add(new PackageJsonDependency(packageName, packageJson.getString("version", null), license));
+                    dependencies.add(new PackageJsonDependency(packageName, packageJson.getString("version", null),
+                        license.toString()));
 
                     if (resolveTransitiveDeps)
                     {
