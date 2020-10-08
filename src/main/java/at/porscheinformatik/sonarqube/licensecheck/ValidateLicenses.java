@@ -156,7 +156,7 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS,
+            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JAVA,
                 LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
         issue.at(issue.newLocation().on(context.project()).message(
             "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
@@ -171,7 +171,7 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS,
+            .forRule(RuleKey.of(dependency instanceof PackageJsonDependency ? LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JS : LicenseCheckRulesDefinition.LICENSE_CHECK_REPO_KEY_JAVA,
                 LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
         issue.at(issue.newLocation().on(context.project())
             .message("No License found for Dependency: " + dependency.getName()));
