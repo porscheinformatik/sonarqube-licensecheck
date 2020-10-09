@@ -39,6 +39,9 @@ should look something like this:
 After booting the SonarQube Server with the License-Check Plugin two new options can be found in the tab
 <b>Administration</b>.
 
+Please do NOT use the page **Administration** -> **General Settings** -> **SonarQube License Check Plugin** for changing the plugin's settings.
+Use **Administration** -> **Configuration** > **License check**.
+
 * Within the general settings the plugin can be manually enabled or disabled. By default it is enabled.
 * All other configuration is under License-Check specific settings (Configuration > License Check).
   * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
