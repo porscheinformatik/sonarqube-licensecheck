@@ -28,18 +28,10 @@ public class MavenDependencyService
         this.configuration = configuration;
     }
 
-    public List<MavenDependency> getMavenDependencies()
+    private List<MavenDependency> fromString(String dependencies)
     {
         final List<MavenDependency> mavenDependencies = new ArrayList<>();
-        String dependencyString = configuration.get(ALLOWED_DEPENDENCIES_KEY).orElse("[]").replaceAll(
-            LicenseService.COMMA_PLACEHOLDER, ",");
-
-        if (dependencyString.isEmpty())
-        {
-            dependencyString = "[]";
-        }
-
-        JsonReader jsonReader = Json.createReader(new StringReader(dependencyString));
+        JsonReader jsonReader = Json.createReader(new StringReader(dependencies));
         JsonArray jsonArray = jsonReader.readArray();
         jsonReader.close();
 
@@ -50,6 +42,21 @@ public class MavenDependencyService
             mavenDependencies
                 .add(new MavenDependency(jsonObject.getString("nameMatches"), jsonObject.getString("license")));
         }
+
+        return mavenDependencies;
+    }
+
+    public List<MavenDependency> getMavenDependencies()
+    {
+        String dependencyString = configuration.get(ALLOWED_DEPENDENCIES_KEY).orElse("[]").replaceAll(
+            LicenseService.COMMA_PLACEHOLDER, ",");
+
+        if (dependencyString.isEmpty())
+        {
+            dependencyString = "[]";
+        }
+
+        List<MavenDependency> mavenDependencies = fromString(dependencyString);
 
         if(mavenDependencies.isEmpty())
         {

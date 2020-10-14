@@ -1,7 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import at.porscheinformatik.sonarqube.licensecheck.utils.CompareUtil;
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -85,8 +83,19 @@ public class Dependency implements Comparable<Dependency>
     @Override
     public boolean equals(Object o)
     {
+        if(this == o)
+        {
+            return true;
+        }
+
+        if(Objects.isNull(o) || !o.getClass().equals(this.getClass()))
+        {
+            return false;
+        }
+
         Dependency that = (Dependency) o;
-        return CompareUtil.equals(this, o) && Objects.equals(name, that.name) &&
+
+        return Objects.equals(name, that.name) &&
             Objects.equals(version, that.version) &&
             Objects.equals(license, that.license);
     }
