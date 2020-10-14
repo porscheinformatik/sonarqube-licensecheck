@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     displayedItems() {
-      if (!this.searchText || this.searchText.length == 0) {
+      if (!this.searchText || this.searchText.length === 0) {
         return this.sortedItems;
       }
 
@@ -100,7 +100,7 @@ export default {
         let modifier = 1;
         if (this.sortDirection === "desc") modifier = -1;
         if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return modifier;
         return 0;
       });
     }
@@ -142,12 +142,45 @@ export default {
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveDependencies(){
+      let dependenciesToPost = [];
+
+      for (let i = 0; i < this.items.length; i++){
+        dependenciesToPost.push(new Object({nameMatches: this.items[i].key, license: this.items[i].license}));
+      }
+
+      let post = {
+        'key': "licensecheck.alloweddependencies",
+        'values': JSON.stringify(dependenciesToPost).replaceAll(",", "COMMA_PLACEHOLDER")
+      };
+
       window.SonarRequest
-        .post(`/api/licensecheck/maven-dependencies/${this.editMode}`, item)
+        .post(`/api/settings/set`, post)
         .then(() => {
           this.loadMavenDependencies();
         });
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        if (this.items.filter(dependency => dependency.key === item.key).length >= 1) {
+          //key (!) already available
+          return;
+        }
+
+        this.items.push(item);
+      }
+      else {
+        if (this.items.filter(dependency => dependency.key === item.key && dependency.license === item.license).length === 1) {
+          //nothing has changed
+          return;
+        }
+
+        //remove old key/item
+        this.items = this.items.filter(dependency => dependency.key !== item.old_key);
+        //add new key/item
+        this.items.push(item);
+      }
+      this.saveDependencies()
       this.itemToEdit = null;
     },
     showDeleteDialog(item) {
@@ -157,11 +190,15 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/maven-dependencies/delete', { key: item.key })
-        .then(() => {
-          this.loadMavenDependencies();
-        });
+      if (this.items.filter(dependency => dependency.key === item.key).length === 0) {
+        //key not found
+        return;
+      }
+
+      this.items = this.items.filter(dependency => dependency.key !== item.key);
+
+      this.saveDependencies();
+
       this.itemToDelete = null;
     },
     sort(param) {

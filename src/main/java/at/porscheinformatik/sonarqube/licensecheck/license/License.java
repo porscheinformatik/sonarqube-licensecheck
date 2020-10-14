@@ -75,6 +75,10 @@ public class License implements Comparable<License>
         {
             return new ArrayList<>();
         }
+        else
+        {
+            serializedLicensesString = serializedLicensesString.replaceAll(LicenseService.COMMA_PLACEHOLDER, ",");
+        }
 
         if (serializedLicensesString.startsWith("["))
         {
@@ -86,7 +90,7 @@ public class License implements Comparable<License>
                 for (JsonObject licenseJson : licensesJson.getValuesAs(JsonObject.class))
                 {
                     licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
-                        licenseJson.getString("status")));
+                        licenseJson.getString("status", "false")));
                 }
             }
             return licenses;
@@ -173,6 +177,7 @@ public class License implements Comparable<License>
         return jsonString.toString();
     }
 
+    //TODO: Do we need the compareable interface any longer? After switching to public API it does not seem so.
     @Override
     public int compareTo(License o)
     {
@@ -201,6 +206,11 @@ public class License implements Comparable<License>
     @Override
     public boolean equals(Object o)
     {
+        if(!o.getClass().equals(getClass()))
+        {
+            return false;
+        }
+
         License license = (License) o;
         return CompareUtil.equals(this, o) && Objects.equals(name, license.name) &&
             Objects.equals(identifier, license.identifier) &&

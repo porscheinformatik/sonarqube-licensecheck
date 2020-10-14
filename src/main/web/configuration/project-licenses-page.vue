@@ -173,12 +173,45 @@ export default {
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveLicenses(){
+      let licensesToPost = [];
+
+      for (let i = 0; i < this.items.length; i++){
+        licensesToPost.push(new Object({projectKey: this.items[i].projectKey, license: this.items[i].license, status: this.items[i].status}));
+      }
+
+      let post = {
+        'key': "licensecheck.projectlicense",
+        'values': JSON.stringify(licensesToPost).replaceAll(",", "COMMA_PLACEHOLDER")
+      };
+
       window.SonarRequest
-        .post(`/api/licensecheck/project-licenses/${this.editMode}`, item)
+        .post(`/api/settings/set`, post)
         .then(() => {
           this.loadProjectLicenses();
         });
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        if (this.items.filter(license => license.licenseName === item.licenseName && license.projectName === item.projectName).length >= 1) {
+          //license already available
+          return;
+        }
+
+        this.items.push(item);
+      }
+      else {
+        if (this.items.filter(license => license.licenseName === item.licenseName && license.projectName === item.projectName && license.status === item.status).length === 1) {
+          //nothing has changed
+          return;
+        }
+
+        //remove old identifier/item
+        this.items = this.items.filter(license => license.licenseName !== item.licenseName || license.projectName !== item.projectName);
+        //add new identifier/item
+        this.items.push(item);
+      }
+      this.saveLicenses();
       this.itemToEdit = null;
     },
     showDeleteDialog(item) {
@@ -188,11 +221,15 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/project-licenses/delete', { projectKey: item.projectKey, license: item.license })
-        .then(() => {
-          this.loadProjectLicenses();
-        });
+      if (this.items.filter(license => license.licenseName === item.licenseName && license.projectName === item.projectName).length === 0) {
+        //license not found
+        return;
+      }
+
+      this.items = this.items.filter(license => license.licenseName !== item.licenseName || license.projectName !== item.projectName);
+
+      this.saveLicenses();
+
       this.itemToDelete = null;
     },
     sort(param) {

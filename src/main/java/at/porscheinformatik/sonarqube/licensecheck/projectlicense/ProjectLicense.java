@@ -1,5 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
 
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.utils.CompareUtil;
 
 import java.io.StringReader;
@@ -70,7 +71,8 @@ public class ProjectLicense implements Comparable<ProjectLicense>
     {
         List<ProjectLicense> projectLicenses = new ArrayList<>();
 
-        try (JsonReader jsonReader = Json.createReader(new StringReader(projectLicensesString)))
+        try (JsonReader jsonReader = Json.createReader(new StringReader(projectLicensesString.replaceAll(
+            LicenseService.COMMA_PLACEHOLDER, ","))))
         {
             JsonArray projectLicensesJson = jsonReader.readArray();
             for (int i = 0; i < projectLicensesJson.size(); i++)
@@ -79,7 +81,7 @@ public class ProjectLicense implements Comparable<ProjectLicense>
                 projectLicenses.add(new ProjectLicense(
                     projectLicenseJson.getString("projectKey"),
                     projectLicenseJson.getString("license"),
-                    projectLicenseJson.getString("status")));
+                    projectLicenseJson.getString("status", "false")));
             }
         }
 
@@ -109,7 +111,13 @@ public class ProjectLicense implements Comparable<ProjectLicense>
     @Override
     public boolean equals(Object o)
     {
+        if(!o.getClass().equals(this.getClass()))
+        {
+            return false;
+        }
+
         ProjectLicense that = (ProjectLicense) o;
+
         return CompareUtil.equals(this, o) && Objects.equals(projectKey, that.projectKey) &&
             Objects.equals(license, that.license) &&
             Objects.equals(status, that.status);

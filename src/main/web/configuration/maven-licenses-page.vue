@@ -141,12 +141,45 @@ export default {
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveLicenses(){
+      let licensesToPost = [];
+
+      for (let i = 0; i < this.items.length; i++){
+        licensesToPost.push(new Object({regex: this.items[i].regex, license: this.items[i].license}));
+      }
+
+      let post = {
+        'key': "licensecheck.licensesregex",
+        'values': JSON.stringify(licensesToPost).replaceAll(",", "COMMA_PLACEHOLDER")
+      };
+
       window.SonarRequest
-        .post(`/api/licensecheck/maven-licenses/${this.editMode}`, item)
+        .post(`/api/settings/set`, post)
         .then(() => {
           this.loadMavenLicenses();
         });
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        if (this.items.filter(license => license.regex === item.regex && license.licenseName === item.licenseName).length >= 1) {
+          //license already available
+          return;
+        }
+
+        this.items.push(item);
+      }
+      else {
+        if (this.items.filter(license => license.regex === item.regex && license.licenseName === item.licenseName).length === 1) {
+          //nothing has changed
+          return;
+        }
+
+        //remove old regex/item
+        this.items = this.items.filter(license => license.regex !== item.old_regex || license.licenseName !== item.licenseName);
+        //add new regex/item
+        this.items.push(item);
+      }
+      this.saveLicenses();
       this.itemToEdit = null;
     },
     showDeleteDialog(item) {
@@ -156,11 +189,14 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/maven-licenses/delete', { regex: item.regex })
-        .then(() => {
-          this.loadMavenLicenses();
-        });
+      if (this.items.filter(license => license.regex === item.regex).length === 0) {
+        //license not found
+        return;
+      }
+
+      this.items = this.items.filter(license => license.regex !== item.regex);
+
+      this.saveLicenses();
       this.itemToDelete = null;
     },
     sort(param) {

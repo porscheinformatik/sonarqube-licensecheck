@@ -1,15 +1,13 @@
 package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
-import jdk.nashorn.internal.runtime.CodeStore;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 import javax.json.Json;
 import javax.json.stream.JsonGenerator;
@@ -22,11 +20,18 @@ public class MavenLicenseTest
     {
         String regex = "Regex";
         String licenseNameRegex = "LicenseNameRegex";
-        String mavenLicenseString = "[{\"regex\": \"" + regex + "\", \"licenseNameRegEx\": \"" + licenseNameRegex + "\"}]";
+        String license = "License";
+        String mavenLicenseString = "[{\"regex\": \"" + regex + "\", \"license\": \"" + license + "\"}]".replaceAll(",",
+            LicenseService.COMMA_PLACEHOLDER);
 
         Assert.assertEquals(0, MavenLicense.fromString("").size());
         Assert.assertEquals(1, MavenLicense.fromString(mavenLicenseString).size());
-        Assert.assertTrue(MavenLicense.fromString(mavenLicenseString).contains(new MavenLicense(regex, licenseNameRegex)));
+
+        mavenLicenseString = "[{\"licenseNameRegEx\": \"" + licenseNameRegex + "\", \"license\": \"" + license + "\"}]".replaceAll(",",
+            LicenseService.COMMA_PLACEHOLDER);
+        Assert.assertEquals(1, MavenLicense.fromString(mavenLicenseString).size());
+
+        Assert.assertTrue(MavenLicense.fromString(mavenLicenseString).contains(new MavenLicense(licenseNameRegex, license)));
     }
 
     @Test
@@ -38,7 +43,7 @@ public class MavenLicenseTest
         generator.writeEnd();
         generator.close();
 
-        Assert.assertTrue(MavenLicense.createString(new ArrayList<>()).equals(jsonString.toString()));
+        Assert.assertEquals(MavenLicense.createString(new ArrayList<>()), jsonString.toString());
 
         Collection<MavenLicense> mavenLicenses = new ArrayList<>();
         String regex = "Regex" + RandomStringUtils.randomAlphanumeric(5);

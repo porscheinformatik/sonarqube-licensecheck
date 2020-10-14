@@ -1,5 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -14,8 +16,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
-
-import org.codehaus.plexus.util.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
@@ -62,7 +62,8 @@ public class MavenLicense implements Comparable<MavenLicense>
 
         if (mavenLicenseString != null && mavenLicenseString.startsWith("["))
         {
-            try (JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString)))
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString.replaceAll(
+                LicenseService.COMMA_PLACEHOLDER, ","))))
             {
                 JsonArray licensesJson = jsonReader.readArray();
                 for (int i = 0; i < licensesJson.size(); i++)
@@ -83,16 +84,6 @@ public class MavenLicense implements Comparable<MavenLicense>
                         mavenLicenses.add(new MavenLicense(regex, licenseJson.getString("license")));
                     }
                 }
-            }
-        }
-        else if (StringUtils.isNotEmpty(mavenLicenseString))
-        {
-            // deprecated - remove with later release
-            String[] mavenLicenseEntries = mavenLicenseString.split(";");
-            for (String mavenLicenseEntry : mavenLicenseEntries)
-            {
-                String[] mavenLicenseEntryParts = mavenLicenseEntry.split("~");
-                mavenLicenses.add(new MavenLicense(mavenLicenseEntryParts[0], mavenLicenseEntryParts[1]));
             }
         }
 
@@ -131,7 +122,7 @@ public class MavenLicense implements Comparable<MavenLicense>
             return false;
         }
         MavenLicense that = (MavenLicense) o;
-        return Objects.equals(regex, that.regex) &&
+        return Objects.equals(regex.toString(), that.regex.toString()) &&
             Objects.equals(license, that.license);
     }
 

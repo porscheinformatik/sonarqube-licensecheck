@@ -1,15 +1,13 @@
-package at.porscheinformatik.sonarqube.licensecheck;
+package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.junit.Assert.assertThat;
-
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LicenseTest
 {
@@ -26,7 +24,7 @@ public class LicenseTest
     {
         String dependenciesJson = License.createString(asList(LIC2, LIC1));
 
-        assertThat(dependenciesJson, equalTo(LICENSES_JSON));
+        assertEquals(dependenciesJson, LICENSES_JSON);
     }
 
     @Test
@@ -34,7 +32,10 @@ public class LicenseTest
     {
         List<License> licenses = License.fromString(LICENSES_STRING);
 
-        assertThat(licenses, hasItems(LIC1, LIC2));
+        assertTrue(licenses.containsAll(new ArrayList<>(){{
+            add(LIC1);
+            add(LIC2);}})
+        );
     }
 
     @Test
@@ -42,6 +43,9 @@ public class LicenseTest
     {
         List<License> licenses = License.fromString(LICENSES_JSON);
 
-        assertThat(licenses, hasItems(LIC1, LIC2));
+        assertTrue(licenses.containsAll(new ArrayList<>(){{
+            add(LIC1);
+            add(LIC2);}})
+        );
     }
 }

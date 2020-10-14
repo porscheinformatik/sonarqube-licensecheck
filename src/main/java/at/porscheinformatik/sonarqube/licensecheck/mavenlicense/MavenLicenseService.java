@@ -2,14 +2,14 @@ package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 
+import org.sonar.api.config.Configuration;
+import org.sonar.api.scanner.ScannerSide;
+import org.sonar.api.server.ServerSide;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.sonar.api.config.Configuration;
-import org.sonar.api.scanner.ScannerSide;
-import org.sonar.api.server.ServerSide;
 
 @ServerSide
 @ScannerSide

@@ -13,7 +13,6 @@ public final class MavenDependencyConfiguration extends LicenseCheckConfiguratio
     public static final String CONTROLLER = "api/licensecheck/maven-dependencies";
 
     public static final String SHOW_ACTION_DESCRIPTION = "Show Maven Dependencies";
-    public static final String DELETE_ACTION_DESCRIPTION = "Delete Maven Dependency";
     public static final String ADD_ACTION_DESCRIPTION = "Add Maven Dependency";
     public static final String EDIT_ACTION_DESCRIPTION = "Edit Maven Dependency";
 
@@ -24,7 +23,6 @@ public final class MavenDependencyConfiguration extends LicenseCheckConfiguratio
 
     public static final String ERROR_ADD_ALREADY_EXISTS =
         "Add Maven Dependency aborted. Maven Dependency already exists: ";
-    public static final String INFO_ADD_SUCCESS = "Maven Dependency added: ";
 
     public static final String INFO_DELETE_SUCCESS = "Maven Dependency deleted: ";
 }

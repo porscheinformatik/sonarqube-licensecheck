@@ -18,6 +18,7 @@ public class LicenseService
 {
     private final Configuration configuration;
     private final ProjectLicenseService projectLicenseService;
+    public static final String COMMA_PLACEHOLDER = "COMMA_PLACEHOLDER";
 
     public LicenseService(Configuration configuration, ProjectLicenseService projectLicenseService)
     {
@@ -53,7 +54,6 @@ public class LicenseService
 
     public List<License> getLicenses()
     {
-        String licenseString = configuration.get(LICENSE_KEY).orElse(null);
-        return License.fromString(licenseString);
+        return License.fromString(configuration.get(LICENSE_KEY).orElse(null));
     }
 }

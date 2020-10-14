@@ -115,7 +115,7 @@ export default {
         let modifier = 1;
         if (this.sortDirection === "desc") modifier = -1;
         if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return modifier;
         return 0;
       });
     }
@@ -142,12 +142,40 @@ export default {
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveLicenses(){
+      let post = {
+        'key': "licensecheck.licenses",
+        //we make use of placeholder here to use multivalued field to "override" 4000 character limit for single text fields
+        'values': JSON.stringify(this.items).replaceAll(",", "COMMA_PLACEHOLDER")
+      };
+
       window.SonarRequest
-        .post(`/api/licensecheck/licenses/${this.editMode}`, item)
+        .post(`/api/settings/set`, post)
         .then(() => {
-          this.load()
-      });
+          this.load();
+        });
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        if (this.items.filter(license => license.identifier === item.identifier).length >= 1) {
+          //identifier (!) already available
+          return;
+        }
+
+        this.items.push(item);
+      }
+      else {
+        if (this.items.filter(license => license.identifier === item.identifier && license.name === item.name && license.status === item.status).length === 1) {
+          //nothing has changed
+          return;
+        }
+
+        //remove old identifier/item
+        this.items = this.items.filter(license => license.identifier !== item.identifier);
+        //add new identifier/item
+        this.items.push(item);
+      }
+      this.saveLicenses()
       this.itemToEdit = null;
     },
     showDeleteDialog(item) {
@@ -157,11 +185,15 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/licenses/delete', { identifier: item.identifier })
-        .then(() => {
-          this.load()
-      });
+      if (this.items.filter(license => license.identifier === item.identifier).length === 0) {
+        //identifier not found
+        return;
+      }
+
+      this.items = this.items.filter(license => license.identifier !== item.identifier);
+
+      this.saveLicenses();
+
       this.itemToDelete = null;
     },
     sort(param) {
