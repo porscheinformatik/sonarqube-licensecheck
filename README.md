@@ -18,6 +18,7 @@ This plugin is compatible:
  * 1.x versions with SonarQube >= 5.3 and < 6.
  * 2.x version with SonarQube >= 6.5 and < 7.
  * 3.x version with SonarQube >= 7.9 LTS and < 8.
+ * 4.x version with SonarQube 8.x
 
 ## Installation
 
