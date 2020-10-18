@@ -4,7 +4,7 @@
   "description": "SonarQube License Check",
   "private": true,
   "scripts": {
-    "build": "webpack -p",
+    "build": "webpack --mode=production",
     "watch": "concurrently --kill-others \"webpack -w\" \"node test-server.js\"",
     "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons"
   },
@@ -19,8 +19,8 @@
     "vue-loader": "15.9.3",
     "vue-svgicon": "3.2.9",
     "vue-template-compiler": "2.6.12",
-    "webpack": "4.44.2",
-    "webpack-cli": "3.3.12"
+    "webpack": "5.1.3",
+    "webpack-cli": "4.0.0"
   },
   "dependencies": {
     "file-saverjs": "1.3.6",
