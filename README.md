@@ -39,15 +39,16 @@ should look something like this:
 After booting the SonarQube Server with the License-Check Plugin two new options can be found in the tab
 <b>Administration</b>.
 
+Hint: please do **not** use the page "Administration" -> "General Settings" -> "SonarQube License Check Plugin" for changing the plugin's settings. This shows the plugin's config in plain JSON - you might use that as a backup/restore.
+
 * Within the general settings the plugin can be manually enabled or disabled. By default it is enabled.
-* All other configuration is under License-Check specific settings (Configuration > License Check).
+* All other configuration is under License-Check specific settings ("Configuration" > "License Check").
   * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
   * Under "Project Licenses" you can allow and disallow licenses for a specific project.
   * Under "Maven Dependencies" you can map the Maven key (groupId:artifactId) to licenses using regular expressions. E.g. `^asm:asm$` to "BSD-3-Clause"
   * Under "Maven Licenses" you can map Maven license texts to licenses using regular expressions, e.g. `.*Apache.*2.*` to "Apache-2.0".
 
-![License
-configuration](docs/licensecheck_configuration.jpg)
+![License configuration](docs/licensecheck_configuration.jpg)
 
 ### Maven
 
