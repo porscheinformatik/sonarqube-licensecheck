@@ -76,7 +76,6 @@ public class MavenDependencyScanner implements Scanner
         }
 
         InvocationRequest request = new DefaultInvocationRequest();
-        request.setRecursive(false);
         request.setPomFile(new File(moduleDir, "pom.xml"));
         request.setGoals(Collections.singletonList("dependency:list"));
         if (settings.userSettings != null)
