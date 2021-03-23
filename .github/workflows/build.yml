@@ -14,4 +14,7 @@ jobs:
         with:
           java-version: 11
       - name: Build with SonarCloud
-        run: mvn clean -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
