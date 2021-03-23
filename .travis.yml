@@ -1,18 +1,12 @@
 language: java
 jdk:
 - openjdk8
-- openjdk11
 if: type != push OR branch = master OR branch =~ /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 addons:
   sonarcloud:
     organization: "porscheinformatik"
 jobs:
   include:
-    - name: Build
-      script: mvn clean verify
-    - name: Build with SonarCloud
-      if: type != pull_request
-      script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
     - name: Release
       if: tag IS present
       script: echo "Deploying to GitHub releases ..."
