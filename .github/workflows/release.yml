@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  push:
+    tags: ["v.*"]
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set Release Version
+        run: mvn -B versions:set -DnewVersion=${GITHUB_REF:11} -DgenerateBackupPoms=false
+      - name: Build
+        run: mvn -B install
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prerelease: contains(github.ref, 'beta')
+          files: target/sonarqube-licensecheck-plugin-${GITHUB_REF:11}.jar
