@@ -1,8 +1,6 @@
-name: Build
+name: Release
 
 on:
-  push:
-    tags: ["v.*"]
   release:
     types: [created]
 
@@ -12,8 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - id: release-version
+        run: echo "::set-output name=version::${GITHUB_REF:11}"
       - name: Set Release Version
-        run: mvn -B versions:set -DnewVersion=${GITHUB_REF:11} -DgenerateBackupPoms=false
+        run: mvn -B versions:set -DnewVersion=${{ steps.release-version.outputs.version }} -DgenerateBackupPoms=false
       - name: Build
         run: mvn -B install
       - name: Release
@@ -22,5 +22,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: ${{ steps.release-version.outputs.version }}
           prerelease: contains(github.ref, 'beta')
-          files: target/sonarqube-licensecheck-plugin-${GITHUB_REF:11}.jar
+          files: target/sonarqube-licensecheck-plugin-${{ steps.release-version.outputs.version }}.jar
+          fail_on_unmatched_files: true
