@@ -1,6 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -31,15 +32,31 @@ public class ValidateLicenses
 
     public Set<Dependency> validateLicenses(Set<Dependency> dependencies, SensorContext context)
     {
+        return validateLicenses(dependencies, context, null, null);
+    }
+
+    public Set<Dependency> validateLicenses(Set<Dependency> dependencies, SensorContext context, 
+        Map<String, String> customLicenseMapping, Map<String, String> forcedLicenseMapping)
+    {
         for (Dependency dependency : dependencies)
         {
             dependency.setStatus(Dependency.Status.Allowed);
 
-            if (StringUtils.isBlank(dependency.getLicense()))
+            if (forcedLicenseMapping != null && forcedLicenseMapping.get(dependency.getName()) != null)
             {
-                licenseNotFoundIssue(context, dependency);
-            }
-            else
+                dependency.setLicense(forcedLicenseMapping.get(dependency.getName()));
+                checkForLicenses(context, dependency);
+            } else if (StringUtils.isBlank(dependency.getLicense()))
+            {
+                if (customLicenseMapping != null && customLicenseMapping.get(dependency.getName()) != null)
+                {
+                    dependency.setLicense(customLicenseMapping.get(dependency.getName()));
+                    checkForLicenses(context, dependency);
+                } else
+                {
+                    licenseNotFoundIssue(context, dependency);
+                }
+            } else
             {
                 checkForLicenses(context, dependency);
             }

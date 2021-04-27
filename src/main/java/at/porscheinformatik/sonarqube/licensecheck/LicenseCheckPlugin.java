@@ -68,6 +68,17 @@ public class LicenseCheckPlugin implements Plugin
                 .description("Activate license check")
                 .type(PropertyType.BOOLEAN)
                 .defaultValue("true")
-                .build());
+                .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.CUSTOM_LICENSE_MAPPINGS)
+                .category("License Check")
+                .name("Custom Mapping")
+                .description(
+                    "Explicitly specify licenses for dependencies where licenses can not be resolved automatically.")
+                .type(PropertyType.TEXT).build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.FORCED_LICENSE_MAPPINGS)
+                .category("License Check")
+                .name("Forced Mapping")
+                .description("Explicitly force licenses for dependencies where faulty license identifiers are found.")
+                .type(PropertyType.TEXT).build());
     }
 }

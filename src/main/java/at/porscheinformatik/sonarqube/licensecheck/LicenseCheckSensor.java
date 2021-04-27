@@ -2,10 +2,18 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static java.util.Collections.newSetFromMap;
 
+import java.io.StringReader;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
+import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -133,7 +141,16 @@ public class LicenseCheckSensor implements Sensor
             dependencies.addAll(scanner.scan(fs.baseDir()));
         }
         InputProject project = context.project();
-        Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);
+
+        final String customMappingsString = configuration.get(LicenseCheckPropertyKeys.CUSTOM_LICENSE_MAPPINGS)
+                .orElse(null);
+        final String forcedMappingsString = configuration.get(LicenseCheckPropertyKeys.FORCED_LICENSE_MAPPINGS)
+                .orElse(null);
+        final Map<String, String> customMappings = parseLicensesFromMappingList(customMappingsString);
+        final Map<String, String> forcedMappings = parseLicensesFromMappingList(forcedMappingsString);
+
+        Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context, customMappings,
+                forcedMappings);
 
         Set<License> usedLicenses = validateLicenses.getUsedLicenses(validatedDependencies, project);
 
@@ -153,5 +170,49 @@ public class LicenseCheckSensor implements Sensor
             saveLicenses(context, usedLicenses);
             saveMeasures(context, usedLicenses, validatedDependencies);
         }
+    }
+
+    private static Map<String, String> parseLicensesFromMappingList(final String mappingListString)
+    {
+        final Map<String, String> resultMap = new ConcurrentHashMap<String, String>();
+        if (!StringUtils.isBlank(mappingListString))
+        {
+            if (mappingListString.startsWith("["))
+            {
+                // handle JSON array syntax
+                try (final JsonReader reader = Json.createReader(new StringReader(mappingListString)))
+                {
+                    final JsonArray mappingArray = reader.readArray();
+                    for (int i = 0; i < mappingArray.size(); i++)
+                    {
+                        final JsonObject mapping = mappingArray.getJsonObject(i);
+                        final String dependencyName = mapping.getString("dependency", "");
+                        final String licenseName = mapping.getString("license", "");
+                        if (!StringUtils.isBlank(dependencyName) && !StringUtils.isBlank(licenseName))
+                        {
+                            resultMap.put(dependencyName, licenseName);
+                        }
+                    }
+                }
+            } else 
+            {
+                // handle inline syntax (dependency1;somelicense$dependency2;otherlicense)
+                final String[] sections = mappingListString.split("\\$");
+                for (final String section : sections)
+                {
+                    final String[] sectionSplit = section.split(";");
+                    if (sectionSplit.length == 2)
+                    {
+                        final String dependencyName = sectionSplit[0];
+                        final String licenseName = sectionSplit[1];
+                        if (!StringUtils.isBlank(dependencyName) && !StringUtils.isBlank(licenseName))
+                        {
+                            resultMap.put(dependencyName, licenseName);
+                        }
+                    }
+                }
+            }
+        }
+        return resultMap;
     }
 }

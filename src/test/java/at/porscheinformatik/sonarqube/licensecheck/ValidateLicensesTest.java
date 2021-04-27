@@ -2,7 +2,9 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -12,7 +14,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
@@ -179,6 +183,110 @@ public class ValidateLicensesTest
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    @Test
+    public void licenseMissingWithCustomMapping()
+    {
+        SensorContext context = createContext();
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        Map<String, String> customLicenseMapping = new ConcurrentHashMap<>();
+        customLicenseMapping.put("thing", "MIT");
+
+        Dependency testDependency = validateLicenses
+                .validateLicenses(deps(new Dependency("thing", "1.0", "")), context, customLicenseMapping, null)
+                .stream().findFirst().get();
+                
+        verify(context).newIssue();
+        assertTrue("Dependency should have MIT license according to mapping",
+                "MIT".equals(testDependency.getLicense()));
+        assertFalse("Issue should not contain the unlisted license key",
+                issue.toString().contains(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    @Test
+    public void licenseUnknownWithCustomMapping()
+    {
+        SensorContext context = createContext();
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        Map<String, String> customLicenseMapping = new ConcurrentHashMap<>();
+        customLicenseMapping.put("thing", "MIT");
+
+        Dependency testDependency = validateLicenses
+                .validateLicenses(deps(new Dependency("thing", "1.0", "Some unknown and wrong license")), context,
+                        customLicenseMapping, null)
+                .stream().findFirst().get();
+
+        verify(context).newIssue();
+        // Custom mapping should be ignored in this case
+        assertTrue("Dependency should have wrong license according to how it was passed in",
+                "Some unknown and wrong license".equals(testDependency.getLicense()));
+        assertTrue("Issue should contain the unlisted license key",
+                issue.toString().contains(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    @Test
+    public void licenseKnownWithCustomMapping()
+    {
+        SensorContext context = createContext();
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        Map<String, String> customLicenseMapping = new ConcurrentHashMap<>();
+        customLicenseMapping.put("thing", "MIT");
+
+        Dependency testDependency = validateLicenses
+                .validateLicenses(deps(new Dependency("thing", "1.0", "Apache-2.0")), context, customLicenseMapping,
+                        null)
+                .stream().findFirst().get();
+        // Mapping should be ignored in this case
+        assertTrue("Dependency should have Apache-2.0 license according to how it was passed in",
+                "Apache-2.0".equals(testDependency.getLicense()));
+    }
+
+    @Test
+    public void licenseUnknownWithForcedMapping()
+    {
+        SensorContext context = createContext();
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        Map<String, String> forcedLicenseMapping = new ConcurrentHashMap<>();
+        forcedLicenseMapping.put("thing", "MIT");
+
+        Dependency testDependency = validateLicenses
+                .validateLicenses(deps(new Dependency("thing", "1.0", "Some unknown and wrong license")), context, null,
+                        forcedLicenseMapping)
+                .stream().findFirst().get();
+
+        verify(context).newIssue();
+        assertTrue("Dependency should have MIT license according to mapping",
+                "MIT".equals(testDependency.getLicense()));
+        assertFalse("Issue should not contain the unlisted license key",
+                issue.toString().contains(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+    }
+
+    @Test
+    public void licenseKnownWithForcedMapping() 
+    {
+        SensorContext context = createContext();
+        NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
+        when(context.newIssue()).thenReturn(issue);
+
+        Map<String, String> forcedLicenseMapping = new ConcurrentHashMap<>();
+        forcedLicenseMapping.put("thing", "MIT");
+
+        Dependency testDependency = validateLicenses
+                .validateLicenses(deps(new Dependency("thing", "1.0", "Apache-2.0")), context, null,
+                        forcedLicenseMapping)
+                .stream().findFirst().get();
+        // Mapping should not be ignored, as it is forced
+        assertTrue("Dependency should have MIT license according to mapping",
+                "MIT".equals(testDependency.getLicense()));
     }
 
     @Test
