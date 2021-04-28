@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>8.1.0.31237</version>
+      <version>8.4.0.35506</version>
       <scope>system</scope>
       <systemPath>${basedir}/lib/sonar-plugin-api-impl-8.1.0.31237.jar</systemPath>
     </dependency>
