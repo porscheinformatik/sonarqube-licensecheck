@@ -132,7 +132,9 @@ export default {
         });
     },
     showAddDialog() {
-      this.itemToEdit = {};
+      this.itemToEdit = {
+        status: false
+      };
       this.editMode = 'add';
     },
     showEditDialog(item) {
