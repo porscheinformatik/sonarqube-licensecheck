@@ -13,6 +13,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: adopt
       - name: Build with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
