@@ -44,6 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
+    <sonarqube.version>8.8.0.42792</sonarqube.version>
   </properties>
 
   <dependencies>
@@ -79,22 +80,22 @@
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>8.1.0.31237</version>
+      <version>${sonarqube.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-webserver-core</artifactId>
-      <version>8.1.0.31237</version>
+      <version>${sonarqube.version}</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-webserver-core-8.1.0.31237.jar</systemPath>
+      <systemPath>${basedir}/lib/sonar-webserver-core-${sonarqube.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>8.1.0.31237</version>
+      <version>${sonarqube.version}</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-plugin-api-impl-8.1.0.31237.jar</systemPath>
+      <systemPath>${basedir}/lib/sonar-plugin-api-impl-${sonarqube.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
