@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonarqube.version>8.8.0.42792</sonarqube.version>
+    <sonarqube.version>8.9.0.43852</sonarqube.version>
   </properties>
 
   <dependencies>
@@ -85,17 +85,10 @@
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-webserver-core</artifactId>
+      <artifactId>sonar-application</artifactId>
       <version>${sonarqube.version}</version>
       <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-webserver-core-${sonarqube.version}.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-plugin-api-impl</artifactId>
-      <version>${sonarqube.version}</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/sonar-plugin-api-impl-${sonarqube.version}.jar</systemPath>
+      <systemPath>${project.build.directory}/sonarqube-${sonarqube.version}/lib/sonar-application-${sonarqube.version}.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
@@ -124,6 +117,33 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.2</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.sonarsource.sonarqube</groupId>
+                  <artifactId>sonar-application</artifactId>
+                  <version>${sonarqube.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <overWrite>false</overWrite>
+                </artifactItem>
+              </artifactItems>
+              <includes>sonarqube-*/lib/sonar-application*</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <version>1.20.0.405</version>
@@ -133,7 +153,6 @@
           <pluginClass>at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPlugin</pluginClass>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
