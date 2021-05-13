@@ -1,10 +1,16 @@
 package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.PROJECT_LICENSE_SET;
+import static at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense.FIELD_ALLOWED;
+import static at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense.FIELD_LICENSE;
+import static at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense.FIELD_PROJECT_KEY;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.config.Configuration;
@@ -24,6 +30,23 @@ public class ProjectLicenseService
     }
 
     public List<ProjectLicense> getProjectLicenseList()
+    {
+        return Arrays.stream(configuration.getStringArray(PROJECT_LICENSE_SET))
+            .map(idx -> {
+                String idxProp = "." + idx + ".";
+                String projectKey = configuration.get(PROJECT_LICENSE_SET + idxProp + FIELD_PROJECT_KEY).orElse(null);
+                String license = configuration.get(PROJECT_LICENSE_SET + idxProp + FIELD_LICENSE).orElse(null);
+                Boolean allowed =
+                    configuration.getBoolean(PROJECT_LICENSE_SET + idxProp + FIELD_ALLOWED).orElse(Boolean.FALSE);
+                return new ProjectLicense(projectKey, license, allowed);
+            }).collect(Collectors.toList());
+    }
+
+    /**
+     * @deprecated use {@link #getProjectLicenseList()} instead
+     */
+    @Deprecated
+    public List<ProjectLicense> getProjectLicenseListOld()
     {
         String projectLicenseString = configuration.get(PROJECT_LICENSE_KEY).orElse(null);
 

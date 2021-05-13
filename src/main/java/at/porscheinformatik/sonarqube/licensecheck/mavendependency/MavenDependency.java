@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class MavenDependency implements Comparable<MavenDependency>
 {
+    public static final String FIELD_KEY = "key";
+    public static final String FIELD_LICENSE = "license";
+
     private String key;
     private String license;
 

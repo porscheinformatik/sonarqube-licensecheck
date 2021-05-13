@@ -1,31 +1,36 @@
 package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
 
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonGenerator;
 
 public class ProjectLicense implements Comparable<ProjectLicense>
 {
+    public static final String FIELD_PROJECT_KEY = "projectKey";
+    public static final String FIELD_LICENSE = "license";
+    public static final String FIELD_ALLOWED = "allowed";
+
     private final String projectKey;
     private final String license;
-    private final String status;
+    private final Boolean allowed;
 
-    public ProjectLicense(String projectKey, String license, String status)
+    public ProjectLicense(String projectKey, String license, Boolean allowed)
     {
         super();
         this.projectKey = projectKey;
         this.license = license;
-        this.status = status;
+        this.allowed = allowed;
+    }
+
+    public ProjectLicense(String projectKey, String license, String allowed)
+    {
+        this(projectKey, license, Boolean.parseBoolean(allowed));
     }
 
     public String getProjectKey()
@@ -38,33 +43,12 @@ public class ProjectLicense implements Comparable<ProjectLicense>
         return license;
     }
 
-    public String getStatus()
+    public Boolean getAllowed()
     {
-        return status;
+        return allowed;
     }
 
-    public static String createString(Collection<ProjectLicense> projectLicenses)
-    {
-        TreeSet<ProjectLicense> projectLicenseSet = new TreeSet<>();
-        projectLicenseSet.addAll(projectLicenses);
-
-        StringWriter jsonString = new StringWriter();
-        JsonGenerator generator = Json.createGenerator(jsonString);
-        generator.writeStartArray();
-        for (ProjectLicense projectLicense : projectLicenseSet)
-        {
-            generator.writeStartObject();
-            generator.write("projectKey", projectLicense.getProjectKey());
-            generator.write("license", projectLicense.getLicense());
-            generator.write("status", projectLicense.getStatus());
-            generator.writeEnd();
-        }
-        generator.writeEnd();
-        generator.close();
-
-        return jsonString.toString();
-    }
-
+    @Deprecated
     public static List<ProjectLicense> fromString(String projectLicensesString)
     {
         List<ProjectLicense> projectLicenses = new ArrayList<>();
@@ -96,7 +80,7 @@ public class ProjectLicense implements Comparable<ProjectLicense>
         {
             if (this.getLicense().compareTo(o.getLicense()) == 0)
             {
-                return this.getStatus().compareTo(o.getStatus());
+                return this.getAllowed().compareTo(o.getAllowed());
             }
             else
             {
@@ -123,12 +107,12 @@ public class ProjectLicense implements Comparable<ProjectLicense>
         ProjectLicense that = (ProjectLicense) o;
         return Objects.equals(projectKey, that.projectKey) &&
             Objects.equals(license, that.license) &&
-            Objects.equals(status, that.status);
+            Objects.equals(allowed, that.allowed);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(projectKey, license, status);
+        return Objects.hash(projectKey, license, allowed);
     }
 }

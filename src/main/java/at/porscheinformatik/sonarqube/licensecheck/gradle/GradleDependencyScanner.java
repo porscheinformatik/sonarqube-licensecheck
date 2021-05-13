@@ -1,7 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 
 import org.codehaus.plexus.util.StringUtils;

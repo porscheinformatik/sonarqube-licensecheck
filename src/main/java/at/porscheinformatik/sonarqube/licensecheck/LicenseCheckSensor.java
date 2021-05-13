@@ -1,7 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static java.util.Collections.newSetFromMap;
-
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +14,6 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
@@ -26,8 +23,8 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 public class LicenseCheckSensor implements Sensor
 {
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
-    private final static Set<License> AGGREGATED_LICENSES = newSetFromMap(new ConcurrentHashMap<>());
-    private final static Set<Dependency> AGGREGATED_DEPENDENCIES = newSetFromMap(new ConcurrentHashMap<>());
+    private static final Set<License> AGGREGATED_LICENSES = ConcurrentHashMap.newKeySet();
+    private static final Set<Dependency> AGGREGATED_DEPENDENCIES = ConcurrentHashMap.newKeySet();
     private final FileSystem fs;
     private final Configuration configuration;
     private final ValidateLicenses validateLicenses;
@@ -69,7 +66,7 @@ public class LicenseCheckSensor implements Sensor
             sensorContext
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.LICENSE)
-                .withValue(License.createString(licenses))
+                .withValue(License.createJsonString(licenses))
                 .on(sensorContext.module())
                 .save();
         }
@@ -85,7 +82,7 @@ public class LicenseCheckSensor implements Sensor
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
-            .withValue((int) licenses.stream().filter(l -> !"true".equals(l.getStatus())).count())
+            .withValue((int) licenses.stream().filter(License::getAllowed).count())
             .on(sensorContext.module())
             .save();
 

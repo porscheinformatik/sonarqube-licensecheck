@@ -51,8 +51,8 @@
         <div class="modal-field">
           <label for="licenseSelect">License<em class="mandatory">*</em></label>
           <select required v-model="itemToEdit.license" id="licenseSelect" name="licenseSelect">
-            <option v-for="license in licenses" v-bind:value="license.identifier" v-bind:key="license.identifier">
-              {{ license.identifier }} / {{ license.name }}
+            <option v-for="license in licenses" v-bind:value="license.id" v-bind:key="license.id">
+              {{ license.id }} / {{ license.name }}
             </option>
           </select>
         </div>
@@ -68,6 +68,7 @@
 
 <script>
 import '../../../compiled-icons';
+import {KEYS} from "../property_keys";
 
 export default {
   data() {
@@ -99,8 +100,8 @@ export default {
       return this.items.sort((a, b) => {
         let modifier = 1;
         if (this.sortDirection === "desc") modifier = -1;
-        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        if (a[this.sortBy] < b[this.sortBy]) return -modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return modifier;
         return 0;
       });
     }
@@ -111,18 +112,18 @@ export default {
   methods: {
     load() {
       window.SonarRequest
-        .getJSON("/api/licensecheck/licenses/show")
+        .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_SET}`)
         .then(response => {
-          this.licenses = response;
+          this.licenses = response.settings[0].fieldValues;
         })
         .then(this.loadMavenLicenses);
     },
     loadMavenLicenses() {
       window.SonarRequest
-        .getJSON("/api/licensecheck/maven-licenses/show")
+        .getJSON(`/api/settings/values?keys=${KEYS.MAVEN_LICENSE_MAPPING}`)
         .then(response => {
-          this.items = response.mavenLicenses.map(item => {
-            let license = this.licenses.find(license => license.identifier === item.license);
+          this.items = response.settings[0].fieldValues.map(item => {
+            let license = this.licenses.find(l => l.id === item.license);
             if (license) {
               item.licenseName = license.name;
             }
@@ -141,13 +142,27 @@ export default {
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveItems(items) {
       window.SonarRequest
-        .post(`/api/licensecheck/maven-licenses/${this.editMode}`, item)
+        .post(`/api/settings/set`, {
+          key: KEYS.MAVEN_LICENSE_MAPPING,
+          fieldValues: items.map(i => JSON.stringify(i)),
+        })
         .then(() => {
           this.loadMavenLicenses();
+          this.itemToEdit = null;
+          this.itemToDelete = null;
         });
-      this.itemToEdit = null;
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        this.saveItems([...this.items, item]);
+      } else {
+        const itemToChange = this.items.find(i => i.regex === item.old_regex);
+        itemToChange.name = item.name;
+        itemToChange.allowed = item.allowed;
+        this.saveItems(this.items);
+      }
     },
     showDeleteDialog(item) {
       this.itemToDelete = item;
@@ -156,12 +171,7 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/maven-licenses/delete', { regex: item.regex })
-        .then(() => {
-          this.loadMavenLicenses();
-        });
-      this.itemToDelete = null;
+      this.saveItems(this.items.filter(i => i.regex !== item.regex));
     },
     sort(param) {
       if (param === this.sortBy) {

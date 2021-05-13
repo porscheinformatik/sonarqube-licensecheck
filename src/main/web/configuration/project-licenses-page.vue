@@ -29,8 +29,8 @@
             <td><span :title="item.projectKey">{{item.projectName}}</span></td>
             <td>{{item.license}} / {{item.licenseName}}</td>
             <td>
-              <span :class="{ 'icon-license-ok': item.status === 'true', 'icon-license-nok': item.status === 'false' }"></span>
-              {{item.status === 'true' ? 'Allowed': 'Forbidden'}}
+              <span :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed === 'false' }"></span>
+              {{item.allowed === 'true' ? 'Allowed': 'Forbidden'}}
             </td>
             <td class="thin nowrap">
               <a class="button" @click="showEditDialog(item)" title="Edit item">
@@ -60,15 +60,15 @@
         <div class="modal-field">
           <label for="licenseSelect">License<em class="mandatory">*</em></label>
           <select required :disabled="editMode !== 'add'" v-model="itemToEdit.license" id="licenseSelect" name="licenseSelect">
-            <option v-for="license in licenses" v-bind:value="license.identifier" v-bind:key="license.identifier">
-              {{ license.identifier }} / {{ license.name }}
+            <option v-for="license in licenses" v-bind:value="license.id" v-bind:key="license.id">
+              {{ license.id }} / {{ license.name }}
             </option>
           </select>
         </div>
         <div class="modal-field">
           <label>Status<em class="mandatory">*</em></label>
           <label for="itemStatusEdit">
-            <input type="checkbox" id="itemStatusEdit" name="itemStatusEdit" v-model="itemToEdit.status" true-value="true" false-value="false">
+            <input type="checkbox" id="itemStatusEdit" name="itemStatusEdit" v-model="itemToEdit.allowed" true-value="true" false-value="false">
             Allowed
           </label>
         </div>
@@ -84,6 +84,7 @@
 
 <script>
 import '../../../compiled-icons';
+import {KEYS} from "../property_keys";
 
 export default {
   data() {
@@ -116,8 +117,8 @@ export default {
       return this.items.sort((a, b) => {
         let modifier = 1;
         if (this.sortDirection === "desc") modifier = -1;
-        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        if (a[this.sortBy] < b[this.sortBy]) return -modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return modifier;
         return 0;
       });
     }
@@ -131,14 +132,14 @@ export default {
     },
     loadProjectLicenses() {
       window.SonarRequest
-        .getJSON("/api/licensecheck/project-licenses/show")
+        .getJSON(`/api/settings/values?keys=${KEYS.PROJECT_LICENSE_SET}`)
         .then(response => {
-          this.items = response.map(item => {
-            let license = this.licenses.find(license => license.identifier === item.license);
+          this.items = response.settings[0].fieldValues.map(item => {
+            let license = this.licenses.find(l => l.id === item.license);
             if (license) {
               item.licenseName = license.name;
             }
-            let project = this.projects.find(project => project.key === item.projectKey);
+            let project = this.projects.find(p => p.key === item.projectKey);
             if (project) {
               item.projectName = project.name;
             }
@@ -148,38 +149,49 @@ export default {
     },
     loadLicenses() {
       return window.SonarRequest
-        .getJSON("/api/licensecheck/licenses/show")
+        .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_SET}`)
         .then(response => {
-          this.licenses = response;
+          this.licenses = response.settings[0].fieldValues;
         });
     },
     loadProjects() {
       return window.SonarRequest
-        .getJSON('/api/components/search?qualifiers=TRK&pageSize=500')
+        .getJSON('/api/components/search?qualifiers=TRK&pageSize=500') // TODO > 500 projects?
         .then(response => {
           this.projects = response.components;
         });
     },
     showAddDialog() {
-      this.loadProjects();
       this.itemToEdit = {};
       this.editMode = 'add';
     },
     showEditDialog(item) {
-      this.loadProjects();
       this.itemToEdit = Object.assign({ old_regex: item.regex }, item);
       this.editMode = 'edit';
     },
     cancelEdit() {
       this.itemToEdit = null;
     },
-    saveItem(item) {
+    saveItems(items) {
       window.SonarRequest
-        .post(`/api/licensecheck/project-licenses/${this.editMode}`, item)
+        .post(`/api/settings/set`, {
+          key: KEYS.PROJECT_LICENSE_SET,
+          fieldValues: items.map(i => JSON.stringify(i)),
+        })
         .then(() => {
           this.loadProjectLicenses();
+          this.itemToEdit = null;
+          this.itemToDelete = null;
         });
-      this.itemToEdit = null;
+    },
+    saveItem(item) {
+      if (this.editMode === 'add') {
+        this.saveItems([...this.items, item]);
+      } else {
+        const itemToChange = this.items.find(i => i.projectKey === item.projectKey && i.license === item.license);
+        itemToChange.allowed = item.allowed;
+        this.saveItems(this.items);
+      }
     },
     showDeleteDialog(item) {
       this.itemToDelete = item;
@@ -188,12 +200,7 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      window.SonarRequest
-        .post('/api/licensecheck/project-licenses/delete', { projectKey: item.projectKey, license: item.license })
-        .then(() => {
-          this.loadProjectLicenses();
-        });
-      this.itemToDelete = null;
+      this.saveItems(this.items.filter(i => i.projectKey !== item.projectKey && i.license !== item.license));
     },
     sort(param) {
       if (param === this.sortBy) {

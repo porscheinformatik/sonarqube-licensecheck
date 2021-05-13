@@ -22,9 +22,9 @@ public class LicenseTest
     private static final License LIC2 = new License("MIT License", "MIT", "false");
 
     @Test
-    public void createString()
+    public void createJsonString()
     {
-        String dependenciesJson = License.createString(asList(LIC2, LIC1));
+        String dependenciesJson = License.createJsonString(asList(LIC2, LIC1));
 
         assertThat(dependenciesJson, equalTo(LICENSES_JSON));
     }

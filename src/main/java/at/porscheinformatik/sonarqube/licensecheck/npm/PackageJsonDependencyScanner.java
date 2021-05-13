@@ -19,7 +19,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
