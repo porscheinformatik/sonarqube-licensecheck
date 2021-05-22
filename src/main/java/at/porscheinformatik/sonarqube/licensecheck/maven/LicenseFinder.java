@@ -12,8 +12,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 
 class LicenseFinder
 {
@@ -40,7 +40,8 @@ class LicenseFinder
                 {
                     Parent parent = model.getParent();
                     Dependency dependency =
-                        new Dependency(parent.getGroupId() + ":" + parent.getArtifactId(), parent.getVersion(), null);
+                        new Dependency(parent.getGroupId() + ":" + parent.getArtifactId(), parent.getVersion(), null,
+                            LicenseCheckRulesDefinition.LANG_JAVA);
                     return getLicenses(DirectoryFinder.getPomPath(dependency,
                         DirectoryFinder.getMavenRepsitoryDir(userSettings, globalSettings)),
                         userSettings, globalSettings);

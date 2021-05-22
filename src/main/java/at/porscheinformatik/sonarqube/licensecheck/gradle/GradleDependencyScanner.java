@@ -1,25 +1,29 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-
-import org.codehaus.plexus.util.StringUtils;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
+import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
 
 public class GradleDependencyScanner implements Scanner
 {
@@ -83,7 +87,7 @@ public class GradleDependencyScanner implements Scanner
                 moduleLicenseUrl = arrModuleUrls.getString(0, null);
             }
             Dependency dep = new Dependency(jsonDepObj.getString("moduleName", null),
-                jsonDepObj.getString("moduleVersion", null), moduleLicense);
+                jsonDepObj.getString("moduleVersion", null), moduleLicense, LicenseCheckRulesDefinition.LANG_JAVA);
             dep.setPomPath(moduleLicenseUrl);
             dependencySet.add(dep);
         }

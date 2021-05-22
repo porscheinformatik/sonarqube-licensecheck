@@ -6,7 +6,8 @@
       <thead>
         <tr>
           <th v-for="dependency in columns" v-bind:key="dependency" v-on:click="sort(dependency)" scope="col"> {{dependency}} 
-            <div class="arrow" v-if="dependency == sortByDep" v-bind:class="{ 'arrow_up' : sortDirectionDep === 'asc', 'arrow_down' : sortDirectionDep === 'desc'}"></div>
+            <div class="arrow" v-if="dependency === sortByDep"
+                 v-bind:class="{ 'arrow_up' : sortDirectionDep === 'asc', 'arrow_down' : sortDirectionDep === 'desc'}"></div>
           </th>
         </tr>
       </thead>
@@ -47,16 +48,13 @@ export default {
       return this.dependencies.sort((a, b) => {
         let modifier = 1;
         if (this.sortDirectionDep === "desc") modifier = -1;
-        if (a[this.sortByDep] < b[this.sortByDep]) return -1 * modifier;
-        if (a[this.sortByDep] > b[this.sortByDep]) return 1 * modifier;
+        if (a[this.sortByDep] < b[this.sortByDep]) return -modifier;
+        if (a[this.sortByDep] > b[this.sortByDep]) return modifier;
         return 0;
       });
     },
     "columns": function columns() {
-      if (this.dependencies.length == 0) {
-        return [];
-      }
-      return Object.keys(this.dependencies[0])
+      return ["name", "version", "license", "status"];
     }
   },
   methods: {

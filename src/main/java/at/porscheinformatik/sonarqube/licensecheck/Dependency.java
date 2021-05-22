@@ -1,5 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.LANG_JAVA;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -19,15 +21,22 @@ public class Dependency implements Comparable<Dependency>
     private String name;
     private String version;
     private String license;
+    private String lang;
     private Status status;
     private String pomPath;
 
-    public Dependency(String name, String version, String license)
+    public Dependency(String name, String version, String license, String lang)
     {
         super();
         this.name = name;
         this.version = version;
         this.license = license;
+        this.lang = lang;
+    }
+
+    public Dependency(String name, String version, String license)
+    {
+        this(name, version, license, LANG_JAVA);
     }
 
     public String getName()
@@ -58,6 +67,16 @@ public class Dependency implements Comparable<Dependency>
     public void setLicense(String license)
     {
         this.license = license;
+    }
+
+    public String getLang()
+    {
+        return lang;
+    }
+
+    public void setLang(String lang)
+    {
+        this.lang = lang;
     }
 
     public void setStatus(final Status status)
@@ -140,7 +159,7 @@ public class Dependency implements Comparable<Dependency>
                         JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
                         dependencies.add(
                             new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
-                                dependencyJson.getString("license")));
+                                dependencyJson.getString("license"), dependencyJson.getString("lang", LANG_JAVA)));
                     }
                 }
             }
@@ -155,7 +174,7 @@ public class Dependency implements Comparable<Dependency>
                     String name = subParts.length > 0 ? subParts[0] : null;
                     String version = subParts.length > 1 ? subParts[1] : null;
                     String license = subParts.length > 2 ? subParts[2] : null;
-                    dependencies.add(new Dependency(name, version, license));
+                    dependencies.add(new Dependency(name, version, license, LANG_JAVA));
                 }
             }
         }
@@ -177,6 +196,7 @@ public class Dependency implements Comparable<Dependency>
             generator.write("name", dependency.getName());
             generator.write("version", dependency.getVersion());
             generator.write("license", license != null ? license : " ");
+            generator.write("lang", dependency.getLang());
             generator.writeEnd();
         }
         generator.writeEnd();

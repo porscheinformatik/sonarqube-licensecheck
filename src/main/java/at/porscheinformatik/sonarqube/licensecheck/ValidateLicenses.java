@@ -156,8 +156,7 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-                LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+            .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
         issue.at(issue.newLocation().on(context.project()).message(
             "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
         issue.save();
@@ -171,11 +170,24 @@ public class ValidateLicenses
 
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(LicenseCheckMetrics.LICENSE_CHECK_KEY,
-                LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+            .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
         issue.at(issue.newLocation().on(context.project())
             .message("No License found for Dependency: " + dependency.getName()));
         issue.save();
+    }
+
+    private static String getRepoKey(Dependency dependency)
+    {
+        switch (dependency.getLang())
+        {
+            case LicenseCheckRulesDefinition.LANG_JS:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+            case LicenseCheckRulesDefinition.LANG_GROOVY:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+            case LicenseCheckRulesDefinition.LANG_JAVA:
+            default:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY;
+        }
     }
 
     private static boolean contains(String[] items, String valueToFind)

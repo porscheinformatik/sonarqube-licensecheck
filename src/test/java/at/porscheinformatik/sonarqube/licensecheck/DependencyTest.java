@@ -12,8 +12,8 @@ import org.junit.Test;
 public class DependencyTest
 {
     private static final String DEPENDENCIES_JSON =
-        "[{\"name\":\"another\",\"version\":\"2.1.0\",\"license\":\"MIT\"}," +
-            "{\"name\":\"library\",\"version\":\"1.0.0\",\"license\":\"Apache-2.0\"}]";
+        "[{\"name\":\"another\",\"version\":\"2.1.0\",\"license\":\"MIT\",\"lang\":\"java\"}," +
+            "{\"name\":\"library\",\"version\":\"1.0.0\",\"license\":\"Apache-2.0\",\"lang\":\"java\"}]";
     private static final String DEPENDENCIES_STRING = "another~2.1.0~MIT;library~1.0.0~Apache-2.0";
     private static final Dependency DEP1 = new Dependency("another", "2.1.0", "MIT");
     private static final Dependency DEP2 = new Dependency("library", "1.0.0", "Apache-2.0");

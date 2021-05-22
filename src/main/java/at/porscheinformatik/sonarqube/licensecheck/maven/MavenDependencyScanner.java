@@ -28,6 +28,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
@@ -185,7 +186,8 @@ public class MavenDependencyScanner implements Scanner
             path = path.substring(0, lastDotIndex) + ".pom";
         }
 
-        Dependency dependency = new Dependency(groupId + ":" + artifactId, version, null);
+        Dependency dependency =
+            new Dependency(groupId + ":" + artifactId, version, null, LicenseCheckRulesDefinition.LANG_JAVA);
         if (new File(path).exists())
         {
             dependency.setPomPath(path);
