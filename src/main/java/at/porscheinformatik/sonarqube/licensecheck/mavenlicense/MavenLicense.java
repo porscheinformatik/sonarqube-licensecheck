@@ -19,6 +19,9 @@ import org.codehaus.plexus.util.StringUtils;
 
 public class MavenLicense implements Comparable<MavenLicense>
 {
+    public static final String FIELD_LICENSE = "license";
+    public static final String FIELD_REGEX = "regex";
+
     private final Pattern regex;
     private final String license;
 

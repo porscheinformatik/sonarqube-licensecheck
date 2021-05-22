@@ -3,7 +3,7 @@ package at.porscheinformatik.sonarqube.licensecheck.maven;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;

@@ -86,7 +86,7 @@ public class ValidateLicenses
 
                 for (License element : licensesContainingDependency)
                 {
-                    if (!Boolean.parseBoolean(element.getStatus()))
+                    if (!element.getAllowed())
                     {
                         notAllowedLicense.append(element.getName()).append(" ");
                     }
@@ -111,7 +111,7 @@ public class ValidateLicenses
         return licenses
             .stream()
             .filter(l -> l.getIdentifier().equals(spdxLicenseString))
-            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
+            .anyMatch(License::getAllowed);
     }
 
     private boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses)
@@ -120,7 +120,7 @@ public class ValidateLicenses
         return licenses
             .stream()
             .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
-            .anyMatch(l -> Boolean.parseBoolean(l.getStatus()));
+            .anyMatch(License::getAllowed);
     }
 
     private boolean checkSpdxLicenseWithAnd(String spdxLicenseString, List<License> licenses)
@@ -131,7 +131,7 @@ public class ValidateLicenses
             licenses.stream()
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
-        long allowedLicenseCount = foundLicenses.stream().filter(l -> Boolean.parseBoolean(l.getStatus())).count();
+        long allowedLicenseCount = foundLicenses.stream().filter(License::getAllowed).count();
         if (count == allowedLicenseCount)
         {
             return true;

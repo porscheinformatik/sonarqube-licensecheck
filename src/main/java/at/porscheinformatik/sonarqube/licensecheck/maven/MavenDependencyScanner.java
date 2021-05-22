@@ -28,7 +28,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
 import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
 import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;

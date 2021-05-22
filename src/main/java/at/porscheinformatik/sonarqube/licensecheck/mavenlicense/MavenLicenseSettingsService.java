@@ -1,11 +1,15 @@
 package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_SET;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.MAVEN_LICENSE_MAPPING;
+import static at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicense.FIELD_LICENSE;
+import static at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicense.FIELD_REGEX;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
@@ -15,7 +19,11 @@ import org.sonar.server.platform.PersistentSettings;
 
 import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
 
+/**
+ * @deprecated for reading use {@link MavenLicenseService}
+ */
 @ServerSide
+@Deprecated
 public class MavenLicenseSettingsService
 {
     private static final Logger LOGGER = Loggers.get(MavenLicenseSettingsService.class);
@@ -24,6 +32,7 @@ public class MavenLicenseSettingsService
      * This is not official API
      */
     private final PersistentSettings persistentSettings;
+
     private final Configuration configuration;
     private final MavenLicenseService mavenLicenseService;
 
@@ -34,93 +43,54 @@ public class MavenLicenseSettingsService
         this.persistentSettings = persistentSettings;
         this.configuration = configuration;
         this.mavenLicenseService = mavenLicenseService;
-        initMavenLicenses();
     }
 
-    private void initMavenLicenses()
+    public void init()
     {
-        String mavenLicenseListString = configuration.get(LICENSE_REGEX).orElse(null);
-
-        if (mavenLicenseListString != null && !mavenLicenseListString.isEmpty())
+        if (configuration.get(MAVEN_LICENSE_MAPPING).orElse(null) != null)
         {
-            return;
+            LOGGER.debug("Maven license mappings exists.");
         }
-
-        try (InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
+        else if (configuration.get(LICENSE_REGEX).orElse(null) != null)
         {
-            mavenLicenseListString = IOUtils.readToString(in);
-            persistentSettings.saveProperty(LICENSE_REGEX, mavenLicenseListString);
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Could not load default_license_mapping.json", e);
-        }
-    }
-
-    public boolean addMavenLicense(String regex, String key)
-    {
-        MavenLicense newMavenLicense = new MavenLicense(regex, key);
-
-        if (!checkIfListContains(newMavenLicense))
-        {
-            addMavenLicense(newMavenLicense);
-            return true;
+            LOGGER.info("Migrating old settings to new format for Maven license mappings");
+            migrateOldSettings();
         }
         else
         {
-            return false;
-        }
-    }
+            LOGGER.info("No old config found, import default_license_mapping");
 
-    public boolean addMavenLicense(MavenLicense newMavenLicense)
-    {
-        List<MavenLicense> mavenLicenses = mavenLicenseService.getMavenLicenseList();
-
-        if (!mavenLicenses.contains(newMavenLicense))
-        {
-            mavenLicenses.add(newMavenLicense);
-            saveSettings(mavenLicenses);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public boolean checkIfListContains(MavenLicense mavenLicense)
-    {
-        List<MavenLicense> mavenLicenses = mavenLicenseService.getMavenLicenseList();
-        return mavenLicenses.contains(mavenLicense);
-    }
-
-    public void deleteMavenLicense(String regex)
-    {
-        List<MavenLicense> mavenLicenses = mavenLicenseService.getMavenLicenseList();
-        Iterator<MavenLicense> i = mavenLicenses.iterator();
-
-        while (i.hasNext())
-        {
-            String regexFromList = i.next().getRegex().toString();
-            if (regexFromList.equals(regex))
+            try (InputStream in = MavenLicenseSettingsService.class.getResourceAsStream("default_license_mapping.json"))
             {
-                i.remove();
+                String mavenLicenseListString = IOUtils.readToString(in);
+                saveSettings(MavenLicense.fromString(mavenLicenseListString));
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("Could not load default_license_mapping.json", e);
             }
         }
-        saveSettings(mavenLicenses);
     }
 
     private void saveSettings(List<MavenLicense> mavenLicenses)
     {
-        String mavenLicensesString = MavenLicense.createString(mavenLicenses);
-
-        persistentSettings.saveProperty(LICENSE_REGEX, mavenLicensesString);
+        String indexes = IntStream.range(1, mavenLicenses.size())
+            .mapToObj(Integer::toString)
+            .collect(Collectors.joining(","));
+        persistentSettings.saveProperty(MAVEN_LICENSE_MAPPING, indexes);
+        for (int i = 0; i < mavenLicenses.size(); i++)
+        {
+            MavenLicense mavenLicense = mavenLicenses.get(i);
+            String idxProp = "." + i + ".";
+            persistentSettings.saveProperty(MAVEN_LICENSE_MAPPING + idxProp + FIELD_LICENSE, mavenLicense.getLicense());
+            persistentSettings.saveProperty(MAVEN_LICENSE_MAPPING + idxProp + FIELD_REGEX,
+                mavenLicense.getRegex().toString());
+        }
     }
 
-    public void sortMavenLicenses()
+    private void migrateOldSettings()
     {
-        List<MavenLicense> mavenLicenses = mavenLicenseService.getMavenLicenseList();
-        Collections.sort(mavenLicenses);
-        saveSettings(mavenLicenses);
+        saveSettings(mavenLicenseService.getMavenLicenseListOld());
+        persistentSettings.saveProperty(LICENSE_REGEX, null);
     }
 }

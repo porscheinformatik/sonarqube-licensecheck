@@ -20,16 +20,25 @@ import org.codehaus.plexus.util.StringUtils;
 
 public class License implements Comparable<License>
 {
+    public static final String FIELD_NAME = "name";
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_ALLOWED = "allowed";
+
     private String name;
     private String identifier;
-    private String status;
+    private Boolean allowed;
 
-    public License(String name, String identifier, String status)
+    public License(String name, String identifier, Boolean allowed)
     {
         super();
         this.name = name;
         this.identifier = identifier;
-        this.status = status;
+        this.allowed = Objects.requireNonNull(allowed);
+    }
+
+    public License(String name, String identifier, String allowed)
+    {
+        this(name, identifier, Boolean.parseBoolean(allowed));
     }
 
     public String getName()
@@ -52,20 +61,20 @@ public class License implements Comparable<License>
         this.identifier = identifier;
     }
 
-    public String getStatus()
+    public Boolean getAllowed()
     {
-        return status;
+        return allowed;
     }
 
-    public void setStatus(String status)
+    public void setAllowed(Boolean allowed)
     {
-        this.status = status;
+        this.allowed = allowed;
     }
 
     @Override
     public String toString()
     {
-        return "{name:" + name + ", identifier:" + identifier + ", status:" + status + "}";
+        return "{name:" + name + ", identifier:" + identifier + ", status:" + allowed + "}";
     }
 
     public static List<License> fromString(String serializedLicensesString)
@@ -101,9 +110,9 @@ public class License implements Comparable<License>
     }
 
     /**
-     * @deprecated remove with later release
      * @param serializedLicensesString setting string
      * @return a list with licences
+     * @deprecated remove with later release
      */
     @Deprecated
     private static List<License> readLegacySeparated(String serializedLicensesString)
@@ -128,9 +137,9 @@ public class License implements Comparable<License>
     }
 
     /**
-     * @deprecated remove with later release
      * @param serializedLicensesString setting string
      * @return a list with licences
+     * @deprecated remove with later release
      */
     @Deprecated
     private static List<License> readLegacyJson(String serializedLicensesString)
@@ -151,7 +160,7 @@ public class License implements Comparable<License>
         return licenses;
     }
 
-    public static String createString(Collection<License> licenses)
+    public static String createJsonString(Collection<License> licenses)
     {
         TreeSet<License> licenseSet = new TreeSet<>(licenses);
 
@@ -163,7 +172,7 @@ public class License implements Comparable<License>
             generator.writeStartObject();
             generator.write("name", license.getName());
             generator.write("identifier", license.getIdentifier());
-            generator.write("status", license.getStatus());
+            generator.write("status", license.getAllowed().toString());
             generator.writeEnd();
         }
         generator.writeEnd();
@@ -184,7 +193,7 @@ public class License implements Comparable<License>
         {
             if (this.name.compareTo(o.name) == 0)
             {
-                return this.status.compareTo(o.status);
+                return this.allowed.compareTo(o.allowed);
             }
             else
             {
@@ -211,12 +220,12 @@ public class License implements Comparable<License>
         License license = (License) o;
         return Objects.equals(name, license.name) &&
             Objects.equals(identifier, license.identifier) &&
-            Objects.equals(status, license.status);
+            Objects.equals(allowed, license.allowed);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(name, identifier, status);
+        return Objects.hash(name, identifier, allowed);
     }
 }

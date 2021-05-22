@@ -1,11 +1,15 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_SET;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ALLOWED;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ID;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_NAME;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.sonar.api.config.Configuration;
 import org.sonar.api.server.ServerSide;
@@ -15,7 +19,11 @@ import org.sonar.server.platform.PersistentSettings;
 
 import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
 
+/**
+ * @deprecated for reading licenses, use {@link LicenseService}
+ */
 @ServerSide
+@Deprecated
 public class LicenseSettingsService
 {
     private static final Logger LOGGER = Loggers.get(LicenseSettingsService.class);
@@ -28,127 +36,72 @@ public class LicenseSettingsService
     private final Configuration configuration;
     private final LicenseService licenseService;
 
-    public LicenseSettingsService(PersistentSettings persistentSettings, Configuration configuration, LicenseService licenseService)
+    public LicenseSettingsService(PersistentSettings persistentSettings, Configuration configuration,
+        LicenseService licenseService)
     {
         super();
         this.persistentSettings = persistentSettings;
         this.configuration = configuration;
         this.licenseService = licenseService;
-
-        initSpdxLicences();
     }
 
-    public String getLicensesID()
+    public void init()
     {
-        List<License> licenses = licenseService.getLicenses();
-
-        StringBuilder licenseString = new StringBuilder();
-        for (License license : licenses)
+        if (configuration.getStringArray(LICENSE_SET).length > 0)
         {
-            licenseString.append(license.getIdentifier()).append(";");
+            LOGGER.debug("License configuration exists.");
         }
-        return licenseString.toString();
-    }
-
-    public boolean addLicense(String name, String identifier, String status)
-    {
-        License newLicense = new License(name, identifier, status);
-        return addLicense(newLicense);
-    }
-
-    public boolean addLicense(License newLicense)
-    {
-        List<License> licenses = licenseService.getLicenses();
-
-        if (listContains(newLicense, licenses))
+        else if (configuration.get(LICENSE_KEY).orElse(null) != null)
         {
-            return false;
+            LOGGER.info("Old config found, migrating");
+
+            migrateOldSettings();
         }
-
-        licenses.add(newLicense);
-        saveSettings(licenses);
-
-        return true;
-    }
-
-    private boolean listContains(License newLicense, List<License> licenses)
-    {
-        for (License license : licenses)
+        else
         {
-            if (newLicense.getIdentifier().equals(license.getIdentifier()))
+            LOGGER.info("No old config found, import spdx_license_list");
+
+            try (InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json"))
             {
-                return true;
+                String spdxLicenseListJson = IOUtils.readToString(inputStream);
+                List<License> spdxLicenses = License.fromString(spdxLicenseListJson);
+                saveSettings(spdxLicenses);
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("Could not load spdx_license_list.json", e);
             }
         }
-        return false;
     }
 
-    public boolean deleteLicense(String id)
+    private void migrateOldSettings()
     {
-        List<License> licenses = License.fromString(configuration.get(LICENSE_KEY).orElse(null));
-        List<License> newLicenseList = new ArrayList<>();
-        boolean found = false;
-        for (License license : licenses)
+        if (licenseService.getLicenses().isEmpty())
         {
-            if (id.equals(license.getIdentifier()))
+            List<License> licensesOld = licenseService.getLicensesOld();
+            LOGGER.info("Migrating old config with {} entries", licensesOld.size());
+            if (!licensesOld.isEmpty())
             {
-                found = true;
-            }
-            else
-            {
-                newLicenseList.add(license);
+                saveSettings(licensesOld);
             }
         }
-
-        if (found)
-        {
-            saveSettings(newLicenseList);
-        }
-
-        return found;
+        persistentSettings.saveProperty(LICENSE_KEY, null);
     }
 
-    public boolean updateLicense(final String id, final String newName, final String newStatus)
+    private void saveSettings(List<License> licenses)
     {
-        List<License> licenses = licenseService.getLicenses();
-
-        for (License license : licenses)
+        String indexes = IntStream.range(1, licenses.size())
+            .mapToObj(Integer::toString)
+            .collect(Collectors.joining(","));
+        persistentSettings.saveProperty(LICENSE_SET, indexes);
+        for (int i = 0; i < licenses.size(); i++)
         {
-            if (id.equals(license.getIdentifier()))
-            {
-                license.setName(newName);
-                license.setStatus(newStatus);
-                saveSettings(licenses);
-                return true;
-            }
+            License license = licenses.get(i);
+            String idxProp = "." + i + ".";
+            persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_NAME, license.getName());
+            persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_ID, license.getIdentifier());
+            persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_ALLOWED, license.getAllowed().toString());
         }
-        return false;
-    }
-
-    private void saveSettings(List<License> licenseList)
-    {
-        Collections.sort(licenseList);
-        String licenseJson = License.createString(licenseList);
-        persistentSettings.saveProperty(LICENSE_KEY, licenseJson);
-    }
-
-    private void initSpdxLicences()
-    {
-        String licenseJson = configuration.get(LICENSE_KEY).orElse(null);
-
-        if (licenseJson != null && !licenseJson.isEmpty())
-        {
-            return;
-        }
-
-        try (InputStream inputStream = LicenseSettingsService.class.getResourceAsStream("spdx_license_list.json");)
-        {
-            String spdxLicenseListJson = IOUtils.readToString(inputStream);
-            persistentSettings.saveProperty(LICENSE_KEY, spdxLicenseListJson);
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Could not load spdx_license_list.json", e);
-        }
+        LOGGER.info("Saving the new config with {} entries", licenses.size());
     }
 }

@@ -1,16 +1,23 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_SET;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ALLOWED;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ID;
+import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_NAME;
 
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.server.ServerSide;
 
-import java.util.Collection;
-import java.util.List;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 
 @ServerSide
 @ScannerSide
@@ -43,7 +50,7 @@ public class LicenseService
             {
                 if (license.getIdentifier().equals(projectLicense.getLicense()))
                 {
-                    license.setStatus(projectLicense.getStatus()); //override the stati of the globalLicenses
+                    license.setAllowed(projectLicense.getAllowed()); //override the stati of the globalLicenses
                 }
             }
         }
@@ -52,6 +59,23 @@ public class LicenseService
     }
 
     public List<License> getLicenses()
+    {
+        return Arrays.stream(configuration.getStringArray(LICENSE_SET))
+            .map(idx -> {
+                String idxProp = "." + idx + ".";
+                String name = configuration.get(LICENSE_SET + idxProp + FIELD_NAME).orElse(null);
+                String identifier = configuration.get(LICENSE_SET + idxProp + FIELD_ID).orElse(null);
+                Boolean allowed = configuration.getBoolean(LICENSE_SET + idxProp + FIELD_ALLOWED)
+                    .orElse(Boolean.FALSE);
+                return new License(name, identifier, allowed.toString());
+            }).collect(Collectors.toList());
+    }
+
+    /**
+     * @deprecated use {@link #getLicenses()} instead
+     */
+    @Deprecated
+    public List<License> getLicensesOld()
     {
         String licenseString = configuration.get(LICENSE_KEY).orElse(null);
         return License.fromString(licenseString);

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import at.porscheinformatik.sonarqube.licensecheck.interfaces.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
