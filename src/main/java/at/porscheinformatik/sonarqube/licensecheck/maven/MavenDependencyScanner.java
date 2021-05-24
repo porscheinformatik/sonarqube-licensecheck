@@ -61,10 +61,13 @@ public class MavenDependencyScanner implements Scanner
 
         MavenSettings settings = getSettingsFromCommandLineArgs();
 
-        return readDependencyList(moduleDir, settings)
-            .map(this::mapMavenDependencyToLicense)
-            .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
-            .collect(Collectors.toSet());
+        try (Stream<Dependency> dependencies = readDependencyList(moduleDir, settings))
+        {
+            return dependencies
+                .map(this::mapMavenDependencyToLicense)
+                .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
+                .collect(Collectors.toSet());
+        }
     }
 
     private static Stream<Dependency> readDependencyList(File moduleDir, MavenSettings settings)
