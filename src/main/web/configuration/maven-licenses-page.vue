@@ -25,7 +25,7 @@
         <tbody>
           <tr v-for="item in displayedItems" :key="item.key">
             <td>{{item.regex}}</td>
-            <td>{{item.license}} / {{item.licenseName}}</td>
+            <td>{{item.license}} / {{findLicenseName(item.license)}}</td>
             <td class="thin nowrap">
               <a class="button" @click="showEditDialog(item)" title="Edit item">
                 <svgicon icon="pencil" width="16" height="16" style="fill: currentcolor"></svgicon>
@@ -122,14 +122,12 @@ export default {
       window.SonarRequest
         .getJSON(`/api/settings/values?keys=${KEYS.MAVEN_LICENSE_MAPPING}`)
         .then(response => {
-          this.items = response.settings[0].fieldValues.map(item => {
-            let license = this.licenses.find(l => l.id === item.license);
-            if (license) {
-              item.licenseName = license.name;
-            }
-            return item;
-          });
+          this.items = response.settings[0].fieldValues;
         });
+    },
+    findLicenseName(license) {
+      let licenseItem = this.licenses.find(l => l.id === license);
+      return licenseItem ? licenseItem.name : '-';
     },
     showAddDialog() {
       this.itemToEdit = {};
@@ -159,8 +157,8 @@ export default {
         this.saveItems([...this.items, item]);
       } else {
         const itemToChange = this.items.find(i => i.regex === item.old_regex);
-        itemToChange.name = item.name;
-        itemToChange.allowed = item.allowed;
+        itemToChange.license = item.license;
+        itemToChange.regex = item.regex;
         this.saveItems(this.items);
       }
     },

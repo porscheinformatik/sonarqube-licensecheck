@@ -26,8 +26,8 @@
         </thead>
         <tbody>
           <tr v-for="item in displayedItems" :key="item.key">
-            <td><span :title="item.projectKey">{{item.projectName}}</span></td>
-            <td>{{item.license}} / {{item.licenseName}}</td>
+            <td><span :title="item.projectKey">{{findProjectName(item.projectKey)}}</span></td>
+            <td>{{item.license}} / {{findLicenseName(item.license)}}</td>
             <td>
               <span :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed === 'false' }"></span>
               {{item.allowed === 'true' ? 'Allowed': 'Forbidden'}}
@@ -76,7 +76,7 @@
       <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
     </modal-dialog>
     <modal-dialog header="Delete License" :show="!!itemToDelete" @close="cancelDelete()">
-      <div slot="body" v-if="itemToDelete">Are you sure you want to delete the license mapping &quot;{{itemToDelete.projectName}}&quot; / &quot;{{itemToDelete.license}}&quot;?</div>
+      <div slot="body" v-if="itemToDelete">Are you sure you want to delete the license mapping &quot;{{findProjectName(itemToDelete.projectKey)}}&quot; / &quot;{{itemToDelete.license}}&quot;?</div>
       <span slot="footer"><button class="button" @click="deleteItem(itemToDelete)">Delete</button></span>
     </modal-dialog>
   </div>
@@ -134,17 +134,7 @@ export default {
       window.SonarRequest
         .getJSON(`/api/settings/values?keys=${KEYS.PROJECT_LICENSE_SET}`)
         .then(response => {
-          this.items = response.settings[0].fieldValues.map(item => {
-            let license = this.licenses.find(l => l.id === item.license);
-            if (license) {
-              item.licenseName = license.name;
-            }
-            let project = this.projects.find(p => p.key === item.projectKey);
-            if (project) {
-              item.projectName = project.name;
-            }
-            return item;
-          });
+          this.items = response.settings[0].fieldValues;
         });
     },
     loadLicenses() {
@@ -160,6 +150,14 @@ export default {
         .then(response => {
           this.projects = response.components;
         });
+    },
+    findProjectName(projectKey) {
+      let projectItem = this.projects.find(p => p.key === projectKey);
+      return projectItem ? projectItem.name : '-';
+    },
+    findLicenseName(license) {
+      let licenseItem = this.licenses.find(l => l.id === license);
+      return licenseItem ? licenseItem.name : '-';
     },
     showAddDialog() {
       this.itemToEdit = {};
@@ -200,7 +198,7 @@ export default {
       this.itemToDelete = null;
     },
     deleteItem(item) {
-      this.saveItems(this.items.filter(i => i.projectKey !== item.projectKey && i.license !== item.license));
+      this.saveItems(this.items.filter(i => (i.projectKey !== item.projectKey || i.license !== item.license)));
     },
     sort(param) {
       if (param === this.sortBy) {
