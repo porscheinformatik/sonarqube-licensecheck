@@ -19,6 +19,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 
 public class PackageJsonDependencyScanner implements Scanner
@@ -113,7 +114,7 @@ public class PackageJsonDependencyScanner implements Scanner
                     else if (packageJson.containsKey("licenses"))
                     {
                         final JsonArray licenses = packageJson.getJsonArray("licenses");
-                        if (licenses.size() == 1) 
+                        if (licenses.size() == 1)
                         {
                             license = licenses.getJsonObject(0).getString("type", "");
                         }
@@ -135,7 +136,8 @@ public class PackageJsonDependencyScanner implements Scanner
                         }
                     }
 
-                    dependencies.add(new Dependency(packageName, packageJson.getString("version", null), license));
+                    dependencies.add(new Dependency(packageName, packageJson.getString("version", null), license,
+                        LicenseCheckRulesDefinition.LANG_JS));
 
                     if (resolveTransitiveDeps)
                     {

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -67,7 +66,7 @@ public class ValidateLicensesTest
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context);
 
         verify(context).newIssue();
-        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+        assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
     }
 
     @Test
@@ -76,7 +75,8 @@ public class ValidateLicensesTest
         SensorContext context = createContext();
 
         validateLicenses.validateLicenses(
-            deps(new Dependency("thing", "1.0", "Apache-2.0"), new Dependency("another", "2.0", "Apache-2.0")),
+            deps(new Dependency("thing", "1.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_JS),
+                new Dependency("another", "2.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_JS)),
             context);
 
         verify(context, never()).newIssue();
@@ -127,7 +127,7 @@ public class ValidateLicensesTest
             context);
 
         verify(context).newIssue();
-        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY));
+        assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class ValidateLicensesTest
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)")), context);
 
         verify(context).newIssue();
-        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+        assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
     }
 
     //  LGPL OR Apache-2.0 AND MIT
@@ -165,7 +165,7 @@ public class ValidateLicensesTest
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context);
 
         verify(context).newIssue();
-        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+        assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class ValidateLicensesTest
         validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Mamamia")), context);
 
         verify(context).newIssue();
-        assertThat(issue.toString(), containsString(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY));
+        assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
     }
 
     @Test

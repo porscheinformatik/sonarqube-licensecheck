@@ -1,5 +1,9 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,7 +115,7 @@ public class LicenseCheckSensor implements Sensor
     public void describe(SensorDescriptor descriptor)
     {
         descriptor.name("License Check")
-            .createIssuesForRuleRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY);
+            .createIssuesForRuleRepositories(RULE_REPO_KEY, RULE_REPO_KEY_JS, RULE_REPO_KEY_GROOVY);
     }
 
     @Override

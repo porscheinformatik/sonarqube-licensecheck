@@ -1,19 +1,3 @@
-/*
- * SonarQube Licencecheck Plugin
- * Copyright (C) 2016 Porsche Informatik
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package at.porscheinformatik.sonarqube.licensecheck;
 
 import org.sonar.api.rule.Severity;
@@ -24,24 +8,43 @@ import org.sonar.api.server.rule.RulesDefinition;
  */
 public final class LicenseCheckRulesDefinition implements RulesDefinition
 {
+    public static final String LANG_JAVA = "java";
+    public static final String LANG_JS = "js";
+    public static final String LANG_GROOVY = "grvy";
+
+    public static final String RULE_REPO_KEY = "licensecheck";
+    public static final String RULE_REPO_KEY_JS = "licensecheck-js";
+    public static final String RULE_REPO_KEY_GROOVY = "licensecheck-groovy";
+
+    public static final String RULE_UNLISTED_KEY = "licensecheck.unlisted";
+    public static final String RULE_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
+
     @Override
     public void define(Context context)
     {
-        NewRepository repository = context.createRepository(LicenseCheckMetrics.LICENSE_CHECK_KEY, "java");
-        repository.setName("License Check");
+        NewRepository[] repos = new NewRepository[]{
+            context.createRepository(RULE_REPO_KEY, LANG_JAVA),
+            context.createRepository(RULE_REPO_KEY_JS, LANG_JS),
+            context.createRepository(RULE_REPO_KEY_GROOVY, LANG_GROOVY)
+        };
 
-        repository
-            .createRule(LicenseCheckMetrics.LICENSE_CHECK_UNLISTED_KEY)
-            .setName("Dependency has unknown license [license-check]")
-            .setHtmlDescription("The dependencies license could not be determined!")
-            .setSeverity(Severity.BLOCKER);
+        for (NewRepository repo : repos)
+        {
+            repo.setName("License Check");
 
-        repository
-            .createRule(LicenseCheckMetrics.LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY)
-            .setName("License is not allowed [license-check]")
-            .setHtmlDescription("Violation because the license of the dependency is not allowed.")
-            .setSeverity(Severity.BLOCKER);
+            repo
+                .createRule(RULE_UNLISTED_KEY)
+                .setName("Dependency has unknown license [license-check]")
+                .setHtmlDescription("The dependencies license could not be determined!")
+                .setSeverity(Severity.BLOCKER);
 
-        repository.done();
+            repo
+                .createRule(RULE_NOT_ALLOWED_LICENSE_KEY)
+                .setName("License is not allowed [license-check]")
+                .setHtmlDescription("Violation because the license of the dependency is not allowed.")
+                .setSeverity(Severity.BLOCKER);
+
+            repo.done();
+        }
     }
 }

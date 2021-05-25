@@ -9,11 +9,6 @@ import org.sonar.api.measures.Metrics;
 
 public class LicenseCheckMetrics implements Metrics
 {
-    public static final String LICENSE_CHECK_KEY = "licensecheck";
-
-    public static final String LICENSE_CHECK_UNLISTED_KEY = "licensecheck.unlisted";
-    public static final String LICENSE_CHECK_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
-
     public static final String LICENSE_CHECK_DEPENDENCY_KEY = "licensecheck.dependency";
     private static final String LICENSE_CHECK_LICENSE_KEY = "licensecheck.license";
 
