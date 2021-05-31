@@ -95,7 +95,7 @@
 
 <script>
 import "../../../compiled-icons";
-import {KEYS} from "../property_keys";
+import {loadLicenses, saveLicenses} from "./sonar-api";
 
 const focus = {
   inserted(el, binding) {
@@ -144,11 +144,7 @@ export default {
   },
   methods: {
     load() {
-      window.SonarRequest
-        .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_SET}`)
-        .then(response => {
-          this.items = response.settings[0].fieldValues;
-        });
+      return loadLicenses().then(l => this.items = l);
     },
     showAddDialog() {
       this.itemToEdit = {
@@ -164,11 +160,7 @@ export default {
       this.itemToEdit = null;
     },
     saveItems(items) {
-      window.SonarRequest
-        .post(`/api/settings/set`, {
-          key: KEYS.LICENSE_SET,
-          fieldValues: items.map(i => JSON.stringify(i)),
-        })
+      saveLicenses(items)
         .then(() => {
           this.load()
           this.itemToEdit = null;

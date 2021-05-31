@@ -84,7 +84,7 @@
 
 <script>
 import '../../../compiled-icons';
-import {KEYS} from "../property_keys";
+import {loadLicenses, loadProjectLicenses, loadProjects, saveProjectLicenses} from "./sonar-api";
 
 export default {
   data() {
@@ -128,28 +128,14 @@ export default {
   },
   methods: {
     load() {
-      Promise.all([this.loadLicenses(), this.loadProjects()]).then(() => this.loadProjectLicenses());
+      return Promise.all([
+        loadLicenses().then(l => this.licenses = l),
+        loadProjects().then(p => this.projects = p),
+        this.loadProjectLicenses(),
+      ]);
     },
     loadProjectLicenses() {
-      window.SonarRequest
-        .getJSON(`/api/settings/values?keys=${KEYS.PROJECT_LICENSE_SET}`)
-        .then(response => {
-          this.items = response.settings[0].fieldValues;
-        });
-    },
-    loadLicenses() {
-      return window.SonarRequest
-        .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_SET}`)
-        .then(response => {
-          this.licenses = response.settings[0].fieldValues;
-        });
-    },
-    loadProjects() {
-      return window.SonarRequest
-        .getJSON('/api/components/search?qualifiers=TRK&pageSize=500') // TODO > 500 projects?
-        .then(response => {
-          this.projects = response.components;
-        });
+      return loadProjectLicenses().then(pl => this.items = pl)
     },
     findProjectName(projectKey) {
       let projectItem = this.projects.find(p => p.key === projectKey);
@@ -171,13 +157,9 @@ export default {
       this.itemToEdit = null;
     },
     saveItems(items) {
-      window.SonarRequest
-        .post(`/api/settings/set`, {
-          key: KEYS.PROJECT_LICENSE_SET,
-          fieldValues: items.map(i => JSON.stringify(i)),
-        })
+      return saveProjectLicenses(items)
         .then(() => {
-          this.loadProjectLicenses();
+          this.loadProjectLicenses()
           this.itemToEdit = null;
           this.itemToDelete = null;
         });

@@ -68,7 +68,7 @@
 
 <script>
 import '../../../compiled-icons';
-import {KEYS} from "../property_keys";
+import {loadLicenses, loadMavenDependencies, saveMavenDependencies} from "./sonar-api";
 
 export default {
   data() {
@@ -112,19 +112,13 @@ export default {
   },
   methods: {
     load() {
-      window.SonarRequest
-        .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_SET}`)
-        .then(response => {
-          this.licenses = response.settings[0].fieldValues;
-        })
-        .then(this.loadMavenDependencies);
+      return Promise.all([
+        loadLicenses().then(l => this.licenses = l),
+        this.loadMavenDependencies(),
+      ]);
     },
     loadMavenDependencies() {
-      window.SonarRequest
-        .getJSON(`/api/settings/values?keys=${KEYS.MAVEN_DEPENDENCY_MAPPING}`)
-        .then(response => {
-          this.items =  response.settings[0].fieldValues;
-        });
+      return loadMavenDependencies().then(md => this.items = md);
     },
     findLicenseName(license) {
       let licenseItem = this.licenses.find(l => l.id === license);
@@ -142,11 +136,7 @@ export default {
       this.itemToEdit = null;
     },
     saveItems(items) {
-      window.SonarRequest
-        .post(`/api/settings/set`, {
-          key: KEYS.MAVEN_DEPENDENCY_MAPPING,
-          fieldValues: items.map(i => JSON.stringify(i)),
-        })
+      saveMavenDependencies(items)
         .then(() => {
           this.loadMavenDependencies();
           this.itemToEdit = null;
