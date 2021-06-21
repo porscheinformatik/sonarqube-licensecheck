@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import LicensesPage from './configuration/licenses-page';
-import MavenDependenciesPage from './configuration/maven-dependencies-page';
-import MavenLicensesPage from './configuration/maven-licenses-page';
+import DependencyMappingsPage from './configuration/dependency-mappings-page';
+import LicenseMappingsPage from './configuration/license-mappings-page';
 import ProjectLicensesPage from './configuration/project-licenses-page';
 import ModalDialog from './modal-dialog';
 import VueSVGIcon from 'vue-svgicon'
@@ -33,21 +33,21 @@ window.registerExtension('licensecheck/configuration', function (options) {
         }
       }
     },
-    components: { LicensesPage, MavenDependenciesPage, MavenLicensesPage, ProjectLicensesPage},
+    components: { LicensesPage, DependencyMappingsPage, LicenseMappingsPage, ProjectLicensesPage},
     template: `<div class="page page-limited">
   <ul class="tabs">
     <li><a href="?category=licenses" :class="{selected: currentRoute==='licenses'}" @click="activateCategory($event, 'licenses')">Licenses</a></li>
     <li><a href="?category=project-licenses" :class="{selected: currentRoute==='project-licenses'}" @click="activateCategory($event, 'project-licenses')">Project Licenses</a></li>
-    <li><a href="?category=maven-dependencies" :class="{selected: currentRoute==='maven-dependencies'}" @click="activateCategory($event, 'maven-dependencies')">Maven Dependencies</a></li>
-    <li><a href="?category=maven-licenses" :class="{selected: currentRoute==='maven-licenses'}" @click="activateCategory($event, 'maven-licenses')">Maven Licenses</a></li>
+    <li><a href="?category=dependency-mappings" :class="{selected: currentRoute==='dependency-mappings'}" @click="activateCategory($event, 'dependency-mappings')">Dependency Mappings</a></li>
+    <li><a href="?category=license-mappings" :class="{selected: currentRoute==='license-mappings'}" @click="activateCategory($event, 'license-mappings')">License Mappings</a></li>
   </ul>
   <br>
   <licenses-page v-if="currentRoute === 'licenses'">
   </licenses-page>
-  <maven-dependencies-page v-if="currentRoute === 'maven-dependencies'">
-  </maven-dependencies-page>
-  <maven-licenses-page v-if="currentRoute === 'maven-licenses'">
-  </maven-licenses-page>
+  <dependency-mappings-page v-if="currentRoute === 'dependency-mappings'">
+  </dependency-mappings-page>
+  <license-mappings-page v-if="currentRoute === 'license-mappings'">
+  </license-mappings-page>
   <project-licenses-page v-if="currentRoute === 'project-licenses'">
   </project-licenses-page>
 </div>`

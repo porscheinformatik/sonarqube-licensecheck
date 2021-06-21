@@ -1,16 +1,20 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.hamcrest.MatcherAssert.*;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.util.Set;
 
 import org.junit.Test;
 
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
-
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class PackageJsonDependencyScannerTest
 {
@@ -19,9 +23,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testHappyPath()
     {
-        Scanner scanner = new PackageJsonDependencyScanner(false);
-
-        Set<Dependency> dependencies = scanner.scan(folder);
+        Set<Dependency> dependencies = createScanner().scan(folder);
 
         assertThat(dependencies, hasSize(2));
         assertThat(dependencies, containsInAnyOrder(
@@ -32,9 +34,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testTransitive()
     {
-        Scanner scanner = new PackageJsonDependencyScanner(true);
-
-        Set<Dependency> dependencies = scanner.scan(folder);
+        Set<Dependency> dependencies = createScanner(true).scan(folder);
 
         assertThat(dependencies, hasSize(4));
         assertThat(dependencies, containsInAnyOrder(
@@ -47,9 +47,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testNoPackageJson()
     {
-        Scanner scanner = new PackageJsonDependencyScanner(false);
-
-        Set<Dependency> dependencies = scanner.scan(new File("src"));
+        Set<Dependency> dependencies = createScanner().scan(new File("src"));
 
         assertThat(dependencies, hasSize(0));
     }
@@ -57,9 +55,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testNoNodeModules()
     {
-        Scanner scanner = new PackageJsonDependencyScanner(false);
-
-        Set<Dependency> dependencies = scanner.scan(new File(folder, "node_modules/arangojs"));
+        Set<Dependency> dependencies = createScanner().scan(new File(folder, "node_modules/arangojs"));
 
         assertThat(dependencies, hasSize(0));
     }
@@ -67,9 +63,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testLicenseInDeprecatedLicenseFormat()
     {
-        final Scanner scanner = new PackageJsonDependencyScanner(false);
-
-        final Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_project"));
+        final Set<Dependency> dependencies = createScanner().scan(new File(folder, "deprecated_project"));
 
         assertEquals(1, dependencies.size());
 
@@ -80,13 +74,23 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testLicenseInDeprecatedLicensesFormat()
     {
-        final Scanner scanner = new PackageJsonDependencyScanner(false);
-
-        final Set<Dependency> dependencies = scanner.scan(new File(folder, "deprecated_multilicense_project"));
+        final Set<Dependency> dependencies = createScanner().scan(new File(folder, "deprecated_multilicense_project"));
 
         assertEquals(1, dependencies.size());
 
         final Dependency expectedDependency = new Dependency("some-module", "1.7.1", "(MIT OR LGPLv3)");
         assertEquals(expectedDependency, dependencies.toArray()[0]);
+    }
+
+    private Scanner createScanner()
+    {
+        return createScanner(false);
+    }
+
+    private Scanner createScanner(boolean resolveTransitiveDeps)
+    {
+        LicenseMappingService licenseMappingService = mock(LicenseMappingService.class);
+        when(licenseMappingService.mapLicense(anyString())).thenCallRealMethod();
+        return new PackageJsonDependencyScanner(licenseMappingService, resolveTransitiveDeps);
     }
 }

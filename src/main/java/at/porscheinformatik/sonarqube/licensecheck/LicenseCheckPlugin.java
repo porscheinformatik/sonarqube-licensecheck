@@ -3,12 +3,12 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencySettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicense;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
@@ -23,6 +23,8 @@ import java.util.List;
 
 public class LicenseCheckPlugin implements Plugin
 {
+    private static final String LICENSE_ID_DESCRIPTION = "The identifier of the license (e.g. GPL-3.0)";
+
     @Override
     public void define(Context context)
     {
@@ -39,10 +41,10 @@ public class LicenseCheckPlugin implements Plugin
             LicenseCheckRulesDefinition.class,
             LicenseService.class,
             LicenseSettingsService.class,
-            MavenDependencyService.class,
-            MavenDependencySettingsService.class,
-            MavenLicenseService.class,
-            MavenLicenseSettingsService.class,
+            DependencyMappingService.class,
+            DependencyMappingSettingsService.class,
+            LicenseMappingService.class,
+            LicenseMappingSettingsService.class,
             ProjectLicenseService.class,
             ProjectLicenseSettingsService.class,
             LicenseCheckWebService.class,
@@ -54,7 +56,7 @@ public class LicenseCheckPlugin implements Plugin
                 .fields(
                     PropertyFieldDefinition.build(License.FIELD_ID)
                         .name("Identifier")
-                        .description("The identifier of the license (e.g. GPL-3.0)")
+                        .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(License.FIELD_NAME)
                         .name("Name")
@@ -66,35 +68,39 @@ public class LicenseCheckPlugin implements Plugin
                         .type(PropertyType.BOOLEAN).build()
                 )
                 .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.MAVEN_DEPENDENCY_MAPPING)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.DEPENDENCY_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
-                .name("Maven Dependency Mapping")
-                .description("Maps a dependency (with regex) to a license")
+                .name("Dependency Mapping")
+                .description("Maps a dependency name/key (with regex) to a license")
                 .fields(
-                    PropertyFieldDefinition.build(MavenDependency.FIELD_KEY)
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_KEY)
                         .name("Dependency")
                         .description("A regular expression to match against the dependency key.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
-                    PropertyFieldDefinition.build(MavenDependency.FIELD_LICENSE)
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_LICENSE)
                         .name("License Identifier")
-                        .description("The identifier of the license (e.g. GPL-3.0)")
-                        .type(PropertyType.STRING).build()
+                        .description(LICENSE_ID_DESCRIPTION)
+                        .type(PropertyType.STRING).build(),
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_OVERWRITE)
+                        .name("Overwrite License")
+                        .description("Overwrite the license defined by the dependency.")
+                        .type(PropertyType.BOOLEAN).build()
                 )
                 .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.MAVEN_LICENSE_MAPPING)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
-                .name("Maven License Mapping")
+                .name("License Mapping")
                 .description("Maps a license name (with regex) to a license")
                 .fields(
-                    PropertyFieldDefinition.build(MavenLicense.FIELD_REGEX)
+                    PropertyFieldDefinition.build(LicenseMapping.FIELD_REGEX)
                         .name("License name")
                         .description("A regular expression to match against the license name.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
-                    PropertyFieldDefinition.build(MavenLicense.FIELD_LICENSE)
+                    PropertyFieldDefinition.build(LicenseMapping.FIELD_LICENSE)
                         .name("License Identifier")
-                        .description("The identifier of the license (e.g. GPL-3.0)")
+                        .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build()
                 )
                 .build(),
@@ -110,7 +116,7 @@ public class LicenseCheckPlugin implements Plugin
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_LICENSE)
                         .name("License Identifier")
-                        .description("The identifier of the license (e.g. GPL-3.0)")
+                        .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_ALLOWED)
                         .name("Allowed")

@@ -30,23 +30,18 @@ import org.sonar.api.utils.log.Loggers;
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
 public class MavenDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(MavenDependencyScanner.class);
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
 
-    private final MavenLicenseService mavenLicenseService;
-    private final MavenDependencyService mavenDependencyService;
+    private final LicenseMappingService licenseMappingService;
 
-    public MavenDependencyScanner(MavenLicenseService mavenLicenseService,
-        MavenDependencyService mavenDependencyService)
+    public MavenDependencyScanner(LicenseMappingService licenseMappingService)
     {
-        this.mavenLicenseService = mavenLicenseService;
-        this.mavenDependencyService = mavenDependencyService;
+        this.licenseMappingService = licenseMappingService;
     }
 
     @Override
@@ -65,8 +60,7 @@ public class MavenDependencyScanner implements Scanner
         try (Stream<Dependency> dependencies = readDependencyList(moduleDir, settings))
         {
             return dependencies
-                .map(this::mapMavenDependencyToLicense)
-                .map(this.loadLicenseFromPom(mavenLicenseService.getLicenseMap(), settings))
+                .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
                 .collect(Collectors.toSet());
         }
     }
@@ -259,7 +253,7 @@ public class MavenDependencyScanner implements Scanner
         String licenseName = license.getName();
         if (StringUtils.isBlank(licenseName))
         {
-            LOGGER.info("Dependency '{}' has no license set.", dependency.getName());
+            LOGGER.info("Dependency '{}' has an empty license.", dependency.getName());
             return;
         }
 
@@ -272,25 +266,7 @@ public class MavenDependencyScanner implements Scanner
             }
         }
 
-        LOGGER.info("No licenses found for '{}'", licenseName);
-    }
-
-    private Dependency mapMavenDependencyToLicense(Dependency dependency)
-    {
-        if (StringUtils.isNotBlank(dependency.getLicense()))
-        {
-            return dependency;
-        }
-
-        for (MavenDependency allowedDependency : mavenDependencyService.getMavenDependencies())
-        {
-            String matchString = allowedDependency.getKey();
-            if (dependency.getName().matches(matchString))
-            {
-                dependency.setLicense(allowedDependency.getLicense());
-            }
-        }
-        return dependency;
+        LOGGER.info("No licenses match found for '{}'", licenseName);
     }
 
     private static MavenSettings getSettingsFromCommandLineArgs()

@@ -1,20 +1,23 @@
-package at.porscheinformatik.sonarqube.licensecheck.mavendependency;
+package at.porscheinformatik.sonarqube.licensecheck.dependencymapping;
 
 import java.util.Objects;
 
-public class MavenDependency implements Comparable<MavenDependency>
+public class DependencyMapping implements Comparable<DependencyMapping>
 {
     public static final String FIELD_KEY = "key";
     public static final String FIELD_LICENSE = "license";
+    public static final String FIELD_OVERWRITE = "overwrite";
 
     private String key;
     private String license;
+    private Boolean overwrite;
 
-    public MavenDependency(String key, String license)
+    public DependencyMapping(String key, String license, Boolean overwrite)
     {
         super();
         this.key = key;
         this.license = license;
+        this.overwrite = overwrite;
     }
 
     public String getKey()
@@ -37,6 +40,16 @@ public class MavenDependency implements Comparable<MavenDependency>
         this.license = license;
     }
 
+    public Boolean getOverwrite()
+    {
+        return overwrite;
+    }
+
+    public void setOverwrite(Boolean overwrite)
+    {
+        this.overwrite = overwrite;
+    }
+
     @Override
     public String toString()
     {
@@ -44,7 +57,7 @@ public class MavenDependency implements Comparable<MavenDependency>
     }
 
     @Override
-    public int compareTo(MavenDependency o)
+    public int compareTo(DependencyMapping o)
     {
         if (o == null)
         {
@@ -72,7 +85,7 @@ public class MavenDependency implements Comparable<MavenDependency>
         {
             return false;
         }
-        MavenDependency that = (MavenDependency) o;
+        DependencyMapping that = (DependencyMapping) o;
         return Objects.equals(key, that.key) &&
             Objects.equals(license, that.license);
     }

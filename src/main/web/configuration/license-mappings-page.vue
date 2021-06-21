@@ -1,10 +1,10 @@
 <template>
   <div class="boxed-group boxed-group-inner">
     <header class="page-header">
-      <h1 class="page-title">License Check - Maven Licenses</h1>
-      <div class="page-description">Map strings entered in Maven POM license name to licenses.</div>
+      <h1 class="page-title">License Check - License Mappings</h1>
+      <div class="page-description">Maps a license name (with regex) to a license</div>
       <div class="page-actions">
-        <button id="license-add" @click="showAddDialog()" class="button">Add Maven License</button>
+        <button id="license-add" @click="showAddDialog()" class="button">Add License Mapping</button>
       </div>
     </header>
     <div class="panel panel-vertical bordered-bottom spacer-bottom">
@@ -68,7 +68,7 @@
 
 <script>
 import '../../../compiled-icons';
-import {loadLicenses, loadMavenLicenses, saveMavenLicenses} from "./sonar-api";
+import {loadLicenses, loadLicenseMappings, saveLicenseMappings} from "./sonar-api";
 
 export default {
   data() {
@@ -113,12 +113,12 @@ export default {
     load() {
       return Promise.all([
           loadLicenses().then(l => this.licenses = l),
-          this.loadMavenLicenses(),
+          this.loadLicenseMappings(),
         ]
       );
     },
-    loadMavenLicenses() {
-      return loadMavenLicenses().then(ml => this.items = ml);
+    loadLicenseMappings() {
+      return loadLicenseMappings().then(ml => this.items = ml);
     },
     findLicenseName(license) {
       let licenseItem = this.licenses.find(l => l.id === license);
@@ -136,9 +136,9 @@ export default {
       this.itemToEdit = null;
     },
     saveItems(items) {
-      saveMavenLicenses(items)
+      saveLicenseMappings(items)
         .then(() => {
-          this.loadMavenLicenses();
+          this.loadLicenseMappings();
           this.itemToEdit = null;
           this.itemToDelete = null;
         });

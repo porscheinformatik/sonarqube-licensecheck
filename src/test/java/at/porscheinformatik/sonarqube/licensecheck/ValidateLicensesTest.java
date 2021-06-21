@@ -1,8 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -13,7 +15,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
@@ -25,6 +26,8 @@ import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
 import org.sonar.api.scanner.fs.InputProject;
 
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 
@@ -34,6 +37,7 @@ public class ValidateLicensesTest
     private ValidateLicenses validateLicenses;
     private ProjectDefinition projectDefinition;
     private InputProject module;
+    private DependencyMappingService dependencyMappingService;
 
     @Before
     public void setup()
@@ -43,7 +47,8 @@ public class ValidateLicensesTest
         final LicenseService licenseService = mock(LicenseService.class);
         when(licenseService.getLicenses(module)).thenReturn(Arrays.asList(new License("MIT", "MIT", "false"),
             new License("LGPL is fantastic", "LGPL", "true"), APACHE_LICENSE));
-        validateLicenses = new ValidateLicenses(licenseService);
+        dependencyMappingService = mock(DependencyMappingService.class);
+        validateLicenses = new ValidateLicenses(licenseService, dependencyMappingService);
     }
 
     private SensorContext createContext()
@@ -191,7 +196,19 @@ public class ValidateLicensesTest
             module);
 
         assertThat(usedLicensesApache.size(), is(1));
-        assertThat(usedLicensesApache, CoreMatchers.hasItem(APACHE_LICENSE));
+        assertThat(usedLicensesApache, hasItem(APACHE_LICENSE));
+    }
+
+    @Test
+    public void dependencyMapping()
+    {
+        when(dependencyMappingService.getDependencyMappings()).thenReturn(
+            Collections.singletonList(new DependencyMapping("^thing$", APACHE_LICENSE.getIdentifier(), false)));
+
+        Set<Dependency> deps = validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), createContext());
+
+        assertThat(deps.size(), is(1));
+        assertThat(deps.iterator().next().getLicense(), equalTo(APACHE_LICENSE.getIdentifier()));
     }
 
     private static Set<Dependency> deps(Dependency... dependencies)

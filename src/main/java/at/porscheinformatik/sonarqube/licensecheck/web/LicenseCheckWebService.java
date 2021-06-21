@@ -3,8 +3,8 @@ package at.porscheinformatik.sonarqube.licensecheck.web;
 import org.sonar.api.server.ws.WebService;
 
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencySettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
 
 /**
@@ -14,19 +14,19 @@ public class LicenseCheckWebService implements WebService
 {
     private final LicenseSettingsService licenseSettingsService;
     private final ProjectLicenseSettingsService projectLicenseSettingsService;
-    private final MavenLicenseSettingsService mavenLicenseSettingsService;
-    private final MavenDependencySettingsService mavenDependencySettingsService;
+    private final LicenseMappingSettingsService licenseMappingSettingsService;
+    private final DependencyMappingSettingsService dependencyMappingSettingsService;
 
     public LicenseCheckWebService(LicenseSettingsService licenseSettingsService,
         ProjectLicenseSettingsService projectLicenseSettingsService,
-        MavenLicenseSettingsService mavenLicenseSettingsService,
-        MavenDependencySettingsService mavenDependencySettingsService)
+        LicenseMappingSettingsService licenseMappingSettingsService,
+        DependencyMappingSettingsService dependencyMappingSettingsService)
     {
         super();
         this.licenseSettingsService = licenseSettingsService;
         this.projectLicenseSettingsService = projectLicenseSettingsService;
-        this.mavenLicenseSettingsService = mavenLicenseSettingsService;
-        this.mavenDependencySettingsService = mavenDependencySettingsService;
+        this.licenseMappingSettingsService = licenseMappingSettingsService;
+        this.dependencyMappingSettingsService = dependencyMappingSettingsService;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class LicenseCheckWebService implements WebService
         // Init all services
         licenseSettingsService.init();
         projectLicenseSettingsService.init();
-        mavenLicenseSettingsService.init();
-        mavenDependencySettingsService.init();
+        licenseMappingSettingsService.init();
+        dependencyMappingSettingsService.init();
     }
 }

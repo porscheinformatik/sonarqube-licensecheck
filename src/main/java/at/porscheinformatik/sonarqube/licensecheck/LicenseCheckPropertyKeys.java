@@ -25,12 +25,12 @@ public class LicenseCheckPropertyKeys
     /**
      * Config key the Maven license name mapping
      */
-    public static final String MAVEN_LICENSE_MAPPING = "licensecheck.maven.license-mapping";
+    public static final String LICENSE_MAPPING = "licensecheck.license-mapping";
 
     /**
      * Config key the Maven dependency to license mapping
      */
-    public static final String MAVEN_DEPENDENCY_MAPPING = "licensecheck.maven.dep-mapping";
+    public static final String DEPENDENCY_MAPPING = "licensecheck.dep-mapping";
 
     /**
      * Config key to enable/disable transitive dependencies for NPM
@@ -42,16 +42,19 @@ public class LicenseCheckPropertyKeys
      */
     @Deprecated
     public static final String LICENSE_KEY = "licensecheck.licenses";
+
     /**
-     * @deprecated replaced with {@link #MAVEN_LICENSE_MAPPING}
+     * @deprecated replaced with {@link #LICENSE_MAPPING}
      */
     @Deprecated
     public static final String LICENSE_REGEX = "licensecheck.licensesregex";
+
     /**
-     * @deprecated replaced with {@link #MAVEN_DEPENDENCY_MAPPING}
+     * @deprecated replaced with {@link #DEPENDENCY_MAPPING}
      */
     @Deprecated
     public static final String ALLOWED_DEPENDENCIES_KEY = "licensecheck.alloweddependencies";
+
     /**
      * @deprecated replaced with {@link #PROJECT_LICENSE_SET}
      */
