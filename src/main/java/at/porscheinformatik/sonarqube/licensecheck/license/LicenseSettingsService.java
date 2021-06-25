@@ -90,7 +90,7 @@ public class LicenseSettingsService
 
     private void saveSettings(List<License> licenses)
     {
-        String indexes = IntStream.range(1, licenses.size())
+        String indexes = IntStream.range(1, licenses.size() + 1)
             .mapToObj(Integer::toString)
             .collect(Collectors.joining(","));
         persistentSettings.saveProperty(LICENSE_SET, indexes);

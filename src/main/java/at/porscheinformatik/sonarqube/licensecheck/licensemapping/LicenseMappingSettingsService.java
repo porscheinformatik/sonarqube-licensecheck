@@ -73,7 +73,7 @@ public class LicenseMappingSettingsService
 
     private void saveSettings(List<LicenseMapping> licensMappings)
     {
-        String indexes = IntStream.range(1, licensMappings.size())
+        String indexes = IntStream.range(1, licensMappings.size() + 1)
             .mapToObj(Integer::toString)
             .collect(Collectors.joining(","));
         persistentSettings.saveProperty(LICENSE_MAPPING, indexes);

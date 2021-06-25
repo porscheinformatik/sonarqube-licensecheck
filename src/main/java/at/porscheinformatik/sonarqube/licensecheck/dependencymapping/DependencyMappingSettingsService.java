@@ -56,7 +56,7 @@ public class DependencyMappingSettingsService
     {
         Collections.sort(dependencyMappings);
 
-        String indexes = IntStream.range(1, dependencyMappings.size())
+        String indexes = IntStream.range(1, dependencyMappings.size() + 1)
             .mapToObj(Integer::toString)
             .collect(Collectors.joining(","));
         persistentSettings.saveProperty(DEPENDENCY_MAPPING, indexes);

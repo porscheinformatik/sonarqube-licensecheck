@@ -64,7 +64,7 @@ public class ProjectLicenseSettingsService
     {
         Collections.sort(projectLicenses);
 
-        String indexes = IntStream.range(1, projectLicenses.size())
+        String indexes = IntStream.range(1, projectLicenses.size() + 1)
             .mapToObj(Integer::toString)
             .collect(Collectors.joining(","));
         persistentSettings.saveProperty(PROJECT_LICENSE_SET, indexes);

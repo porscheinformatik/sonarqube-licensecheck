@@ -102,26 +102,6 @@ public class LicenseMapping implements Comparable<LicenseMapping>
         return licensMappings;
     }
 
-    public static String createString(Collection<LicenseMapping> licensMappings)
-    {
-        TreeSet<LicenseMapping> licenseMappingSet = new TreeSet<>(licensMappings);
-
-        StringWriter jsonString = new StringWriter();
-        JsonGenerator generator = Json.createGenerator(jsonString);
-        generator.writeStartArray();
-        for (LicenseMapping licenseMapping : licenseMappingSet)
-        {
-            generator.writeStartObject();
-            generator.write("regex", licenseMapping.getRegex().pattern());
-            generator.write("license", licenseMapping.getLicense());
-            generator.writeEnd();
-        }
-        generator.writeEnd();
-        generator.close();
-
-        return jsonString.toString();
-    }
-
     @Override
     public boolean equals(Object o)
     {
@@ -134,7 +114,7 @@ public class LicenseMapping implements Comparable<LicenseMapping>
             return false;
         }
         LicenseMapping that = (LicenseMapping) o;
-        return Objects.equals(regex, that.regex) &&
+        return Objects.equals(regex.pattern(), that.regex.pattern()) &&
             Objects.equals(license, that.license);
     }
 
