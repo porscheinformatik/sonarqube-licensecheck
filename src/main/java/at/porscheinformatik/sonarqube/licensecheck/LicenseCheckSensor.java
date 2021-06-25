@@ -20,8 +20,7 @@ import org.sonar.api.utils.log.Loggers;
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
@@ -35,16 +34,16 @@ public class LicenseCheckSensor implements Sensor
     private final Scanner[] scanners;
 
     public LicenseCheckSensor(FileSystem fs, Configuration configuration, ValidateLicenses validateLicenses,
-        MavenLicenseService mavenLicenseService, MavenDependencyService mavenDependencyService)
+        LicenseMappingService licenseMappingService)
     {
         this.fs = fs;
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
-            new PackageJsonDependencyScanner(
+            new PackageJsonDependencyScanner(licenseMappingService,
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
-            new MavenDependencyScanner(mavenLicenseService, mavenDependencyService),
-            new GradleDependencyScanner(mavenLicenseService)};
+            new MavenDependencyScanner(licenseMappingService),
+            new GradleDependencyScanner(licenseMappingService)};
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)

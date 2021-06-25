@@ -34,30 +34,30 @@ export function saveProjectLicenses(items) {
     })
 }
 
-export function loadMavenLicenses() {
+export function loadLicenseMappings() {
   return window.SonarRequest
-    .getJSON(`/api/settings/values?keys=${KEYS.MAVEN_LICENSE_MAPPING}`)
+    .getJSON(`/api/settings/values?keys=${KEYS.LICENSE_MAPPING}`)
     .then(response => response.settings[0].fieldValues);
 }
 
-export function saveMavenLicenses(items) {
+export function saveLicenseMappings(items) {
   return window.SonarRequest
     .post(`/api/settings/set`, {
-      key: KEYS.MAVEN_LICENSE_MAPPING,
+      key: KEYS.LICENSE_MAPPING,
       fieldValues: items.map(i => JSON.stringify(i)),
     });
 }
 
-export function loadMavenDependencies() {
+export function loadDependencyMappings() {
   return window.SonarRequest
-    .getJSON(`/api/settings/values?keys=${KEYS.MAVEN_DEPENDENCY_MAPPING}`)
+    .getJSON(`/api/settings/values?keys=${KEYS.DEPENDENCY_MAPPING}`)
     .then(response => response.settings[0].fieldValues);
 }
 
-export function saveMavenDependencies(items) {
+export function saveDependencyMappings(items) {
   return window.SonarRequest
     .post(`/api/settings/set`, {
-      key: KEYS.MAVEN_DEPENDENCY_MAPPING,
+      key: KEYS.DEPENDENCY_MAPPING,
       fieldValues: items.map(i => JSON.stringify(i)),
     })
 }

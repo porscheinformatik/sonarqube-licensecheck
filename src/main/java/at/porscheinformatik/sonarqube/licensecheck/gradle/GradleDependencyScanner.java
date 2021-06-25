@@ -23,22 +23,23 @@ import org.sonar.api.utils.log.Loggers;
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
 public class GradleDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(GradleDependencyScanner.class);
-    private final MavenLicenseService mavenLicenseService;
 
-    public GradleDependencyScanner(MavenLicenseService mavenLicenseService)
+    private final LicenseMappingService licenseMappingService;
+
+    public GradleDependencyScanner(LicenseMappingService licenseMappingService)
     {
-        this.mavenLicenseService = mavenLicenseService;
+        this.licenseMappingService = licenseMappingService;
     }
 
     @Override
     public Set<Dependency> scan(File moduleDir)
     {
-        Map<Pattern, String> defaultLicenseMap = mavenLicenseService.getLicenseMap();
+        Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
         File licenseDetailsJsonFile = new File(moduleDir, "build" + File.separator + "reports" + File.separator
             + "dependency-license" + File.separator + "license-details.json");
@@ -52,7 +53,7 @@ public class GradleDependencyScanner implements Scanner
 
         return readLicenseDetailsJson(licenseDetailsJsonFile)
             .stream()
-            .map(d -> mapMavenDependencyToLicense(defaultLicenseMap, d))
+            .map(d -> matchLicense(defaultLicenseMap, d))
             .collect(Collectors.toSet());
     }
 
@@ -119,19 +120,19 @@ public class GradleDependencyScanner implements Scanner
         return moduleLicense;
     }
 
-    private Dependency mapMavenDependencyToLicense(Map<Pattern, String> defaultLicenseMap, Dependency dependency)
+    private Dependency matchLicense(Map<Pattern, String> licenseMap, Dependency dependency)
     {
         if (StringUtils.isBlank(dependency.getLicense()))
         {
-            LOGGER.error(" License not found for Dependency {}", dependency);
+            LOGGER.info("Dependency '{}' has no license set.", dependency.getName());
             return dependency;
         }
 
-        for (Map.Entry<Pattern, String> allowedDependency : defaultLicenseMap.entrySet())
+        for (Map.Entry<Pattern, String> entry : licenseMap.entrySet())
         {
-            if (allowedDependency.getKey().matcher(dependency.getLicense()).matches())
+            if (entry.getKey().matcher(dependency.getLicense()).matches())
             {
-                dependency.setLicense(allowedDependency.getValue());
+                dependency.setLicense(entry.getValue());
                 break;
             }
         }

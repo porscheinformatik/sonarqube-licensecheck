@@ -21,15 +21,18 @@ import org.sonar.api.utils.log.Loggers;
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
 
-    private boolean resolveTransitiveDeps;
+    private final LicenseMappingService licenseMappingService;
+    private final boolean resolveTransitiveDeps;
 
-    public PackageJsonDependencyScanner(boolean resolveTransitiveDeps)
+    public PackageJsonDependencyScanner(LicenseMappingService licenseMappingService, boolean resolveTransitiveDeps)
     {
+        this.licenseMappingService = licenseMappingService;
         this.resolveTransitiveDeps = resolveTransitiveDeps;
     }
 
@@ -135,6 +138,8 @@ public class PackageJsonDependencyScanner implements Scanner
                             license = license.length() == 1 ? "" : (license + ")");
                         }
                     }
+
+                    license = licenseMappingService.mapLicense(license);
 
                     dependencies.add(new Dependency(packageName, packageJson.getString("version", null), license,
                         LicenseCheckRulesDefinition.LANG_JS));

@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.mavenlicense;
+package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,7 +17,7 @@ import javax.json.stream.JsonGenerator;
 
 import org.codehaus.plexus.util.StringUtils;
 
-public class MavenLicense implements Comparable<MavenLicense>
+public class LicenseMapping implements Comparable<LicenseMapping>
 {
     public static final String FIELD_LICENSE = "license";
     public static final String FIELD_REGEX = "regex";
@@ -25,7 +25,7 @@ public class MavenLicense implements Comparable<MavenLicense>
     private final Pattern regex;
     private final String license;
 
-    public MavenLicense(String regex, String license)
+    public LicenseMapping(String regex, String license)
     {
         super();
         this.regex = Pattern.compile(regex);
@@ -43,7 +43,7 @@ public class MavenLicense implements Comparable<MavenLicense>
     }
 
     @Override
-    public int compareTo(MavenLicense o)
+    public int compareTo(LicenseMapping o)
     {
         if (o == null)
         {
@@ -59,13 +59,13 @@ public class MavenLicense implements Comparable<MavenLicense>
         }
     }
 
-    public static List<MavenLicense> fromString(String mavenLicenseString)
+    public static List<LicenseMapping> fromString(String licenseMappingString)
     {
-        List<MavenLicense> mavenLicenses = new ArrayList<>();
+        List<LicenseMapping> licensMappings = new ArrayList<>();
 
-        if (mavenLicenseString != null && mavenLicenseString.startsWith("["))
+        if (licenseMappingString != null && licenseMappingString.startsWith("["))
         {
-            try (JsonReader jsonReader = Json.createReader(new StringReader(mavenLicenseString)))
+            try (JsonReader jsonReader = Json.createReader(new StringReader(licenseMappingString)))
             {
                 JsonArray licensesJson = jsonReader.readArray();
                 for (int i = 0; i < licensesJson.size(); i++)
@@ -74,7 +74,7 @@ public class MavenLicense implements Comparable<MavenLicense>
                     String regex;
                     try
                     {
-                        regex = licenseJson.getString("regex");
+                        regex = licenseJson.getString(FIELD_REGEX);
                     }
                     catch (NullPointerException e)
                     {
@@ -83,43 +83,23 @@ public class MavenLicense implements Comparable<MavenLicense>
 
                     if (regex != null)
                     {
-                        mavenLicenses.add(new MavenLicense(regex, licenseJson.getString("license")));
+                        licensMappings.add(new LicenseMapping(regex, licenseJson.getString(FIELD_LICENSE)));
                     }
                 }
             }
         }
-        else if (StringUtils.isNotEmpty(mavenLicenseString))
+        else if (StringUtils.isNotEmpty(licenseMappingString))
         {
             // deprecated - remove with later release
-            String[] mavenLicenseEntries = mavenLicenseString.split(";");
-            for (String mavenLicenseEntry : mavenLicenseEntries)
+            String[] licenseMappingEntries = licenseMappingString.split(";");
+            for (String licenseMappingEntry : licenseMappingEntries)
             {
-                String[] mavenLicenseEntryParts = mavenLicenseEntry.split("~");
-                mavenLicenses.add(new MavenLicense(mavenLicenseEntryParts[0], mavenLicenseEntryParts[1]));
+                String[] licenseMappingEntryParts = licenseMappingEntry.split("~");
+                licensMappings.add(new LicenseMapping(licenseMappingEntryParts[0], licenseMappingEntryParts[1]));
             }
         }
 
-        return mavenLicenses;
-    }
-
-    public static String createString(Collection<MavenLicense> mavenLicenses)
-    {
-        TreeSet<MavenLicense> mavenLicenseSet = new TreeSet<>(mavenLicenses);
-
-        StringWriter jsonString = new StringWriter();
-        JsonGenerator generator = Json.createGenerator(jsonString);
-        generator.writeStartArray();
-        for (MavenLicense mavenLicense : mavenLicenseSet)
-        {
-            generator.writeStartObject();
-            generator.write("regex", mavenLicense.getRegex().pattern());
-            generator.write("license", mavenLicense.getLicense());
-            generator.writeEnd();
-        }
-        generator.writeEnd();
-        generator.close();
-
-        return jsonString.toString();
+        return licensMappings;
     }
 
     @Override
@@ -133,8 +113,8 @@ public class MavenLicense implements Comparable<MavenLicense>
         {
             return false;
         }
-        MavenLicense that = (MavenLicense) o;
-        return Objects.equals(regex, that.regex) &&
+        LicenseMapping that = (LicenseMapping) o;
+        return Objects.equals(regex.pattern(), that.regex.pattern()) &&
             Objects.equals(license, that.license);
     }
 

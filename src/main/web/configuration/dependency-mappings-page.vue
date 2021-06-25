@@ -1,10 +1,10 @@
 <template>
   <div class="boxed-group boxed-group-inner">
     <header class="page-header">
-      <h1 class="page-title">License Check - Maven Dependencies</h1>
-      <div class="page-description">Map maven identifiers (groupId/artifactId) to licenses.</div>
+      <h1 class="page-title">License Check - Dependency Mappings</h1>
+      <div class="page-description">Maps a dependency name/key (with regex) to a license</div>
       <div class="page-actions">
-        <button class="button" id="license-add" @click="showAddDialog()">Add Maven Dependency</button>
+        <button class="button" id="license-add" @click="showAddDialog()">Add Dependency Mapping</button>
       </div>
     </header>
     <div class="panel panel-vertical bordered-bottom spacer-bottom">
@@ -19,6 +19,7 @@
           <tr>
             <th @click="sort('key')" scope="col">Key Regex<div class="arrow" v-if="sortBy === 'key'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th @click="sort('license')" scope="col">License<div class="arrow" v-if="sortBy === 'license'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
+            <th @click="sort('overwrite')" scope="col">Overwrite License<div class="arrow" v-if="sortBy === 'overwrite'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
@@ -26,6 +27,9 @@
           <tr v-for="item in displayedItems" :key="item.key">
             <td>{{item.key}}</td>
             <td>{{item.license}} / {{findLicenseName(item.license)}}</td>
+            <td>
+              {{ item.overwrite === 'true' ? 'Yes' : 'No' }}
+            </td>
             <td class="thin nowrap">
               <a class="button" @click="showEditDialog(item)" title="Edit item">
                 <svgicon icon="pencil" width="16" height="16" style="fill: currentcolor"></svgicon>
@@ -56,6 +60,14 @@
             </option>
           </select>
         </div>
+        <div class="modal-field">
+          <label>Overwrite License</label>
+          <label for="overwriteCheckbox">
+            <input type="checkbox" id="overwriteCheckbox" name="overwrite" v-model="itemToEdit.overwrite"
+                   true-value="true" false-value="false">
+            Overwrite
+          </label>
+        </div>
       </div>
       <span slot="footer"><button class="button" @click="saveItem(itemToEdit)">Save</button></span>
     </modal-dialog>
@@ -68,7 +80,7 @@
 
 <script>
 import '../../../compiled-icons';
-import {loadLicenses, loadMavenDependencies, saveMavenDependencies} from "./sonar-api";
+import {loadLicenses, loadDependencyMappings, saveDependencyMappings} from "./sonar-api";
 
 export default {
   data() {
@@ -114,11 +126,11 @@ export default {
     load() {
       return Promise.all([
         loadLicenses().then(l => this.licenses = l),
-        this.loadMavenDependencies(),
+        this.loadDependencyMappings(),
       ]);
     },
-    loadMavenDependencies() {
-      return loadMavenDependencies().then(md => this.items = md);
+    loadDependencyMappings() {
+      return loadDependencyMappings().then(md => this.items = md);
     },
     findLicenseName(license) {
       let licenseItem = this.licenses.find(l => l.id === license);
@@ -136,9 +148,9 @@ export default {
       this.itemToEdit = null;
     },
     saveItems(items) {
-      saveMavenDependencies(items)
+      saveDependencyMappings(items)
         .then(() => {
-          this.loadMavenDependencies();
+          this.loadDependencyMappings();
           this.itemToEdit = null;
           this.itemToDelete = null;
         });
@@ -150,6 +162,7 @@ export default {
         const itemToChange = this.items.find(i => i.key === item.old_key);
         itemToChange.key = item.key;
         itemToChange.license = item.license;
+        itemToChange.overwrite = item.overwrite;
         this.saveItems(this.items);
       }
     },

@@ -1,6 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.maven;
 
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -10,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -21,21 +19,16 @@ import org.mockito.Mockito;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavendependency.MavenDependencyService;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
-public class MavenDependencyScannerTest
+public class DependencyMappingScannerTest
 {
     @Test
     public void testLicensesAreFound()
     {
         File moduleDir = new File(".");
 
-        final MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
-        when(dependencyService.getMavenDependencies()).thenReturn(
-            singletonList(new MavenDependency("org.apache.*", "Apache-2.0")));
-        Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
+        Scanner scanner = new MavenDependencyScanner(mockLicenseService());
 
         // -
         Set<Dependency> dependencies = scanner.scan(moduleDir);
@@ -56,11 +49,11 @@ public class MavenDependencyScannerTest
         }
     }
 
-    private MavenLicenseService mockLicenseService()
+    private LicenseMappingService mockLicenseService()
     {
         Map<Pattern, String> licenseMap = new HashMap<>();
         licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
-        MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
+        LicenseMappingService licenseService = Mockito.mock(LicenseMappingService.class);
         when(licenseService.getLicenseMap()).thenReturn(licenseMap);
         return licenseService;
     }
@@ -68,34 +61,14 @@ public class MavenDependencyScannerTest
     @Test
     public void testNullMavenProjectDependencies() throws IOException
     {
-        MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
-        MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
-        Scanner scanner = new MavenDependencyScanner(licenseService, dependencyService);
+        LicenseMappingService licenseService = Mockito.mock(LicenseMappingService.class);
+        Scanner scanner = new MavenDependencyScanner(licenseService);
 
         File moduleDir = Files.createTempDirectory("lala").toFile();
         moduleDir.deleteOnExit();
         Set<Dependency> dependencies = scanner.scan(moduleDir);
 
         assertThat(dependencies.size(), is(0));
-    }
-
-    @Test
-    public void mavenDependencyMappingHandledBeforePomLicense()
-    {
-        File moduleDir = new File(".");
-        MavenDependencyService dependencyService = Mockito.mock(MavenDependencyService.class);
-        List<MavenDependency> mavenDependencies =
-            singletonList(new MavenDependency("org.glassfish:javax.json", "TEST"));
-        when(dependencyService.getMavenDependencies()).thenReturn(mavenDependencies);
-        Scanner scanner = new MavenDependencyScanner(mockLicenseService(), dependencyService);
-
-        Set<Dependency> dependencies = scanner.scan(moduleDir);
-
-        Dependency commonsLang = dependencies.stream()
-            .filter(d -> "org.glassfish:javax.json".equals(d.getName()))
-            .findFirst().orElse(null);
-
-        assertThat(commonsLang.getLicense(), is("TEST"));
     }
 
     @Test
@@ -129,7 +102,7 @@ public class MavenDependencyScannerTest
         try
         {
             System.setProperty("sun.java.command", "thisisatest -X -s src/test/resources/settings-does-not-exist.xml -gs src/test/resources/settings-does-not-exist.xml -B");
-            Scanner scanner = new MavenDependencyScanner(mockLicenseService(), Mockito.mock(MavenDependencyService.class));
+            Scanner scanner = new MavenDependencyScanner(mockLicenseService());
             
             Set<Dependency> dependencies = scanner.scan(new File("."));
             assertThat(dependencies.size(), is(0));

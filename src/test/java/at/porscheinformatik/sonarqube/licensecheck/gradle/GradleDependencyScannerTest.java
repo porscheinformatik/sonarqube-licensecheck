@@ -1,10 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.mavenlicense.MavenLicenseService;
-
-import org.junit.Test;
-import org.mockito.Mockito;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -14,20 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
 public class GradleDependencyScannerTest
 {
-    private MavenLicenseService mockLicenseService()
-    {
-        Map<Pattern, String> licenseMap = new HashMap<>();
-        licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
-        MavenLicenseService licenseService = Mockito.mock(MavenLicenseService.class);
-        when(licenseService.getLicenseMap()).thenReturn(licenseMap);
-        return licenseService;
-    }
-
     @Test
     public void testScannerWithMissingJsonFile()
     {
@@ -45,5 +36,14 @@ public class GradleDependencyScannerTest
 
         Set<Dependency> dependencies = scanner.scan(new File(absolutePath));
         assertEquals(43, dependencies.size());
+    }
+
+    private LicenseMappingService mockLicenseService()
+    {
+        Map<Pattern, String> licenseMap = new HashMap<>();
+        licenseMap.put(Pattern.compile(".*Apache.*2.*"), "Apache-2.0");
+        LicenseMappingService licenseService = Mockito.mock(LicenseMappingService.class);
+        when(licenseService.getLicenseMap()).thenReturn(licenseMap);
+        return licenseService;
     }
 }
