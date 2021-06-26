@@ -15,6 +15,7 @@
     </div>
     <div>
       <table class="data zebra">
+        <caption>Dependency mapping - name/key (with regex) to a license</caption>
         <thead>
           <tr>
             <th @click="sort('key')" scope="col">Key Regex<div class="arrow" v-if="sortBy === 'key'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>

@@ -68,7 +68,8 @@
         <div class="modal-field">
           <label>Status<em class="mandatory">*</em></label>
           <label for="itemStatusEdit">
-            <input type="checkbox" id="itemStatusEdit" name="itemStatusEdit" v-model="itemToEdit.allowed" true-value="true" false-value="false">
+            <input type="checkbox" id="itemStatusEdit" name="itemStatusEdit" v-model="itemToEdit.allowed"
+                   true-value="true" false-value="false">
             Allowed
           </label>
         </div>

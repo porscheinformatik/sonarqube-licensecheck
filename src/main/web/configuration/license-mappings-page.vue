@@ -15,6 +15,7 @@
     </div>
     <div>
       <table class="data zebra">
+        <caption>License mapping - license name (with regex) to a license</caption>
         <thead>
           <tr>
             <th @click="sort('regex')" scope="col">License Text Regex<div class="arrow" v-if="sortBy === 'regex'" v-bind:class="{ 'arrow_up' : sortDirection === 'asc', 'arrow_down' : sortDirection === 'desc'}"></div></th>
