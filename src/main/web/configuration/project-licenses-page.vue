@@ -29,8 +29,9 @@
             <td><span :title="item.projectKey">{{findProjectName(item.projectKey)}}</span></td>
             <td>{{item.license}} / {{findLicenseName(item.license)}}</td>
             <td>
-              <span :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed === 'false' }"></span>
-              {{item.allowed === 'true' ? 'Allowed': 'Forbidden'}}
+              <span
+                :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed !== 'true' }"></span>
+              {{ item.allowed === 'true' ? 'Allowed' : 'Forbidden' }}
             </td>
             <td class="thin nowrap">
               <a class="button" @click="showEditDialog(item)" title="Edit item">

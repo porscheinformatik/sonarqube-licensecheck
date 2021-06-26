@@ -41,7 +41,7 @@
           <td>{{ item.name }}</td>
           <td>
             <span
-              :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed === 'false' }"></span>
+              :class="{ 'icon-license-ok': item.allowed === 'true', 'icon-license-nok': item.allowed !== 'true' }"></span>
             {{ item.allowed === 'true' ? 'Allowed' : 'Forbidden' }}
           </td>
           <td class="thin nowrap">
