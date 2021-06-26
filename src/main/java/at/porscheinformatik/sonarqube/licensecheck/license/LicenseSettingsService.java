@@ -97,7 +97,7 @@ public class LicenseSettingsService
         for (int i = 0; i < licenses.size(); i++)
         {
             License license = licenses.get(i);
-            String idxProp = "." + i + ".";
+            String idxProp = "." + (i + 1) + ".";
             persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_NAME, license.getName());
             persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_ID, license.getIdentifier());
             persistentSettings.saveProperty(LICENSE_SET + idxProp + FIELD_ALLOWED, license.getAllowed().toString());

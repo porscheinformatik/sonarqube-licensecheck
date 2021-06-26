@@ -63,7 +63,7 @@ public class DependencyMappingSettingsService
         for (int i = 0; i < dependencyMappings.size(); i++)
         {
             DependencyMapping depMap = dependencyMappings.get(i);
-            String idxProp = "." + i + ".";
+            String idxProp = "." + (i + 1) + ".";
             persistentSettings.saveProperty(DEPENDENCY_MAPPING + idxProp + FIELD_KEY, depMap.getKey());
             persistentSettings.saveProperty(DEPENDENCY_MAPPING + idxProp + FIELD_LICENSE, depMap.getLicense());
         }

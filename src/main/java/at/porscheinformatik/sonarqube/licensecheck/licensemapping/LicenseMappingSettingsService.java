@@ -1,7 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_MAPPING;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 import static at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping.FIELD_LICENSE;
 import static at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping.FIELD_REGEX;
 
@@ -59,7 +59,8 @@ public class LicenseMappingSettingsService
         {
             LOGGER.info("No old config found, import default_license_mapping");
 
-            try (InputStream in = LicenseMappingSettingsService.class.getResourceAsStream("default_license_mapping.json"))
+            try (InputStream in = LicenseMappingSettingsService.class.getResourceAsStream(
+                "default_license_mapping.json"))
             {
                 String licenseMappingListString = IOUtils.readToString(in);
                 saveSettings(LicenseMapping.fromString(licenseMappingListString));
@@ -80,7 +81,7 @@ public class LicenseMappingSettingsService
         for (int i = 0; i < licensMappings.size(); i++)
         {
             LicenseMapping licenseMapping = licensMappings.get(i);
-            String idxProp = "." + i + ".";
+            String idxProp = "." + (i + 1) + ".";
             persistentSettings.saveProperty(LICENSE_MAPPING + idxProp + FIELD_LICENSE, licenseMapping.getLicense());
             persistentSettings.saveProperty(LICENSE_MAPPING + idxProp + FIELD_REGEX,
                 licenseMapping.getRegex().toString());

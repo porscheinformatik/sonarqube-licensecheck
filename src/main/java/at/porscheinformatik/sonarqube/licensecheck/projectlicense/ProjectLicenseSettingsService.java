@@ -71,7 +71,7 @@ public class ProjectLicenseSettingsService
         for (int i = 0; i < projectLicenses.size(); i++)
         {
             ProjectLicense projectLicense = projectLicenses.get(i);
-            String idxProp = "." + i + ".";
+            String idxProp = "." + (i + 1) + ".";
             persistentSettings.saveProperty(PROJECT_LICENSE_SET + idxProp + FIELD_PROJECT_KEY,
                 projectLicense.getProjectKey());
             persistentSettings.saveProperty(PROJECT_LICENSE_SET + idxProp + FIELD_LICENSE, projectLicense.getLicense());
