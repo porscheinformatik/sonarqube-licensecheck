@@ -5,8 +5,7 @@ SonarQube License-Check
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/6ac787bb79b43e39c367/maintainability)](https://codeclimate.com/github/porscheinformatik/sonarqube-licensecheck/maintainability)
 
-This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects in an organization adhere to a set of
-standard libraries and versions. This enables the governance of the used libraries and licences.
+This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects use dependencies with compliant licenses. All dependencies and licenses can be viewed per projects and exported to CSV. This enables a simple governance of dependencies and licenses for the whole organization.
 
 ## License
 
