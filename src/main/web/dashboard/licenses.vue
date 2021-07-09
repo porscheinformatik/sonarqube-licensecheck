@@ -16,7 +16,7 @@
           <td>{{license.name}}</td>
           <td>
             <span :class="{ 'icon-license-ok': license.status === 'true', 'icon-license-nok': license.status !== 'true' }"></span>
-            {{license.status}}
+            {{ license.status === 'true' ? 'Allowed' : 'Forbidden' }}
           </td>
         </tr>
       </tbody>

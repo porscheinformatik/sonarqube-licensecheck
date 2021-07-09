@@ -1,19 +1,15 @@
 package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonGenerator;
 
 import org.codehaus.plexus.util.StringUtils;
 
