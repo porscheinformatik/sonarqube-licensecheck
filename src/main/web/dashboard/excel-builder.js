@@ -56,7 +56,7 @@ function buildLicensesWorksheet(licenses) {
     result += `<Row>
   <Cell><Data ss:Type="String">${license.identifier}</Data></Cell>
   <Cell><Data ss:Type="String">${license.name}</Data></Cell>
-  <Cell><Data ss:Type="String">${license.status}</Data></Cell>
+  <Cell><Data ss:Type="String">${license.status === 'true' ? 'Allowed' : 'Forbidden'}</Data></Cell>
 </Row>`;
   });
   return result + '</Table></Worksheet>';
