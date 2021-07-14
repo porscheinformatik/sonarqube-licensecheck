@@ -1,17 +1,16 @@
 package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
+import org.codehaus.plexus.util.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-
-import org.codehaus.plexus.util.StringUtils;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class LicenseMapping implements Comparable<LicenseMapping>
 {
@@ -117,6 +116,6 @@ public class LicenseMapping implements Comparable<LicenseMapping>
     @Override
     public int hashCode()
     {
-        return Objects.hash(regex, license);
+        return Objects.hash(regex.pattern(), license);
     }
 }
