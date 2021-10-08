@@ -35,7 +35,7 @@
               <a class="button" @click="showEditDialog(item)" title="Edit item">
                 <svgicon icon="pencil" width="16" height="16" style="fill: currentcolor"></svgicon>
               </a>
-              <a class="button" v-if="items.length > 1" @click="showDeleteDialog(item)" title="Delete item">
+              <a class="button" @click="showDeleteDialog(item)" title="Delete item">
                 <svgicon icon="delete" width="16" height="16" style="fill: rgb(212, 51, 63)"></svgicon>
               </a>
             </td>
