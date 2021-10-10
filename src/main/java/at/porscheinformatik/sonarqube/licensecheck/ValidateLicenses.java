@@ -46,10 +46,8 @@ public class ValidateLicenses
             {
                 mapDependencyToLicense(dependencyMappings, dependency);
             }
-            else
-            {
-                overrideLicenseForDependency(dependencyMappings, dependency);
-            }
+
+            overrideLicenseForDependency(dependencyMappings, dependency);
 
             if (!isLicensesValid(context, licenses, dependency))
             {
