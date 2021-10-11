@@ -15,6 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -37,8 +38,9 @@ public class PackageJsonDependencyScanner implements Scanner
     }
 
     @Override
-    public Set<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(SensorContext context)
     {
+        File moduleDir = context.fileSystem().baseDir();
         File packageJsonFile = new File(moduleDir, "package.json");
 
         if (!packageJsonFile.exists())

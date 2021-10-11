@@ -11,19 +11,31 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.sensor.SensorContext;
 
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class PackageJsonDependencyScannerTest
 {
-    private final File folder = new File("src/test/resources");
+    private static final File RESOURCE_FOLDER = new File("src/test/resources");
+
+    private SensorContext createContext(File folder)
+    {
+        SensorContext context = mock(SensorContext.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+        when(fileSystem.baseDir()).thenReturn(folder);
+        when(context.fileSystem()).thenReturn(fileSystem);
+        return context;
+    }
 
     @Test
     public void testHappyPath()
     {
-        Set<Dependency> dependencies = createScanner().scan(folder);
+        Set<Dependency> dependencies = createScanner().scan(createContext(RESOURCE_FOLDER));
 
         assertThat(dependencies, hasSize(2));
         assertThat(dependencies, containsInAnyOrder(
@@ -34,7 +46,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testTransitive()
     {
-        Set<Dependency> dependencies = createScanner(true).scan(folder);
+        Set<Dependency> dependencies = createScanner(true).scan(createContext(RESOURCE_FOLDER));
 
         assertThat(dependencies, hasSize(4));
         assertThat(dependencies, containsInAnyOrder(
@@ -47,7 +59,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testNoPackageJson()
     {
-        Set<Dependency> dependencies = createScanner().scan(new File("src"));
+        Set<Dependency> dependencies = createScanner().scan(createContext(new File("src")));
 
         assertThat(dependencies, hasSize(0));
     }
@@ -55,7 +67,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testNoNodeModules()
     {
-        Set<Dependency> dependencies = createScanner().scan(new File(folder, "node_modules/arangojs"));
+        Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "node_modules/arangojs")));
 
         assertThat(dependencies, hasSize(0));
     }
@@ -63,7 +75,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testLicenseInDeprecatedLicenseFormat()
     {
-        final Set<Dependency> dependencies = createScanner().scan(new File(folder, "deprecated_project"));
+        final Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "deprecated_project")));
 
         assertEquals(1, dependencies.size());
 
@@ -74,7 +86,7 @@ public class PackageJsonDependencyScannerTest
     @Test
     public void testLicenseInDeprecatedLicensesFormat()
     {
-        final Set<Dependency> dependencies = createScanner().scan(new File(folder, "deprecated_multilicense_project"));
+        final Set<Dependency> dependencies = createScanner().scan(createContext(new File(RESOURCE_FOLDER, "deprecated_multilicense_project")));
 
         assertEquals(1, dependencies.size());
 

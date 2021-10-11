@@ -16,6 +16,9 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
 
+import org.sonar.api.batch.fs.InputComponent;
+import org.sonar.api.batch.fs.TextRange;
+
 public class Dependency implements Comparable<Dependency>
 {
     private String name;
@@ -24,6 +27,8 @@ public class Dependency implements Comparable<Dependency>
     private String lang;
     private Status status;
     private String pomPath;
+    private InputComponent inputComponent;
+    private TextRange textRange;
 
     public Dependency(String name, String version, String license, String lang)
     {
@@ -97,6 +102,26 @@ public class Dependency implements Comparable<Dependency>
     public void setPomPath(String pomPath)
     {
         this.pomPath = pomPath;
+    }
+
+    public InputComponent getInputComponent()
+    {
+        return inputComponent;
+    }
+
+    public void setInputComponent(InputComponent inputComponent)
+    {
+        this.inputComponent = inputComponent;
+    }
+
+    public TextRange getTextRange()
+    {
+        return textRange;
+    }
+
+    public void setTextRange(TextRange textRange)
+    {
+        this.textRange = textRange;
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
@@ -218,8 +219,12 @@ public class ValidateLicenses
         NewIssue issue = context
             .newIssue()
             .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
-        issue.at(issue.newLocation().on(context.project()).message(
-            "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
+
+        NewIssueLocation issueLocation = dependency.getInputComponent() != null
+                ? issue.newLocation().on(dependency.getInputComponent()).at(dependency.getTextRange())
+                : issue.newLocation().on(context.project());
+        issue.at(issueLocation.message(
+                "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
         issue.save();
     }
 
