@@ -235,8 +235,10 @@ public class ValidateLicenses
         NewIssue issue = context
             .newIssue()
             .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
-        issue.at(issue.newLocation().on(context.project())
-            .message("No License found for Dependency: " + dependency.getName()));
+        NewIssueLocation issueLocation = dependency.getInputComponent() != null
+            ? issue.newLocation().on(dependency.getInputComponent()).at(dependency.getTextRange())
+            : issue.newLocation().on(context.project());
+        issue.at(issueLocation.message("No License found for Dependency: " + dependency.getName()));
         issue.save();
     }
 
