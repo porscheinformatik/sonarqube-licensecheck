@@ -216,30 +216,31 @@ public class ValidateLicenses
 
         dependency.setStatus(Dependency.Status.Forbidden);
 
-        NewIssue issue = context
-            .newIssue()
-            .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
-
-        NewIssueLocation issueLocation = dependency.getInputComponent() != null
-                ? issue.newLocation().on(dependency.getInputComponent()).at(dependency.getTextRange())
-                : issue.newLocation().on(context.project());
-        issue.at(issueLocation.message(
-                "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense()));
-        issue.save();
+        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY,
+            "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense());
     }
 
     private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
         LOGGER.info("No License found for Dependency " + dependency.getName());
 
+        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY,
+            "No License found for Dependency: " + dependency.getName());
+    }
+
+    private static void createIssue(SensorContext context, Dependency dependency, String rule, String message)
+    {
         NewIssue issue = context
             .newIssue()
-            .forRule(RuleKey.of(getRepoKey(dependency), LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
-        NewIssueLocation issueLocation = dependency.getInputComponent() != null
-            ? issue.newLocation().on(dependency.getInputComponent()).at(dependency.getTextRange())
-            : issue.newLocation().on(context.project());
-        issue.at(issueLocation.message("No License found for Dependency: " + dependency.getName()));
-        issue.save();
+            .forRule(RuleKey.of(getRepoKey(dependency), rule));
+
+        NewIssueLocation location = issue.newLocation().on(dependency.getInputComponent());
+        if (dependency.getTextRange() != null)
+        {
+            location = location.at(dependency.getTextRange());
+        }
+
+        issue.at(location.message(message)).save();
     }
 
     private static String getRepoKey(Dependency dependency)

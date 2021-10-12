@@ -2,18 +2,12 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.LANG_JAVA;
 
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
 
 import org.sonar.api.batch.fs.InputComponent;
@@ -166,45 +160,6 @@ public class Dependency implements Comparable<Dependency>
         }
 
         return this.name.compareTo(o.name);
-    }
-
-    public static List<Dependency> fromString(String serializedDependencyString)
-    {
-        List<Dependency> dependencies = new ArrayList<>();
-
-        if (serializedDependencyString != null)
-        {
-            if (serializedDependencyString.startsWith("["))
-            {
-                try (JsonReader jsonReader = Json.createReader(new StringReader(serializedDependencyString)))
-                {
-                    JsonArray dependenciesJson = jsonReader.readArray();
-                    for (int i = 0; i < dependenciesJson.size(); i++)
-                    {
-                        JsonObject dependencyJson = dependenciesJson.getJsonObject(i);
-                        dependencies.add(
-                            new Dependency(dependencyJson.getString("name"), dependencyJson.getString("version"),
-                                dependencyJson.getString("license"), dependencyJson.getString("lang", LANG_JAVA)));
-                    }
-                }
-            }
-            else
-            {
-                // deprecated - remove with later release
-                String[] parts = serializedDependencyString.split(";");
-
-                for (String dependencyString : parts)
-                {
-                    String[] subParts = dependencyString.split("~");
-                    String name = subParts.length > 0 ? subParts[0] : null;
-                    String version = subParts.length > 1 ? subParts[1] : null;
-                    String license = subParts.length > 2 ? subParts[2] : null;
-                    dependencies.add(new Dependency(name, version, license, LANG_JAVA));
-                }
-            }
-        }
-
-        return dependencies;
     }
 
     public static String createString(Collection<Dependency> dependencies)

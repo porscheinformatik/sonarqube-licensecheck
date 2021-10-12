@@ -57,6 +57,7 @@ public class GradleDependencyScanner implements Scanner
         return readLicenseDetailsJson(licenseDetailsJsonFile)
             .stream()
             .map(d -> matchLicense(defaultLicenseMap, d))
+            .peek(d -> d.setInputComponent(context.module()))
             .collect(Collectors.toSet());
     }
 

@@ -56,29 +56,17 @@ public class MavenDependencyScanner implements Scanner
         FileSystem fs = context.fileSystem();
         FilePredicate pomXmlPredicate = fs.predicates().matchesPathPattern("**/pom.xml");
 
-        HashSet<Dependency> allDependencies = new HashSet<>();
+        Set<Dependency> allDependencies = new HashSet<>();
 
         for (InputFile pomXml : fs.inputFiles(pomXmlPredicate))
         {
-            context.markForPublishing(pomXml);
             LOGGER.info("Scanning for Maven dependencies (POM: {})", pomXml.uri());
             try (Stream<Dependency> dependencies = readDependencyList(new File(pomXml.uri()), settings))
             {
                 dependencies
                     .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
-                    .map(dependency -> 
-                    {
-                        dependency.setInputComponent(pomXml);
-                        dependency.setTextRange(pomXml.newRange(1, 0, pomXml.lines() - 1, 0));
-                        return dependency;
-                    })
-                    .forEach(dependency ->
-                    {
-                        if (!allDependencies.contains(dependency)) 
-                        {
-                            allDependencies.add(dependency);
-                        }
-                    });
+                    .peek(dependency -> dependency.setInputComponent(pomXml))
+                    .forEach(dependency -> allDependencies.add(dependency));
             }
         }
 
