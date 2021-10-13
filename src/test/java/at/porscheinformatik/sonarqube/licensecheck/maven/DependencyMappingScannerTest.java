@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -17,6 +18,9 @@ import java.util.regex.Pattern;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.SensorContext;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
@@ -106,9 +110,26 @@ public class DependencyMappingScannerTest
         }
     }
 
-    private SensorContext createContext(File moduleDir) 
+    private SensorContext createContext(File moduleDir)
     {
         SensorContext context = mock(SensorContext.class);
+        InputFile pomXml = mock(InputFile.class);
+        when(pomXml.language()).thenReturn("xml");
+        when(pomXml.filename()).thenReturn("pom.xml");
+        when(pomXml.uri()).thenReturn(new File(moduleDir, "pom.xml").toURI());
+        when(pomXml.relativePath()).thenReturn("/pom.xml");
+        when(pomXml.type()).thenReturn(InputFile.Type.MAIN);
+        try
+        {
+            when(pomXml.inputStream()).thenAnswer(i -> new FileInputStream(new File(moduleDir, "pom.xml")));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        FileSystem fileSystem = new DefaultFileSystem(moduleDir.toPath()).add(pomXml);
+        when(context.fileSystem()).thenReturn(fileSystem);
+
         return context;
     }
 

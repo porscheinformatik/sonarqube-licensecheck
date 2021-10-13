@@ -68,7 +68,9 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "MIT")), context);
+        Dependency thing = new Dependency("thing", "1.0", "MIT");
+        thing.setInputComponent(context.project());
+        validateLicenses.validateLicenses(deps(thing), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY));
@@ -127,8 +129,10 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
+        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND MIT)");
+        thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(
-            deps(new Dependency("another", "2.0", "LGPL"), new Dependency("thing", "1.0", "(Apache-2.0 AND MIT)")),
+            deps(new Dependency("another", "2.0", "LGPL"), thing),
             context);
 
         verify(context).newIssue();
@@ -142,7 +146,9 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)")), context);
+        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)");
+        thing.setInputComponent(context.project());
+        validateLicenses.validateLicenses(deps(thing), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
@@ -167,7 +173,9 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", null)), context);
+        Dependency thing = new Dependency("thing", "1.0", null);
+        thing.setInputComponent(context.project());
+        validateLicenses.validateLicenses(deps(thing), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));
@@ -180,7 +188,9 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        validateLicenses.validateLicenses(deps(new Dependency("thing", "1.0", "Mamamia")), context);
+        Dependency thing = new Dependency("thing", "1.0", "Mamamia");
+        thing.setInputComponent(context.project());
+        validateLicenses.validateLicenses(deps(thing), context);
 
         verify(context).newIssue();
         assertThat(issue.toString(), containsString(LicenseCheckRulesDefinition.RULE_UNLISTED_KEY));

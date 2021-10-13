@@ -1,19 +1,22 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.hamcrest.MatcherAssert.*;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Set;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.sensor.SensorContext;
 
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
@@ -26,8 +29,20 @@ public class PackageJsonDependencyScannerTest
     private SensorContext createContext(File folder)
     {
         SensorContext context = mock(SensorContext.class);
-        FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.baseDir()).thenReturn(folder);
+        InputFile packageJson = mock(InputFile.class);
+        when(packageJson.language()).thenReturn("json");
+        when(packageJson.filename()).thenReturn("package.json");
+        when(packageJson.relativePath()).thenReturn("/package.json");
+        when(packageJson.type()).thenReturn(InputFile.Type.MAIN);
+        try
+        {
+            when(packageJson.inputStream()).thenAnswer(i -> new FileInputStream(new File(folder, "package.json")));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+        FileSystem fileSystem = new DefaultFileSystem(folder.toPath()).add(packageJson);
         when(context.fileSystem()).thenReturn(fileSystem);
         return context;
     }
