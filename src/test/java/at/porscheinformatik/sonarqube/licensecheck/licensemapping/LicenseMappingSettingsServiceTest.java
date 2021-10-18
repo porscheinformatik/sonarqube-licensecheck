@@ -3,6 +3,7 @@ package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_MAPPING;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +37,8 @@ public class LicenseMappingSettingsServiceTest
     public void init()
     {
         licenseMappingSettingsService.init();
+
+        verify(persistentSettings, atLeastOnce()).saveProperty(anyString(), anyString());
     }
 
     @Test
