@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +14,10 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import org.sonar.api.batch.fs.FilePredicate;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -37,26 +40,27 @@ public class PackageJsonDependencyScanner implements Scanner
     }
 
     @Override
-    public Set<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(SensorContext context)
     {
-        File packageJsonFile = new File(moduleDir, "package.json");
+        FileSystem fs = context.fileSystem();
+        FilePredicate packageJsonPredicate = fs.predicates().matchesPathPattern("**/package.json");
 
-        if (!packageJsonFile.exists())
+        Set<Dependency> allDependencies = new HashSet<>();
+
+        for (InputFile packageJsonFile : fs.inputFiles(packageJsonPredicate))
         {
-            LOGGER.info("No package.json file found in {} - skipping NPM dependency scan", moduleDir.getPath());
-            return Collections.emptySet();
+            LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
+            allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
         }
 
-        LOGGER.info("Scanning for NPM dependencies");
-
-        return dependencyParser(moduleDir, packageJsonFile);
+        return allDependencies;
     }
 
-    private Set<Dependency> dependencyParser(File baseDir, File packageJsonFile)
+    private Set<Dependency> dependencyParser(File baseDir, InputFile packageJsonFile)
     {
         Set<Dependency> dependencies = new HashSet<>();
 
-        try (InputStream fis = new FileInputStream(packageJsonFile);
+        try (InputStream fis = packageJsonFile.inputStream();
             JsonReader jsonReader = Json.createReader(fis))
         {
             JsonObject packageJson = jsonReader.readObject();
@@ -65,6 +69,7 @@ public class PackageJsonDependencyScanner implements Scanner
             if (packageJsonDependencies != null)
             {
                 scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+                dependencies.forEach(dependency -> dependency.setInputComponent(packageJsonFile));
             }
         }
         catch (IOException e)

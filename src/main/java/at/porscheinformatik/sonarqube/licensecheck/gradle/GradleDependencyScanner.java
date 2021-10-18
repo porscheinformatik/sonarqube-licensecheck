@@ -17,6 +17,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -37,8 +38,10 @@ public class GradleDependencyScanner implements Scanner
     }
 
     @Override
-    public Set<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(SensorContext context)
     {
+        File moduleDir = context.fileSystem().baseDir();
+
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
         File licenseDetailsJsonFile = new File(moduleDir, "build" + File.separator + "reports" + File.separator
@@ -54,6 +57,7 @@ public class GradleDependencyScanner implements Scanner
         return readLicenseDetailsJson(licenseDetailsJsonFile)
             .stream()
             .map(d -> matchLicense(defaultLicenseMap, d))
+            .peek(d -> d.setInputComponent(context.module()))
             .collect(Collectors.toSet());
     }
 

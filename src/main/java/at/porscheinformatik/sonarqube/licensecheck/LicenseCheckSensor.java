@@ -130,7 +130,7 @@ public class LicenseCheckSensor implements Sensor
 
         for (Scanner scanner : scanners)
         {
-            dependencies.addAll(scanner.scan(fs.baseDir()));
+            dependencies.addAll(scanner.scan(context));
         }
         InputProject project = context.project();
         Set<Dependency> validatedDependencies = validateLicenses.validateLicenses(dependencies, context);

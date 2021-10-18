@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +14,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.maven.model.License;
@@ -24,6 +24,10 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonar.api.batch.fs.FilePredicate;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -45,27 +49,31 @@ public class MavenDependencyScanner implements Scanner
     }
 
     @Override
-    public Set<Dependency> scan(File moduleDir)
+    public Set<Dependency> scan(SensorContext context)
     {
-        if (!new File(moduleDir, "pom.xml").exists())
-        {
-            LOGGER.info("No pom.xml file found in {} - skipping Maven dependency scan", moduleDir.getPath());
-            return Collections.emptySet();
-        }
-
-        LOGGER.info("Scanning for Maven dependencies");
-
         MavenSettings settings = getSettingsFromCommandLineArgs();
 
-        try (Stream<Dependency> dependencies = readDependencyList(moduleDir, settings))
+        FileSystem fs = context.fileSystem();
+        FilePredicate pomXmlPredicate = fs.predicates().matchesPathPattern("**/pom.xml");
+
+        Set<Dependency> allDependencies = new HashSet<>();
+
+        for (InputFile pomXml : fs.inputFiles(pomXmlPredicate))
         {
-            return dependencies
-                .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
-                .collect(Collectors.toSet());
+            LOGGER.info("Scanning for Maven dependencies (POM: {})", pomXml.uri());
+            try (Stream<Dependency> dependencies = readDependencyList(new File(pomXml.uri()), settings))
+            {
+                dependencies
+                    .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
+                    .peek(dependency -> dependency.setInputComponent(pomXml))
+                    .forEach(dependency -> allDependencies.add(dependency));
+            }
         }
+
+        return allDependencies;
     }
 
-    private static Stream<Dependency> readDependencyList(File moduleDir, MavenSettings settings)
+    private static Stream<Dependency> readDependencyList(File pomXml, MavenSettings settings)
     {
         Path tempFile = createTempFile();
         if (tempFile == null)
@@ -75,7 +83,7 @@ public class MavenDependencyScanner implements Scanner
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setRecursive(false);
-        request.setPomFile(new File(moduleDir, "pom.xml"));
+        request.setPomFile(pomXml);
         request.setGoals(Collections.singletonList("dependency:list"));
         if (settings.userSettings != null)
         {
