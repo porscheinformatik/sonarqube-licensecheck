@@ -19,8 +19,8 @@ import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
@@ -55,14 +55,14 @@ public class LicenseCheckSensor implements Sensor
             sensorContext.<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
 
     private static void saveLicenses(SensorContext sensorContext, Set<License> licenses)
     {
-        LOGGER.debug("Saving licenses for module {}: {}", sensorContext.module(), licenses);
+        LOGGER.debug("Saving licenses for project {}: {}", sensorContext.project(), licenses);
 
         if (!licenses.isEmpty())
         {
@@ -70,7 +70,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.LICENSE)
                 .withValue(License.createJsonString(licenses))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
@@ -80,33 +80,33 @@ public class LicenseCheckSensor implements Sensor
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES)
             .withValue(licenses.size())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
             .withValue((int) licenses.stream().filter(License::getAllowed).count())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES)
             .withValue(dependencies.size())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_FORBIDDEN_LICENSE)
             .withValue(
                 (int) dependencies.stream().filter(d -> Dependency.Status.Forbidden.equals(d.getStatus())).count())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_UNKNOWN_LICENSE)
             .withValue(
                 (int) dependencies.stream().filter(d -> Dependency.Status.Unknown.equals(d.getStatus())).count())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
     }
 
@@ -146,12 +146,6 @@ public class LicenseCheckSensor implements Sensor
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
             saveMeasures(context, AGGREGATED_LICENSES, AGGREGATED_DEPENDENCIES);
-        }
-        else
-        {
-            saveDependencies(context, validatedDependencies);
-            saveLicenses(context, usedLicenses);
-            saveMeasures(context, usedLicenses, validatedDependencies);
         }
     }
 }

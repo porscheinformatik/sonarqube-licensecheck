@@ -49,6 +49,8 @@ public class PackageJsonDependencyScanner implements Scanner
 
         for (InputFile packageJsonFile : fs.inputFiles(packageJsonPredicate))
         {
+            context.markForPublishing(packageJsonFile);
+
             LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
             allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
         }
@@ -69,7 +71,11 @@ public class PackageJsonDependencyScanner implements Scanner
             if (packageJsonDependencies != null)
             {
                 scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
-                dependencies.forEach(dependency -> dependency.setInputComponent(packageJsonFile));
+                dependencies.forEach(dependency ->
+                {
+                    dependency.setInputComponent(packageJsonFile);
+                    dependency.setTextRange(packageJsonFile.newRange(1, 0, packageJsonFile.lines(), 0));
+                });
             }
         }
         catch (IOException e)
