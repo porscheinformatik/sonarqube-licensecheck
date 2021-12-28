@@ -19,6 +19,9 @@ This plugin is compatible:
  * 2.x version with SonarQube >= 6.5 and < 7.
  * 3.x version with SonarQube >= 7.9 LTS and < 8.
  * 4.x version with SonarQube 8.x
+ * 5.x version with 8.9 LTS and <= 9.2.x
+
+For all changes see [CHANGELOG.md](CHANGELOG.md)
 
 ## Installation
 
