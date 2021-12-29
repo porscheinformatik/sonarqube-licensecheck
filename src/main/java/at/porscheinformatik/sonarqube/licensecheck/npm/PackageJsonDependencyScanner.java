@@ -29,6 +29,7 @@ import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
+    public static final String LICENSE = "license";
 
     private final LicenseMappingService licenseMappingService;
     private final boolean resolveTransitiveDeps;
@@ -113,16 +114,16 @@ public class PackageJsonDependencyScanner implements Scanner
                 if (packageJson != null)
                 {
                     String license = "";
-                    if (packageJson.containsKey("license"))
+                    if (packageJson.containsKey(LICENSE))
                     {
-                        final Object licenceObj = packageJson.get("license");
+                        final Object licenceObj = packageJson.get(LICENSE);
                         if (licenceObj instanceof JsonObject)
                         {
                             license = ((JsonObject) licenceObj).getString("type", "");
                         }
                         else
                         {
-                            license = packageJson.getString("license", "");
+                            license = packageJson.getString(LICENSE, "");
                         }
                     }
                     else if (packageJson.containsKey("licenses"))
