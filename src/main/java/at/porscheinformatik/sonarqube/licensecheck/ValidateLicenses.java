@@ -24,6 +24,8 @@ import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 public class ValidateLicenses
 {
     private static final Logger LOGGER = Loggers.get(ValidateLicenses.class);
+    public static final String AND = " AND ";
+    public static final String OR = " OR ";
 
     private final LicenseService licenseService;
     private final DependencyMappingService dependencyMappingService;
@@ -52,11 +54,11 @@ public class ValidateLicenses
 
             if (!isLicensesValid(context, licenses, dependency))
             {
-                dependency.setStatus(Dependency.Status.Unknown);
+                dependency.setStatus(Dependency.Status.UNKNOWN);
             }
             else
             {
-                dependency.setStatus(Dependency.Status.Allowed);
+                dependency.setStatus(Dependency.Status.ALLOWED);
             }
         }
         return dependencies;
@@ -135,7 +137,7 @@ public class ValidateLicenses
             .filter(l -> dependency.getLicense().contains(l.getIdentifier()))
             .collect(Collectors.toList());
 
-        String[] andLicenses = dependency.getLicense().replace("(", "").replace(")", "").split(" AND ");
+        String[] andLicenses = dependency.getLicense().replace("(", "").replace(")", "").split(AND);
 
         if (licensesContainingDependency.size() != andLicenses.length)
         {
@@ -147,7 +149,7 @@ public class ValidateLicenses
 
             for (License element : licensesContainingDependency)
             {
-                if (!element.getAllowed())
+                if (Boolean.FALSE.equals(element.getAllowed()))
                 {
                     notAllowedLicense.append(element.getName()).append(" ");
                 }
@@ -160,12 +162,12 @@ public class ValidateLicenses
 
     private static boolean checkSpdxLicense(String spdxLicenseString, List<License> licenses)
     {
-        if (spdxLicenseString.contains(" OR "))
+        if (spdxLicenseString.contains(OR))
         {
             return checkSpdxLicenseWithOr(spdxLicenseString, licenses);
         }
 
-        else if (spdxLicenseString.contains(" AND "))
+        else if (spdxLicenseString.contains(AND))
         {
             return checkSpdxLicenseWithAnd(spdxLicenseString, licenses);
         }
@@ -178,7 +180,7 @@ public class ValidateLicenses
 
     private static boolean checkSpdxLicenseWithOr(String spdxLicenseString, List<License> licenses)
     {
-        String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" OR ");
+        String[] orLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(OR);
         return licenses
             .stream()
             .filter(l -> ValidateLicenses.contains(orLicenses, l.getIdentifier()))
@@ -187,7 +189,7 @@ public class ValidateLicenses
 
     private static boolean checkSpdxLicenseWithAnd(String spdxLicenseString, List<License> licenses)
     {
-        String[] andLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(" AND ");
+        String[] andLicenses = spdxLicenseString.replace("(", "").replace(")", "").split(AND);
         long count = andLicenses.length;
         List<License> foundLicenses =
             licenses.stream()
@@ -214,7 +216,7 @@ public class ValidateLicenses
     {
         LOGGER.info("Dependency " + dependency.getName() + " uses a not allowed license " + notAllowedLicense);
 
-        dependency.setStatus(Dependency.Status.Forbidden);
+        dependency.setStatus(Dependency.Status.FORBIDDEN);
 
         createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY,
             "Dependency " + dependency.getName() + " uses a not allowed license " + dependency.getLicense());
