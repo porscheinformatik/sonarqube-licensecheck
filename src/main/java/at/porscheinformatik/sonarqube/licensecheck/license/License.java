@@ -23,6 +23,7 @@ public class License implements Comparable<License>
     public static final String FIELD_NAME = "name";
     public static final String FIELD_ID = "id";
     public static final String FIELD_ALLOWED = "allowed";
+    public static final String STATUS = "status";
 
     private String name;
     private String identifier;
@@ -94,7 +95,7 @@ public class License implements Comparable<License>
                 for (JsonObject licenseJson : licensesJson.getValuesAs(JsonObject.class))
                 {
                     licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
-                        licenseJson.getString("status")));
+                        licenseJson.getString(STATUS)));
                 }
             }
             return licenses;
@@ -153,7 +154,7 @@ public class License implements Comparable<License>
             {
                 JsonObject value = (JsonObject) licenseJson.getValue();
                 licenses.add(new License(value.getString("name"), licenseJson.getKey(),
-                    value.getString("status")));
+                    value.getString(STATUS)));
             }
         }
 
@@ -172,7 +173,7 @@ public class License implements Comparable<License>
             generator.writeStartObject();
             generator.write("name", license.getName());
             generator.write("identifier", license.getIdentifier());
-            generator.write("status", license.getAllowed().toString());
+            generator.write(STATUS, license.getAllowed().toString());
             generator.writeEnd();
         }
         generator.writeEnd();
