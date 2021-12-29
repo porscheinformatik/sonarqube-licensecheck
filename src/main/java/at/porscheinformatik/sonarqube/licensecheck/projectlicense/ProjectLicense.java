@@ -48,6 +48,11 @@ public class ProjectLicense implements Comparable<ProjectLicense>
         return allowed;
     }
 
+    /**
+     *
+     * @deprecated will be removed in future release
+     *
+     */
     @Deprecated
     public static List<ProjectLicense> fromString(String projectLicensesString)
     {
@@ -60,8 +65,8 @@ public class ProjectLicense implements Comparable<ProjectLicense>
             {
                 JsonObject projectLicenseJson = projectLicensesJson.getJsonObject(i);
                 projectLicenses.add(new ProjectLicense(
-                    projectLicenseJson.getString("projectKey"),
-                    projectLicenseJson.getString("license"),
+                    projectLicenseJson.getString(FIELD_PROJECT_KEY),
+                    projectLicenseJson.getString(FIELD_LICENSE),
                     projectLicenseJson.getString("status")));
             }
         }
