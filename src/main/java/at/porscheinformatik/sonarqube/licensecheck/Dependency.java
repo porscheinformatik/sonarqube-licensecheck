@@ -186,8 +186,8 @@ public class Dependency implements Comparable<Dependency>
 
     public enum Status
     {
-        Allowed,
-        Forbidden,
-        Unknown
+        ALLOWED,
+        FORBIDDEN,
+        UNKNOWN
     }
 }
