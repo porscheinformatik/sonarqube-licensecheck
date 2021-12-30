@@ -15,6 +15,6 @@ public class LicenseCheckPageDefinitionTest
         Context context = new Context();
         definition.define(context);
 
-        assertThat(context.getPages().size(), is(2));
+        assertThat(context.getPages().size(), is(1));
     }
 }
