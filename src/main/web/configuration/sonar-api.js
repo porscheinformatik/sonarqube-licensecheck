@@ -2,7 +2,7 @@ import {KEYS} from "../property_keys";
 
 export function loadProjects() {
   return window.SonarRequest
-    .getJSON('/api/components/search?qualifiers=TRK&pageSize=500') // TODO > 500 projects?
+    .getJSON('/api/components/search?qualifiers=TRK&ps=500') // TODO > 500 projects?
     .then(response => response.components);
 }
 
