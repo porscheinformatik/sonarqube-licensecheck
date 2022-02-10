@@ -16,7 +16,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -25,6 +24,7 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.utils.LicenseUtils;
 
 public class GradleDependencyScanner implements Scanner
 {
@@ -56,7 +56,7 @@ public class GradleDependencyScanner implements Scanner
 
         return readLicenseDetailsJson(licenseDetailsJsonFile)
             .stream()
-            .map(d -> matchLicense(defaultLicenseMap, d))
+            .map(d -> LicenseUtils.matchLicense(defaultLicenseMap, d))
             .peek(d -> d.setInputComponent(context.module()))
             .collect(Collectors.toSet());
     }
@@ -122,24 +122,5 @@ public class GradleDependencyScanner implements Scanner
             }
         }
         return moduleLicense;
-    }
-
-    private Dependency matchLicense(Map<Pattern, String> licenseMap, Dependency dependency)
-    {
-        if (StringUtils.isBlank(dependency.getLicense()))
-        {
-            LOGGER.info("Dependency '{}' has no license set.", dependency.getName());
-            return dependency;
-        }
-
-        for (Map.Entry<Pattern, String> entry : licenseMap.entrySet())
-        {
-            if (entry.getKey().matcher(dependency.getLicense()).matches())
-            {
-                dependency.setLicense(entry.getValue());
-                break;
-            }
-        }
-        return dependency;
     }
 }

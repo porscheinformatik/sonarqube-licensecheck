@@ -108,6 +108,18 @@ Note: Please check above link for instructions or follow as mentioned below
     > gradle sonarqube
 
 
+### IOS (Cocoapods, Carthage & Swift Package Manager)
+
+Use custom LicenseFinder ruby gem <http:>https://github.com/etiennecadicidean/LicenseFinder</http:> to generate license report for ios
+projects
+
+``` 
+mkdir -p build/reports/license_finder/
+license_finder report -p --format json -q  > build/reports/license_finder/swift-license-details.json
+```
+
+Then run sonarqube analysis
+
 ## Features
 
 ### Analysis
@@ -118,6 +130,7 @@ Currently supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
 * NPM package.json files - all dependencies (except "devDependencies") are checked
   * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
+* Swift dependencies (Reports must be generated with `License_finder tool`)
 
 ### Project Dashboard
 
