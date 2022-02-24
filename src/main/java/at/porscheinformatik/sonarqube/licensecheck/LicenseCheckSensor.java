@@ -3,12 +3,12 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
 
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -28,15 +28,13 @@ public class LicenseCheckSensor implements Sensor
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
     private static final Set<License> AGGREGATED_LICENSES = ConcurrentHashMap.newKeySet();
     private static final Set<Dependency> AGGREGATED_DEPENDENCIES = ConcurrentHashMap.newKeySet();
-    private final FileSystem fs;
     private final Configuration configuration;
     private final ValidateLicenses validateLicenses;
     private final Scanner[] scanners;
 
-    public LicenseCheckSensor(FileSystem fs, Configuration configuration, ValidateLicenses validateLicenses,
+    public LicenseCheckSensor(Configuration configuration, ValidateLicenses validateLicenses,
         LicenseMappingService licenseMappingService)
     {
-        this.fs = fs;
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
@@ -113,8 +111,11 @@ public class LicenseCheckSensor implements Sensor
     @Override
     public void describe(SensorDescriptor descriptor)
     {
-        descriptor.name("License Check")
-            .createIssuesForRuleRepositories(RULE_REPO_KEY, RULE_REPO_KEY_JS, RULE_REPO_KEY_GROOVY);
+        descriptor.name("License Check").createIssuesForRuleRepositories(
+            RULE_REPO_KEY,
+            RULE_REPO_KEY_JS,
+            RULE_REPO_KEY_GROOVY,
+            RULE_REPO_KEY_KOTLIN);
     }
 
     @Override
