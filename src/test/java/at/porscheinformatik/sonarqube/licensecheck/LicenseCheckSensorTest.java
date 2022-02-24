@@ -15,7 +15,6 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -36,7 +35,7 @@ public class LicenseCheckSensorTest
     public void describe()
     {
         Configuration configuration = createConfiguration();
-        LicenseCheckSensor sensor = new LicenseCheckSensor(null, configuration, null, null);
+        LicenseCheckSensor sensor = new LicenseCheckSensor(configuration, null, null);
         SensorDescriptor descriptor = mock(SensorDescriptor.class);
         when(descriptor.name(anyString())).thenReturn(descriptor);
 
@@ -49,13 +48,12 @@ public class LicenseCheckSensorTest
     @Test
     public void execute() throws IllegalAccessException
     {
-        FileSystem fs = mock(FileSystem.class);
         Configuration configuration = createConfiguration();
         ValidateLicenses validateLicenses = mock(ValidateLicenses.class);
         when(validateLicenses.validateLicenses(any(), any())).thenReturn(DEPENDENCIES);
         when(validateLicenses.getUsedLicenses(any(), any())).thenReturn(LICENSES);
         LicenseMappingService licenseMappingService = mock(LicenseMappingService.class);
-        LicenseCheckSensor sensor = new LicenseCheckSensor(fs, configuration, validateLicenses, licenseMappingService);
+        LicenseCheckSensor sensor = new LicenseCheckSensor(configuration, validateLicenses, licenseMappingService);
         Scanner mockScanner = mock(Scanner.class);
         when(mockScanner.scan(any())).thenReturn(DEPENDENCIES);
         Scanner[] scanners = new Scanner[]{mockScanner};
