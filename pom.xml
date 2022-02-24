@@ -4,7 +4,7 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.0.1</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
