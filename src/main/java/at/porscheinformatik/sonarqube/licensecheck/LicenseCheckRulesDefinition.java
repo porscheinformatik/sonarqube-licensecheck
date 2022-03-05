@@ -10,11 +10,13 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
 {
     public static final String LANG_JAVA = "java";
     public static final String LANG_JS = "js";
+    public static final String LANG_TS = "ts";
     public static final String LANG_GROOVY = "grvy";
     public static final String LANG_KOTLIN = "kotlin";
 
     public static final String RULE_REPO_KEY = "licensecheck";
     public static final String RULE_REPO_KEY_JS = "licensecheck-js";
+    public static final String RULE_REPO_KEY_TS = "licensecheck-ts";
     public static final String RULE_REPO_KEY_GROOVY = "licensecheck-groovy";
     public static final String RULE_REPO_KEY_KOTLIN = "licensecheck-kotlin";
 
@@ -27,6 +29,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
         NewRepository[] repos = new NewRepository[]{
             context.createRepository(RULE_REPO_KEY, LANG_JAVA),
             context.createRepository(RULE_REPO_KEY_JS, LANG_JS),
+            context.createRepository(RULE_REPO_KEY_TS, LANG_TS),
             context.createRepository(RULE_REPO_KEY_GROOVY, LANG_GROOVY),
             context.createRepository(RULE_REPO_KEY_KOTLIN, LANG_KOTLIN),
         };

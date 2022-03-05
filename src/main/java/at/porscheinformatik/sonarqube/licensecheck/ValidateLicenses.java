@@ -249,6 +249,8 @@ public class ValidateLicenses
         {
             case LicenseCheckRulesDefinition.LANG_JS:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+            case LicenseCheckRulesDefinition.LANG_TS:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
             case LicenseCheckRulesDefinition.LANG_GROOVY:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
             case LicenseCheckRulesDefinition.LANG_JAVA:
