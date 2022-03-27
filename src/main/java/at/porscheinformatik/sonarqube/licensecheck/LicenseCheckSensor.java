@@ -22,6 +22,7 @@ import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanne
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenLicenseScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
@@ -41,7 +42,9 @@ public class LicenseCheckSensor implements Sensor
         this.scanners = new Scanner[]{
             new PackageJsonDependencyScanner(licenseMappingService,
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
-            new MavenDependencyScanner(licenseMappingService),
+            configuration.getBoolean(LicenseCheckPropertyKeys.MAVEN_REUSE_LICENSE_XML).orElse(false)
+                ? new MavenLicenseScanner(licenseMappingService) // assume license:download-licenses
+                : new MavenDependencyScanner(licenseMappingService), // use dependency:list
             new GradleDependencyScanner(licenseMappingService)};
     }
 
