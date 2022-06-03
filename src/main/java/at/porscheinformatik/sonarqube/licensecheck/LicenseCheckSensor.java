@@ -84,7 +84,7 @@ public class LicenseCheckSensor implements Sensor
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
-            .withValue((int) licenses.stream().filter(License::getAllowed).count())
+            .withValue((int) licenses.stream().filter((License::getForbidden)).count())
             .on(sensorContext.project())
             .save();
 
