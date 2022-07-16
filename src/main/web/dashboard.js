@@ -17,9 +17,9 @@ window.registerExtension('licensecheck/dashboard', function (options) {
     },
     created() {
       window.SonarRequest
-        .getJSON(`/api/measures/search?projectKeys=${this.component.key}&metricKeys=licensecheck.license,licensecheck.dependency`)
+        .getJSON(`/api/measures/component?component=${this.component.key}&branch=${options.branchLike.name}&metricKeys=licensecheck.license,licensecheck.dependency`)
         .then(response => {
-          response.measures.forEach(measure => {
+          response.component.measures.forEach(measure => {
             if (measure.metric === 'licensecheck.license') {
               this.licenses = JSON.parse(measure.value);
             } else if (measure.metric === 'licensecheck.dependency') {
