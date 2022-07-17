@@ -3,6 +3,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
+    configuration: './src/main/web/configuration.js',
     dashboard: './src/main/web/dashboard.js'
   },
   output: {
