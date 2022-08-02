@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0 not released yet](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.1...master) - yyyy-mm-dd
+- Fix: rule repository for TypeScript was not registered (#315)
+
+## [5.0.1](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.0..v5.0.1) - 2022-02-24
+
+### Bug Fixes
+- Fix: rule repository for Kotlin was not registered (#311, #310)
+- Fix: project licenses page call (#291, #296)
+
 ## [5.0.0](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v4.0.2..v5.0.0) - 2021-12-20
 
 ### BREAKING CHANGES
@@ -11,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Features
 - Create issues on relevant dependency files [#285]
-- License and dependecy mapping now available for all dependency mechanisms (Groovy, Maven, NPM). Dependency mapping has now an attribute to toggle forced mapping. [#257]
+- License and dependency mapping now available for all dependency mechanisms (Groovy, Maven, NPM). Dependency mapping has now an attribute to toggle forced mapping. [#257]
 - Support for JavaScript and Groovy projects (without any Java files) [#247, #241, #182]
 
 ### Bug Fixes
