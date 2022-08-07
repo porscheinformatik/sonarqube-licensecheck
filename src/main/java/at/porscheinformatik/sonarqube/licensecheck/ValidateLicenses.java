@@ -253,6 +253,8 @@ public class ValidateLicenses
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
             case LicenseCheckRulesDefinition.LANG_GROOVY:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+            case LicenseCheckRulesDefinition.LANG_CS:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_CS;
             case LicenseCheckRulesDefinition.LANG_JAVA:
             default:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;

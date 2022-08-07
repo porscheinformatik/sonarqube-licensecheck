@@ -107,6 +107,11 @@ Note: Please check above link for instructions or follow as mentioned below
 
     > gradle sonarqube
 
+### NuGet
+
+NuGet uses the generated output from https://github.com/tomchavakis/nuget-license. Use nuget-license in your build process to create a `licenses.json` file and include it anywhere within the files scanned by SonarQube.
+
+The new SonarQube license rules are only set against C# (not VB.NET).
 
 ## Features
 

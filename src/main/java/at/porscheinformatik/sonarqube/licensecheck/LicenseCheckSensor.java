@@ -5,6 +5,7 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefin
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_CS;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,6 +24,7 @@ import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.nugetlicense.NugetLicenseDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
 {
@@ -38,11 +40,14 @@ public class LicenseCheckSensor implements Sensor
     {
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
-        this.scanners = new Scanner[]{
+        this.scanners = new Scanner[]
+        {
             new PackageJsonDependencyScanner(licenseMappingService,
                 configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS).orElse(false)),
             new MavenDependencyScanner(licenseMappingService),
-            new GradleDependencyScanner(licenseMappingService)};
+            new GradleDependencyScanner(licenseMappingService),
+            new NugetLicenseDependencyScanner(licenseMappingService)
+        };
     }
 
     private static void saveDependencies(SensorContext sensorContext, Set<Dependency> dependencies)
@@ -117,7 +122,8 @@ public class LicenseCheckSensor implements Sensor
             RULE_REPO_KEY_JS,
             RULE_REPO_KEY_TS,
             RULE_REPO_KEY_GROOVY,
-            RULE_REPO_KEY_KOTLIN);
+            RULE_REPO_KEY_KOTLIN,
+            RULE_REPO_KEY_CS);
     }
 
     @Override

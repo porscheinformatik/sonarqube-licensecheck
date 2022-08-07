@@ -2,7 +2,7 @@
   <div class="boxed-group boxed-group-inner">
     <h3>Dependencies</h3>
     <table class="data zebra">
-      <caption>Here you see all project dependencies from Maven (including transitive) and NPM.</caption>
+      <caption>Here you see all project dependencies from Maven (including transitive), NPM and NuGet.</caption>
       <thead>
         <tr>
           <th v-for="dependency in columns" v-bind:key="dependency" v-on:click="sort(dependency)" scope="col"> {{dependency}} 
