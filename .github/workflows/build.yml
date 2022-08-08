@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: "**"
 
 jobs:
   build:
@@ -22,4 +22,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B clean
-          mvn -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+          mvn -B jacoco:prepare-agent install jacoco:report
+          mvn -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik sonar:sonar
