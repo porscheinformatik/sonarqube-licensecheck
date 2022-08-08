@@ -5,7 +5,7 @@ SonarQube License-Check
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/6ac787bb79b43e39c367/maintainability)](https://codeclimate.com/github/porscheinformatik/sonarqube-licensecheck/maintainability)
 
-This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects use dependencies with compliant licenses. All dependencies and licenses can be viewed per projects and exported to Excel XLS. This enables a simple governance of dependencies and licenses for the whole organization.
+This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects use dependencies with compliant licenses. All dependencies and licenses can be viewed per projects and exported to Excel 2003 XML Format. This enables a simple governance of dependencies and licenses for the whole organization.
 
 ## License
 
@@ -41,7 +41,9 @@ should look something like this:
 ## Configuration
 
 ## General Configuration
-After booting the SonarQube Server with the License-Check Plugin be found in the tab <b>Administration</b>.
+After booting the SonarQube Server with the License-Check Plugin be found in the tab <b>Administration</b> or also in the <b>Configuration -> LicenseCheck</b> drop down menu.
+
+### General Configuration via Administration Tab
 
 * Within the <b>General Settings</b> and <b>License Check</b> you find the settings for the plugin.
 * Within the general settings the plugin can be manually enabled or disabled. By default, it is enabled.
@@ -58,8 +60,43 @@ After booting the SonarQube Server with the License-Check Plugin be found in the
 
 ![License Configuration2](docs/Administration_General_Settings_License_Check_2.png)
 
+### General Configuration via License Menu
+
+Administration -> Configuration(dropdown) -> License Check
+
+![alternative License Configuration1](docs/1-nice-General%20Settings%20-%20Administration.png)
+
+* Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
+
+![alternative License Configuration2](docs/2-nice-License%20Check%20-%20Administration.png)
+
+![alternative License Configuration3](docs/3-nice-License%20Check%20-%20Administration.png)
+
+* Under "Project Licenses" you can allow and disallow licenses for a specific project.
+
+![alternative License Configuration4](docs/4-nice-License%20Check%20-%20Administration.png)
+
+![alternative License Configuration5](docs/5-nice-License%20Check%20-%20Administration.png)
+
+* Under "Dependency Mapping" you can map  a dependency name/key (with regex) to a license, e.g. `^asm:asm$` to "BSD-3-Clause"
+
+![alternative License Configuration6](docs/6-nice-License%20Check%20-%20Administration.png)
+
+![alternative License Configuration7](docs/7-nice-License%20Check%20-%20Administration.png)
+
+* Under "License Mappings" you can  map a license name (with regex) to a license, e.g. `.*Apache.*2.*` to "Apache-2.0".
+
+![alternative License Configuration8](docs/8-nice-License%20Check%20-%20Administration.png)
+
+![alternative License Configuration9](docs/9-nice-License%20Check%20-%20Administration.png)
+
+### General Configuration via SonarAPI
+Todo
+
+
+
 ## Activation rules in Quality Profile
-You have also to activate the new rules in a (new) quality profile, for each supported language (java, js, groovy, kotlin) And you have to use this profile for your project.
+You have also to activate the new rules in a (new) quality profile, for each supported language (Groovy, Kotlin, Java, JavaScript, TypeScript) And you have to use this profile for your project.
 
 <b>Step 1</b>
 
