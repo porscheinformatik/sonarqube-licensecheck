@@ -280,7 +280,8 @@ public class MavenDependencyScanner implements Scanner
             }
         }
 
-        LOGGER.info("No licenses match found for '{}'", licenseName);
+        LOGGER.info("No licenses match found for '{}' in dependency '{}:{}'", licenseName,
+            dependency.getName(), dependency.getVersion());
     }
 
     private static MavenSettings getSettingsFromCommandLineArgs()
