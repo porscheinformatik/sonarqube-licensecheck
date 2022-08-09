@@ -1,6 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.LANG_JAVA;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.*;
 
 import java.io.StringWriter;
 import java.util.Collection;
@@ -51,6 +51,19 @@ public class Dependency implements Comparable<Dependency>
     public String getVersion()
     {
         return version;
+    }
+
+    public String getNameWithVersion(){
+        switch (this.lang){
+            case LANG_JS:
+            case LANG_TS:
+                return this.name + "@" + this.version;
+            case LANG_JAVA:
+            case LANG_GROOVY:
+            case LANG_KOTLIN:
+            default:
+                return this.name + ":" + this.version;
+        }
     }
 
     public void setVersion(String version)
