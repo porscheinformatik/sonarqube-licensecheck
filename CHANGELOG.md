@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.1.0 not released yet](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.1...master) - yyyy-mm-dd
 - Fix: rule repository for TypeScript was not registered (#315)
+- Fix: show correct measures for branches and pull requests (#325)
 
 ## [5.0.1](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.0..v5.0.1) - 2022-02-24
 
