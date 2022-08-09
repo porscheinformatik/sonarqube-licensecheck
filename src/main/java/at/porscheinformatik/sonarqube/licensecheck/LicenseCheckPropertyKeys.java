@@ -38,6 +38,11 @@ public class LicenseCheckPropertyKeys
     public static final String NPM_RESOLVE_TRANSITIVE_DEPS = "licensecheck.npm.resolvetransitive";
 
     /**
+     * Config key to enable/disable dependency:list scanning for Maven
+     */
+    public static final String MAVEN_REUSE_LICENSE_XML = "licensechecks.maven.use-dependency-plugin";
+
+    /**
      * @deprecated replaced with {@link #LICENSE_SET}
      */
     @Deprecated

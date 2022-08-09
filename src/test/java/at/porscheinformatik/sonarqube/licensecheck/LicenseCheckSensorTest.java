@@ -82,6 +82,8 @@ public class LicenseCheckSensorTest
         Configuration configuration = mock(Configuration.class);
         when(configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS))
             .thenReturn(Optional.empty());
+        when(configuration.getBoolean(LicenseCheckPropertyKeys.MAVEN_REUSE_LICENSE_XML))
+            .thenReturn(Optional.empty());
         when(configuration.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY)).thenReturn(Optional.of(true));
         return configuration;
     }

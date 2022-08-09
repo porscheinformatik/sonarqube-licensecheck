@@ -146,6 +146,12 @@ public class LicenseCheckPlugin implements Plugin
                 .description("Scan transitive dependencies for NPM packages")
                 .type(PropertyType.BOOLEAN)
                 .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.MAVEN_REUSE_LICENSE_XML)
+                .category(LicenseCheckPropertyKeys.CATEGORY)
+                .name("Reuse licenses.xml")
+                .description("Reuse licenses.xml from already-executed license-maven-plugin:download-licenses instead of resolving dependencies via dependency:list goal")
+                .type(PropertyType.BOOLEAN)
+                .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .name("Activate")
