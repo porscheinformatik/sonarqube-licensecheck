@@ -16,10 +16,20 @@ window.registerExtension('licensecheck/dashboard', function (options) {
       }
     },
     created() {
+      let params = new URLSearchParams(window.location.search);
+      let request = request = {
+        component : options.component.key,
+        metricKeys : "licensecheck.license,licensecheck.dependency"
+      };
+      if (params.has("branch")) {
+        request.branch = params.get("branch");
+      } else if (params.has("pullRequest")) {
+        request.pullRequest = params.get("pullRequest");
+      }
       window.SonarRequest
-        .getJSON(`/api/measures/search?projectKeys=${this.component.key}&metricKeys=licensecheck.license,licensecheck.dependency`)
+        .getJSON("/api/measures/component", request)
         .then(response => {
-          response.measures.forEach(measure => {
+          response.component.measures.forEach(measure => {
             if (measure.metric === 'licensecheck.license') {
               this.licenses = JSON.parse(measure.value);
             } else if (measure.metric === 'licensecheck.dependency') {
