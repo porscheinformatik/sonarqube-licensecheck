@@ -145,6 +145,7 @@ public class LicenseCheckPlugin implements Plugin
                 .name("NPM Transitive Dependencies")
                 .description("Scan transitive dependencies for NPM packages")
                 .type(PropertyType.BOOLEAN)
+                .defaultValue("false")
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
