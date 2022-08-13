@@ -17,8 +17,6 @@ import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.config.PropertyFieldDefinition;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +24,6 @@ import java.util.List;
 public class LicenseCheckPlugin implements Plugin
 {
     private static final String LICENSE_ID_DESCRIPTION = "The identifier of the license (e.g. GPL-3.0)";
-
-    private static final Logger LOGGER = Loggers.get(LicenseCheckPlugin.class);
-
 
     @Override
     public void define(Context context)
