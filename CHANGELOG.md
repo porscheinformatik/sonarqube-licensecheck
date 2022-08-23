@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.1.0 not released yet](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.1...master) - yyyy-mm-dd
-- Fix: rule repository for TypeScript was not registered (#315)
-- Fix: show correct measures for branches and pull requests (#325)
+## [5.1.0](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.1...v5.1.0) - 2022-08-23
+
+### Bug Fixes
+- Rule repository for TypeScript was not registered (#315)
+- Show correct measures for branches and pull requests (#325)
+
+### Other Changes
+- Add defined order to settings (#342)
 
 ## [5.0.1](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.0.0..v5.0.1) - 2022-02-24
 
