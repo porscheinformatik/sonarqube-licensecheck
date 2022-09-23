@@ -99,7 +99,8 @@ public class ValidateLicenses
             if (StringUtils.isBlank(dependency.getLicense()))
             {
                 String matchString = dependencyMapping.getKey();
-                if (dependency.getName().matches(matchString))
+                if (dependency.getName().matches(matchString) ||
+                    dependency.getNameWithVersion().matches(matchString))
                 {
                     dependency.setLicense(dependencyMapping.getLicense());
                 }
