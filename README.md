@@ -41,7 +41,7 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
 
 This plugin is compatible:
 
- * 5.x version with 8.9 LTS and <= 9.2.x
+ * 5.x version with 8.9 LTS and <= 9.7.x
  * 4.x version with SonarQube 8.x
  * 3.x version with SonarQube >= 7.9 LTS and < 8.
  * 2.x version with SonarQube >= 6.5 and < 7.
