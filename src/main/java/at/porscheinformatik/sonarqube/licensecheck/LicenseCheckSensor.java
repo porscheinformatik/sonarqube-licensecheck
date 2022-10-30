@@ -1,15 +1,10 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
-
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -18,11 +13,11 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.*;
 
 public class LicenseCheckSensor implements Sensor
 {
