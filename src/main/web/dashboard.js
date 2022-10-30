@@ -17,7 +17,7 @@ window.registerExtension('licensecheck/dashboard', function (options) {
     },
     created() {
       let params = new URLSearchParams(window.location.search);
-      let request = request = {
+      let request = {
         component : options.component.key,
         metricKeys : "licensecheck.license,licensecheck.dependency"
       };
