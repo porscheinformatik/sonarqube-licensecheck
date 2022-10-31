@@ -1,28 +1,19 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
+import org.codehaus.plexus.util.StringUtils;
+
+import javax.json.*;
+import javax.json.stream.JsonGenerator;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeSet;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import javax.json.stream.JsonGenerator;
-
-import org.codehaus.plexus.util.StringUtils;
+import java.util.*;
 
 public class License implements Comparable<License>
 {
     public static final String FIELD_NAME = "name";
     public static final String FIELD_ID = "id";
     public static final String FIELD_ALLOWED = "allowed";
+    public static final String STATUS = "status";
 
     private String name;
     private String identifier;
@@ -94,7 +85,7 @@ public class License implements Comparable<License>
                 for (JsonObject licenseJson : licensesJson.getValuesAs(JsonObject.class))
                 {
                     licenses.add(new License(licenseJson.getString("name"), licenseJson.getString("identifier"),
-                        licenseJson.getString("status")));
+                        licenseJson.getString(STATUS)));
                 }
             }
             return licenses;
@@ -153,7 +144,7 @@ public class License implements Comparable<License>
             {
                 JsonObject value = (JsonObject) licenseJson.getValue();
                 licenses.add(new License(value.getString("name"), licenseJson.getKey(),
-                    value.getString("status")));
+                    value.getString(STATUS)));
             }
         }
 
@@ -172,7 +163,7 @@ public class License implements Comparable<License>
             generator.writeStartObject();
             generator.write("name", license.getName());
             generator.write("identifier", license.getIdentifier());
-            generator.write("status", license.getAllowed().toString());
+            generator.write(STATUS, license.getAllowed().toString());
             generator.writeEnd();
         }
         generator.writeEnd();

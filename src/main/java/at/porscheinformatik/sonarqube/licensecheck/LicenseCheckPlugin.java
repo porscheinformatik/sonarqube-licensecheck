@@ -24,6 +24,7 @@ import java.util.List;
 public class LicenseCheckPlugin implements Plugin
 {
     private static final String LICENSE_ID_DESCRIPTION = "The identifier of the license (e.g. GPL-3.0)";
+    public static final String LICENSE_IDENTIFIER = "License Identifier";
 
     @Override
     public void define(Context context)
@@ -80,7 +81,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("A regular expression to match against the dependency key.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(DependencyMapping.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(DependencyMapping.FIELD_OVERWRITE)
@@ -101,7 +102,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("A regular expression to match against the license name.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(LicenseMapping.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build()
                 )
@@ -118,7 +119,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("The project key")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_ALLOWED)
