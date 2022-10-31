@@ -47,18 +47,10 @@
     </sonar.pluginTermsConditionsUrl>
     <sonarqube.version>8.9.0.43852</sonarqube.version>
     <java.version>1.8</java.version>
+    <frontend.npm.arguments>run build</frontend.npm.arguments>
   </properties>
 
   <profiles>
-    <profile>
-      <id>prod</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <frontend.npm.arguments>run build</frontend.npm.arguments>
-      </properties>
-    </profile>
     <profile>
       <id>dev</id>
       <properties>
