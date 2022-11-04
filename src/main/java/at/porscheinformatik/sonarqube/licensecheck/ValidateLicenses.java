@@ -1,10 +1,9 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
@@ -15,10 +14,10 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @ScannerSide
 public class ValidateLicenses
@@ -253,6 +252,8 @@ public class ValidateLicenses
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
             case LicenseCheckRulesDefinition.LANG_GROOVY:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+            case LicenseCheckRulesDefinition.LANG_KOTLIN:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
             case LicenseCheckRulesDefinition.LANG_JAVA:
             default:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;

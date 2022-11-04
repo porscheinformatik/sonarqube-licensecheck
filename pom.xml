@@ -4,7 +4,7 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.8.4</version>
+      <version>3.8.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -120,7 +120,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -157,7 +157,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.0</version>
+        <version>3.10.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -180,7 +180,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
+        <version>0.8.8</version>
         <executions>
           <execution>
           <id>prepare-agent</id>
@@ -228,8 +228,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v16.13.2</nodeVersion>
-          <npmVersion>8.1.2</npmVersion>
+          <nodeVersion>v16.15.1</nodeVersion>
+          <npmVersion>8.11.0</npmVersion>
         </configuration>
       </plugin>
     </plugins>

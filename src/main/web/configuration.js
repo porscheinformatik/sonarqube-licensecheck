@@ -37,9 +37,9 @@ window.registerExtension('licensecheck/configuration', function (options) {
     template: `<div class="page page-limited">
   <ul class="tabs">
     <li><a href="?category=licenses" :class="{selected: currentRoute==='licenses'}" @click="activateCategory($event, 'licenses')">Licenses</a></li>
-    <li><a href="?category=project-licenses" :class="{selected: currentRoute==='project-licenses'}" @click="activateCategory($event, 'project-licenses')">Project Licenses</a></li>
-    <li><a href="?category=dependency-mappings" :class="{selected: currentRoute==='dependency-mappings'}" @click="activateCategory($event, 'dependency-mappings')">Dependency Mappings</a></li>
     <li><a href="?category=license-mappings" :class="{selected: currentRoute==='license-mappings'}" @click="activateCategory($event, 'license-mappings')">License Mappings</a></li>
+    <li><a href="?category=dependency-mappings" :class="{selected: currentRoute==='dependency-mappings'}" @click="activateCategory($event, 'dependency-mappings')">Dependency Mappings</a></li>
+    <li><a href="?category=project-licenses" :class="{selected: currentRoute==='project-licenses'}" @click="activateCategory($event, 'project-licenses')">Project Licenses</a></li>
   </ul>
   <br>
   <licenses-page v-if="currentRoute === 'licenses'">

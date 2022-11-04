@@ -47,11 +47,12 @@ public class PackageJsonDependencyScanner implements Scanner
 
         Set<Dependency> allDependencies = new HashSet<>();
 
+        LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
         for (InputFile packageJsonFile : fs.inputFiles(packageJsonPredicate))
         {
             context.markForPublishing(packageJsonFile);
 
-            LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
+            LOGGER.info("Scanning package.json: (path={})", packageJsonFile);
             allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
         }
 
@@ -78,7 +79,7 @@ public class PackageJsonDependencyScanner implements Scanner
                 });
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             LOGGER.error("Error reading package.json", e);
         }
