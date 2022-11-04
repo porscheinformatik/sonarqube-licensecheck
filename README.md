@@ -1,5 +1,4 @@
-SonarQube License-Check
-===================
+# SonarQube License-Check
 
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=at.porscheinformatik.sonarqube.licensecheck:sonarqube-licensecheck-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=at.porscheinformatik.sonarqube.licensecheck:sonarqube-licensecheck-plugin)
 
@@ -11,11 +10,38 @@ This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects use dep
 
 This software is licensed under the [Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+## Table of Contents
+<!-- TOC -->
+  * [Compatibility](#compatibility)
+  * [Installation](#installation)
+  * [Configuration](#configuration)
+  * [General Configuration](#general-configuration)
+    * [General Configuration via Administration Tab](#general-configuration-via-administration-tab)
+    * [General Configuration via License Menu](#general-configuration-via-license-menu)
+    * [General Configuration via Sonar API](#general-configuration-via-sonar-api)
+      * [Plugin Activation](#plugin-activation)
+      * [Global License Settings](#global-license-settings)
+      * [Project License Settings](#project-license-settings)
+      * [License Mapping](#license-mapping)
+      * [Dependency Mapping](#dependency-mapping)
+      * [NPM Transitive setting](#npm-transitive-setting)
+  * [Activation rules in Quality Profile](#activation-rules-in-quality-profile)
+  * [Execution](#execution)
+  * [Supported Languages](#supported-languages)
+  * [Supported Project Types](#supported-project-types)
+    * [Maven](#maven)
+    * [NPM](#npm)
+    * [Gradle](#gradle)
+  * [Features](#features)
+    * [Analysis](#analysis)
+    * [Project Dashboard](#project-dashboard)
+<!-- TOC -->
+
 ## Compatibility
 
 This plugin is compatible:
 
- * 5.x version with 8.9 LTS and <= 9.2.x
+ * 5.x version with 8.9 LTS and <= 9.7.x
  * 4.x version with SonarQube 8.x
  * 3.x version with SonarQube >= 7.9 LTS and < 8.
  * 2.x version with SonarQube >= 6.5 and < 7.
@@ -27,16 +53,6 @@ For all changes see [CHANGELOG.md](CHANGELOG.md)
 
 Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE_HOME/extensions/plugins` and
 restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles - otherwise the plugin is not executed.
-
-## Execution
-
-When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
-
-Please make sure to have all dependencies installed before launching the SonarQube analysis. So your complete build
-should look something like this:
-
-    mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore install
-    mvn -B sonar:sonar
 
 ## Configuration
 
@@ -90,9 +106,72 @@ Administration -> Configuration(dropdown) -> License Check
 
 ![alternative License Configuration9](docs/9-nice-License%20Check%20-%20Administration.png)
 
-### General Configuration via SonarAPI
-Todo
+### General Configuration via Sonar API
+You can also use the [Sonar API](https://docs.sonarqube.org/latest/extend/web-api/)  to configure the plugin.
 
+#### Plugin Activation
+Get the setting
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.activation"
+```
+
+Enable
+```
+curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=true"
+```
+
+Disable
+```
+curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=false"
+```
+
+
+#### Global License Settings
+Get the setting
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-set"
+```
+
+
+#### Project License Settings
+Get the setting
+
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.project-license-set"
+```
+
+#### License Mapping
+Get the setting
+
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-mapping"
+```
+
+#### Dependency Mapping
+Get the setting
+
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.dep-mapping"
+```
+
+#### NPM Transitive setting
+Get the setting
+
+```
+curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.npm.resolvetransitive"
+```
+
+Enable
+
+```
+curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=true"
+```
+
+Disable
+
+```
+curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=false"
+```
 
 
 ## Activation rules in Quality Profile
@@ -125,6 +204,22 @@ You have also to activate the new rules in a (new) quality profile, for each sup
 <b>Step 7</b>
 
 ![activate 7](docs/profile/activate_profile7.png)
+
+## Execution
+
+When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
+
+Please make sure to have all dependencies installed before launching the SonarQube analysis. So your complete build
+should look something like this:
+
+    mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore install
+    mvn -B sonar:sonar
+
+## Supported Languages
+
+Groovy, Kotlin, Java, JavaScript, TypeScript
+
+## Supported Project Types
 
 ### Maven
 
@@ -179,7 +274,6 @@ Note: Please check above link for instructions or follow as mentioned below
 
     > gradle sonarqube
 
-
 ## Features
 
 ### Analysis
@@ -188,6 +282,7 @@ The plugin scans for dependencies defined in your project including all transiti
 
 Currently, supported formats are:
 * Maven POM files - all dependencies with scope "compile" and "runtime" are checked
+* Gradle projects which use JK1 plugin
 * NPM package.json files - all dependencies (except "devDependencies") are checked
   * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
 

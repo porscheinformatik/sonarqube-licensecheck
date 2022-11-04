@@ -25,12 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This version uses a different format for storing the settings. The old settings will be migrated (and deleted) on the first start of SonarQube with the new version. You cannot go back to a previous version! With this change you can edit the settings via the default SonarQube UI or via the custom License Check settings. This change was necessary to remove the dependency on the internal SonarQube API. [#240, #244]
 
 ### Features
-- Create issues on relevant dependency files [#285]
+- Create issues on relevant dependency files (#285)
 - License and dependency mapping now available for all dependency mechanisms (Groovy, Maven, NPM). Dependency mapping has now an attribute to toggle forced mapping. [#257]
-- Support for JavaScript and Groovy projects (without any Java files) [#247, #241, #182]
+- Support for JavaScript and Groovy projects (without any Java files) (#247, #241, #182)
 
 ### Bug Fixes
-- Status in license report should be "Allowed" and "Disallowed" not true/false [#262]
+- Status in license report should be "Allowed" and "Disallowed" not true/false (#262)
 
 ### Other Changes
 - Dependency updates and increase test coverage
