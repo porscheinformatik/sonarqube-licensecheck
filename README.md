@@ -2,8 +2,6 @@
 
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=at.porscheinformatik.sonarqube.licensecheck:sonarqube-licensecheck-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=at.porscheinformatik.sonarqube.licensecheck:sonarqube-licensecheck-plugin)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/6ac787bb79b43e39c367/maintainability)](https://codeclimate.com/github/porscheinformatik/sonarqube-licensecheck/maintainability)
-
 This [SonarQube](http://www.sonarqube.org/) plugin ensures that projects use dependencies with compliant licenses. All dependencies and licenses can be viewed per projects and exported to Excel 2003 XML Format. This enables a simple governance of dependencies and licenses for the whole organization.
 
 ## License
@@ -12,30 +10,43 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
 
 ## Table of Contents
 <!-- TOC -->
+  * [Features](#features)
   * [Compatibility](#compatibility)
   * [Installation](#installation)
-  * [Configuration](#configuration)
-  * [General Configuration](#general-configuration)
-    * [General Configuration via Administration Tab](#general-configuration-via-administration-tab)
-    * [General Configuration via License Menu](#general-configuration-via-license-menu)
-    * [General Configuration via Sonar API](#general-configuration-via-sonar-api)
-      * [Plugin Activation](#plugin-activation)
-      * [Global License Settings](#global-license-settings)
-      * [Project License Settings](#project-license-settings)
-      * [License Mapping](#license-mapping)
-      * [Dependency Mapping](#dependency-mapping)
-      * [NPM Transitive setting](#npm-transitive-setting)
-  * [Activation rules in Quality Profile](#activation-rules-in-quality-profile)
+  * [General Configuration](#configuration)
+    * [General Configuration via Administration Tab](#configuration-via-administration-tab)
+    * [General Configuration via License Menu](#configuration-via-license-menu)
+    * [Activation rules in Quality Profile](#activation-rules-in-quality-profile)
   * [Execution](#execution)
   * [Supported Languages](#supported-languages)
   * [Supported Project Types](#supported-project-types)
     * [Maven](#maven)
     * [NPM](#npm)
     * [Gradle](#gradle)
-  * [Features](#features)
-    * [Analysis](#analysis)
-    * [Project Dashboard](#project-dashboard)
+  * [Configuration via Sonar API](#configuration-via-sonar-api)
 <!-- TOC -->
+
+## Features
+
+### Analysis
+
+The plugin scans for dependencies defined in your project including all transitive dependencies.
+
+Currently, supported formats are:
+* Maven POM files - all dependencies with scope "compile" and "runtime" are checked
+* Gradle projects which use JK1 plugin
+* NPM package.json files - all dependencies (except "devDependencies") are checked
+  * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
+
+    ![Transitive](docs/Administration_General_Settings_License_Check_2.png)
+
+
+### Project Dashboard
+
+The plugin contains a project dashboard showing a list of dependencies with version and a list of all used licences. Each table shows the status of the license
+(allowed, not allowed, not found). You can also export the data to Excel.
+
+![Project Dashboard](docs/License_Check_dashboard.png)
 
 ## Compatibility
 
@@ -55,28 +66,26 @@ Put the pre-built jar-file (from release downloads) in the directory `$SONARQUBE
 restart the server to install the plugin. Activate the rules of this plugin ("License is not allowed", "Dependency has unknown license") in your SonarQube quality profiles - otherwise the plugin is not executed.
 
 ## Configuration
-
-## General Configuration
 After booting the SonarQube Server with the License-Check Plugin be found in the tab <b>Administration</b> or also in the <b>Configuration -> LicenseCheck</b> drop down menu.
 
-### General Configuration via Administration Tab
+### Configuration via Administration Tab
 
 * Within the <b>General Settings</b> and <b>License Check</b> you find the settings for the plugin.
 * Within the general settings the plugin can be manually enabled or disabled. By default, it is enabled.
   * Under "Dependency Mapping" you can map  a dependency name/key (with regex) to a license, e.g. `^asm:asm$` to "BSD-3-Clause"
   * Under "License Mapping" you can  map a license name (with regex) to a license, e.g. `.*Apache.*2.*` to "Apache-2.0".
 
-![License Configuration1](docs/Administration_General Settings_License_Check_1.png)
+    ![License Configuration1](docs/Administration_General_Settings_License_Check_1.png)
 
   * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
 
-![License Configuration2](docs/Administration_General_Settings_License_Check_3.png)
+    ![License Configuration2](docs/Administration_General_Settings_License_Check_3.png)
 
   * Under "Project Licenses" you can allow and disallow licenses for a specific project.
 
-![License Configuration2](docs/Administration_General_Settings_License_Check_2.png)
+    ![License Configuration2](docs/Administration_General_Settings_License_Check_2.png)
 
-### General Configuration via License Menu
+### Configuration via License Menu
 
 Administration -> Configuration(dropdown) -> License Check
 
@@ -84,126 +93,59 @@ Administration -> Configuration(dropdown) -> License Check
 
 * Under "Licenses" you can allow or disallow licenses globally and add/edit the list of known licenses.
 
-![alternative License Configuration2](docs/2-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration2](docs/2-nice-License%20Check%20-%20Administration.png)
 
-![alternative License Configuration3](docs/3-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration3](docs/3-nice-License%20Check%20-%20Administration.png)
 
 * Under "Project Licenses" you can allow and disallow licenses for a specific project.
 
-![alternative License Configuration4](docs/4-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration4](docs/4-nice-License%20Check%20-%20Administration.png)
 
-![alternative License Configuration5](docs/5-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration5](docs/5-nice-License%20Check%20-%20Administration.png)
 
 * Under "Dependency Mapping" you can map  a dependency name/key (with regex) to a license, e.g. `^asm:asm$` to "BSD-3-Clause"
 
-![alternative License Configuration6](docs/6-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration6](docs/6-nice-License%20Check%20-%20Administration.png)
 
-![alternative License Configuration7](docs/7-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration7](docs/7-nice-License%20Check%20-%20Administration.png)
 
 * Under "License Mappings" you can  map a license name (with regex) to a license, e.g. `.*Apache.*2.*` to "Apache-2.0".
 
-![alternative License Configuration8](docs/8-nice-License%20Check%20-%20Administration.png)
+  ![alternative License Configuration8](docs/8-nice-License%20Check%20-%20Administration.png)
 
-![alternative License Configuration9](docs/9-nice-License%20Check%20-%20Administration.png)
-
-### General Configuration via Sonar API
-You can also use the [Sonar API](https://docs.sonarqube.org/latest/extend/web-api/)  to configure the plugin.
-
-#### Plugin Activation
-Get the setting
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.activation"
-```
-
-Enable
-```
-curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=true"
-```
-
-Disable
-```
-curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=false"
-```
+  ![alternative License Configuration9](docs/9-nice-License%20Check%20-%20Administration.png)
 
 
-#### Global License Settings
-Get the setting
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-set"
-```
+### Activation rules in Quality Profile
+You have to activate the new rules in a (new) quality profile, for each supported language (Groovy, Kotlin, Java, JavaScript, TypeScript) And you have to use this profile for your project.
 
+1. Step 1
 
-#### Project License Settings
-Get the setting
+    ![activate 1](docs/profile/activate_profile1.png)
 
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.project-license-set"
-```
+2. Step 2
 
-#### License Mapping
-Get the setting
+    ![activate 2](docs/profile/activate_profile2.png)
 
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-mapping"
-```
+3. Step 3
 
-#### Dependency Mapping
-Get the setting
+    ![activate 3](docs/profile/activate_profile3.png)
 
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.dep-mapping"
-```
+4. Step 4
 
-#### NPM Transitive setting
-Get the setting
+    ![activate 4](docs/profile/activate_profile4.png)
 
-```
-curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.npm.resolvetransitive"
-```
+5. Step 5
 
-Enable
+   ![activate 5](docs/profile/activate_profile5.png)
 
-```
-curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=true"
-```
+6. Step 6
 
-Disable
+    ![activate 6](docs/profile/activate_profile6.png)
 
-```
-curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=false"
-```
+7. Step 7
 
-
-## Activation rules in Quality Profile
-You have also to activate the new rules in a (new) quality profile, for each supported language (Groovy, Kotlin, Java, JavaScript, TypeScript) And you have to use this profile for your project.
-
-<b>Step 1</b>
-
-![activate 1](docs/profile/activate_profile1.png)
-
-<b>Step 2</b>
-
-![activate 2](docs/profile/activate_profile2.png)
-
-<b>Step 3</b>
-
-![activate 3](docs/profile/activate_profile3.png)
-
-<b>Step 4</b>
-
-![activate 4](docs/profile/activate_profile4.png)
-
-<b>Step 5</b>
-
-![activate 5](docs/profile/activate_profile5.png)
-
-<b>Step 6</b>
-
-![activate 6](docs/profile/activate_profile6.png)
-
-<b>Step 7</b>
-
-![activate 7](docs/profile/activate_profile7.png)
+    ![activate 7](docs/profile/activate_profile7.png)
 
 ## Execution
 
@@ -212,7 +154,7 @@ When a project is analyzed using the `mvn sonar:sonar` in command line the exten
 Please make sure to have all dependencies installed before launching the SonarQube analysis. So your complete build
 should look something like this:
 
-    mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent -Dmaven.test.failure.ignore install
+    mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
     mvn -B sonar:sonar
 
 ## Supported Languages
@@ -274,24 +216,73 @@ Note: Please check above link for instructions or follow as mentioned below
 
     > gradle sonarqube
 
-## Features
+### Configuration via Sonar API
+You can also use the [Sonar API](https://docs.sonarqube.org/latest/extend/web-api/)  to configure the plugin.
 
-### Analysis
+#### Plugin Activation
 
-The plugin scans for dependencies defined in your project including all transitive dependencies.
+* Get the setting
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.activation"
+  ```
 
-Currently, supported formats are:
-* Maven POM files - all dependencies with scope "compile" and "runtime" are checked
-* Gradle projects which use JK1 plugin
-* NPM package.json files - all dependencies (except "devDependencies") are checked
-  * Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
+* Enable
+  ```
+  curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=true"
+  ```
 
-![Transitive](docs/Administration_General_Settings_License_Check_2.png)
+* Disable
+  ```
+  curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.activation&value=false"
+  ```
 
+#### Global License Settings
 
-### Project Dashboard
+* Get the setting
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-set"
+  ```
 
-The plugin contains a project dashboard showing a list of dependencies with version and a list of all used licences. Each table shows the status of the license
-(allowed, not allowed, not found). You can also export the data to Excel.
+#### Project License Settings
+ 
+ * Get the setting
 
-![Project Dashboard](docs/License_Check_dashboard.png)
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.project-license-set"
+  ```
+
+#### License Mapping
+
+* Get the setting
+
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.license-mapping"
+  ```
+
+#### Dependency Mapping
+
+* Get the setting
+
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.dep-mapping"
+  ```
+
+#### NPM Transitive setting
+
+* Get the setting
+
+  ```
+  curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?keys=licensecheck.npm.resolvetransitive"
+  ```
+
+* Enable
+
+  ```
+  curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=true"
+  ```
+
+* Disable
+
+  ```
+  curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=false"
+  ```
