@@ -1,19 +1,9 @@
 package at.porscheinformatik.sonarqube.licensecheck.npm;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-
+import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
+import at.porscheinformatik.sonarqube.licensecheck.Scanner;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -21,14 +11,19 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.Dependency;
-import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
-import at.porscheinformatik.sonarqube.licensecheck.Scanner;
-import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import javax.json.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
+    public static final String LICENSE = "license";
+    public static final String LICENSES = "licenses";
 
     private final LicenseMappingService licenseMappingService;
     private final boolean resolveTransitiveDeps;
@@ -114,21 +109,21 @@ public class PackageJsonDependencyScanner implements Scanner
                 if (packageJson != null)
                 {
                     String license = "";
-                    if (packageJson.containsKey("license"))
+                    if (packageJson.containsKey(LICENSE))
                     {
-                        final Object licenceObj = packageJson.get("license");
+                        final Object licenceObj = packageJson.get(LICENSE);
                         if (licenceObj instanceof JsonObject)
                         {
                             license = ((JsonObject) licenceObj).getString("type", "");
                         }
                         else
                         {
-                            license = packageJson.getString("license", "");
+                            license = packageJson.getString(LICENSE, "");
                         }
                     }
-                    else if (packageJson.containsKey("licenses"))
+                    else if (packageJson.containsKey(LICENSES))
                     {
-                        final JsonArray licenses = packageJson.getJsonArray("licenses");
+                        final JsonArray licenses = packageJson.getJsonArray(LICENSES);
                         if (licenses.size() == 1)
                         {
                             license = licenses.getJsonObject(0).getString("type", "");

@@ -7,6 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 class SettingsXmlHandler extends DefaultHandler
 {
 
+    public static final String LOCAL_REPOSITORY = "localRepository";
     private Boolean enableReadElementData = false;
     private String tagName = "";
     private Setting setting;
@@ -21,9 +22,9 @@ class SettingsXmlHandler extends DefaultHandler
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
 
-        if (qName.equals("localRepository"))
+        if (qName.equals(LOCAL_REPOSITORY))
         {
-            tagName = "localRepository";
+            tagName = LOCAL_REPOSITORY;
         }
         else
         {
@@ -44,9 +45,9 @@ class SettingsXmlHandler extends DefaultHandler
     public void characters(char[] ch, int start, int length) throws SAXException
     {
 
-        if (enableReadElementData)
+        if (Boolean.TRUE.equals(enableReadElementData))
         {
-            if (tagName.equals("localRepository"))
+            if (tagName.equals(LOCAL_REPOSITORY))
             {
                 setting.setLocalRepositoryPath(new String(ch, start, length));
             }
