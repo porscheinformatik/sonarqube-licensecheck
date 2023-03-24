@@ -163,6 +163,18 @@ Groovy, Kotlin, Java, JavaScript, TypeScript
 
 ## Supported Project Types
 
+### Maven + NPM
+
+When using Maven and a Javascript Package Manager, define the `sonar.sources` property to point to the files which contain dependency information. 
+
+```xml
+...
+<properties>
+  <sonar.sources>pom.xml,package.json</sonar.sources>
+<properties>
+...
+```
+
 ### Maven
 
 Maven works if your project/module has a `pom.xml` on its root level (running with Maven, Gradle or SonarScanner).
