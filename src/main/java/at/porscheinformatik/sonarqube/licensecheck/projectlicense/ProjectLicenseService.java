@@ -1,6 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.projectlicense;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.PROJECT_LICENSE_SET;
 import static at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense.FIELD_ALLOWED;
 import static at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense.FIELD_LICENSE;
@@ -12,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.server.ServerSide;
@@ -40,22 +38,6 @@ public class ProjectLicenseService
                     configuration.getBoolean(PROJECT_LICENSE_SET + idxProp + FIELD_ALLOWED).orElse(Boolean.FALSE);
                 return new ProjectLicense(projectKey, license, allowed);
             }).collect(Collectors.toList());
-    }
-
-    /**
-     * @deprecated use {@link #getProjectLicenseList()} instead
-     */
-    @Deprecated
-    public List<ProjectLicense> getProjectLicenseListOld()
-    {
-        String projectLicenseString = configuration.get(PROJECT_LICENSE_KEY).orElse(null);
-
-        if (StringUtils.isNotEmpty(projectLicenseString))
-        {
-            return ProjectLicense.fromString(projectLicenseString);
-        }
-
-        return new ArrayList<>();
     }
 
     public Collection<ProjectLicense> getProjectLicenseList(String projectKey)
