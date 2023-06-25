@@ -144,7 +144,7 @@ public class LicenseCheckSensor implements Sensor
         AGGREGATED_DEPENDENCIES.addAll(validatedDependencies);
 
         // root module?
-        if (context.project().key().equals(context.project().key()))
+        if (context.project().key().equals(context.module().key()))
         {
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
