@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
+import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.measure.NewMeasure;
@@ -58,6 +59,9 @@ public class LicenseCheckSensorTest
         FieldUtils.writeField(sensor, "scanners", scanners, true);
         SensorContext context = mock(SensorContext.class);
         InputProject project = mock(InputProject.class);
+        InputModule module = mock(InputModule.class);
+        when(module.key()).thenReturn("my-project");
+        when(context.module()).thenReturn(module);
         when(project.key()).thenReturn("my-project");
         when(context.project()).thenReturn(project);
         NewMeasure measure = mock(NewMeasure.class);

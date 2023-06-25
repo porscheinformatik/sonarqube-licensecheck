@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --mode=production",
-    "watch": "concurrently --kill-others \"webpack -w\" \"node test-server.js\"",
+    "watch": "concurrently --kill-others \"webpack --watch --mode development --devtool inline-source-map\" \"node test-server.js\"",
     "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons"
   },
   "author": "Christian Köberl",
