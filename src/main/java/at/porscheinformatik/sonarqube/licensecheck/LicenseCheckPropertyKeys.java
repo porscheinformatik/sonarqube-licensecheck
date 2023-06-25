@@ -37,29 +37,6 @@ public class LicenseCheckPropertyKeys
      */
     public static final String NPM_RESOLVE_TRANSITIVE_DEPS = "licensecheck.npm.resolvetransitive";
 
-    /**
-     * @deprecated replaced with {@link #LICENSE_SET}
-     */
-    @Deprecated
-    public static final String LICENSE_KEY = "licensecheck.licenses";
-
-    /**
-     * @deprecated replaced with {@link #LICENSE_MAPPING}
-     */
-    @Deprecated
-    public static final String LICENSE_REGEX = "licensecheck.licensesregex";
-
-    /**
-     * @deprecated replaced with {@link #DEPENDENCY_MAPPING}
-     */
-    @Deprecated
-    public static final String ALLOWED_DEPENDENCIES_KEY = "licensecheck.alloweddependencies";
-
-    /**
-     * @deprecated replaced with {@link #PROJECT_LICENSE_SET}
-     */
-    @Deprecated
-    public static final String PROJECT_LICENSE_KEY = "licensecheck.projectlicense";
 
     private LicenseCheckPropertyKeys()
     {

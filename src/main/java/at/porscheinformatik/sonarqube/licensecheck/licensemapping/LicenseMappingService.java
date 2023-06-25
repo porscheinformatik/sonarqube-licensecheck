@@ -1,6 +1,5 @@
 package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_REGEX;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_MAPPING;
 import static at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping.FIELD_LICENSE;
 import static at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping.FIELD_REGEX;
@@ -43,15 +42,6 @@ public class LicenseMappingService
                     configuration.get(LICENSE_MAPPING + idxProp + FIELD_LICENSE).orElse(null);
                 return new LicenseMapping(licenseRegex, licenseId);
             }).collect(Collectors.toList());
-    }
-
-    /**
-     * @deprecated use {@link #getLicenseMappingList()} instead
-     */
-    @Deprecated
-    public List<LicenseMapping> getLicenseMappingListOld()
-    {
-        return LicenseMapping.fromString(configuration.get(LICENSE_REGEX).orElse(null));
     }
 
     public Map<Pattern, String> getLicenseMap()
