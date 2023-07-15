@@ -11,12 +11,12 @@ services:
       SONAR_JDBC_PASSWORD: sonar
     volumes:
       - sonarqube_data:/opt/sonarqube/data
-      - ./plugins:/opt/sonarqube/extensions/plugins
+      - ./target/sonarqube-licensecheck-plugin-6.0.0-SNAPSHOT.jar:/opt/sonarqube/extensions/plugins/sonarqube-licensecheck-plugin-6.0.0-SNAPSHOT.jar
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
       - "9000:9000"
   db:
-    image: postgres:12
+    image: postgres:14-alpine
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar

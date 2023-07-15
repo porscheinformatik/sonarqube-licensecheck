@@ -47,7 +47,7 @@ public class LicenseService
             {
                 if (license.getIdentifier().equals(projectLicense.getLicense()))
                 {
-                    license.setAllowed(projectLicense.getAllowed()); //override the stati of the globalLicenses
+                    license.setAllowed(projectLicense.getAllowed()); // override the status of the globalLicenses
                 }
             }
         }
