@@ -3,9 +3,7 @@ package at.porscheinformatik.sonarqube.licensecheck.npm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,13 +52,13 @@ public class PackageJsonDependencyScanner implements Scanner
             context.markForPublishing(packageJsonFile);
 
             LOGGER.info("Scanning package.json: (path={})", packageJsonFile);
-            allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile, context.fileSystem()));
+            allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
         }
 
         return allDependencies;
     }
 
-    private Set<Dependency> dependencyParser(File baseDir, InputFile packageJsonFile, FileSystem fs)
+    private Set<Dependency> dependencyParser(File baseDir, InputFile packageJsonFile)
     {
         Set<Dependency> dependencies = new HashSet<>();
 
