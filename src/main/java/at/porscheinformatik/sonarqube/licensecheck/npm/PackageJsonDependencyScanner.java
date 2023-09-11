@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,13 +54,13 @@ public class PackageJsonDependencyScanner implements Scanner
             context.markForPublishing(packageJsonFile);
 
             LOGGER.info("Scanning package.json: (path={})", packageJsonFile);
-            allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
+            allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile, context.fileSystem()));
         }
 
         return allDependencies;
     }
 
-    private Set<Dependency> dependencyParser(File baseDir, InputFile packageJsonFile)
+    private Set<Dependency> dependencyParser(File baseDir, InputFile packageJsonFile, FileSystem fs)
     {
         Set<Dependency> dependencies = new HashSet<>();
 
@@ -71,7 +72,8 @@ public class PackageJsonDependencyScanner implements Scanner
             JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
             if (packageJsonDependencies != null)
             {
-                scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+                scanDependencies(new File(packageJsonFile.uri().resolve("node_modules")), packageJsonDependencies.keySet(), 
+                    dependencies);
                 dependencies.forEach(dependency ->
                 {
                     dependency.setInputComponent(packageJsonFile);
@@ -87,7 +89,7 @@ public class PackageJsonDependencyScanner implements Scanner
         return dependencies;
     }
 
-    private void scanDependencies(File baseDir, Set<String> packageNames, Set<Dependency> dependencies)
+    private void scanDependencies(File nodeModulesDir, Set<String> packageNames, Set<Dependency> dependencies)
     {
         LOGGER.info("Scanning NPM packages " + packageNames);
 
@@ -99,11 +101,11 @@ public class PackageJsonDependencyScanner implements Scanner
                 continue;
             }
 
-            File packageJsonFile = new File(baseDir, "node_modules/" + packageName + "/package.json");
+            File packageJsonFile = new File(nodeModulesDir, packageName + "/package.json");
             if (!packageJsonFile.exists())
             {
-                LOGGER.warn("No package.json file found for package {} in node_modules - skipping dependency",
-                        packageName);
+                LOGGER.warn("No package.json file found for package {} at {} - skipping dependency.",
+                        packageName, packageJsonFile);
                 continue;
             }
 
@@ -161,7 +163,7 @@ public class PackageJsonDependencyScanner implements Scanner
                         JsonObject packageJsonDependencies = packageJson.getJsonObject("dependencies");
                         if (packageJsonDependencies != null)
                         {
-                            scanDependencies(baseDir, packageJsonDependencies.keySet(), dependencies);
+                            scanDependencies(nodeModulesDir, packageJsonDependencies.keySet(), dependencies);
                         }
                     }
                 }
