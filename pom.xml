@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonar.apiVersion>9.5.0.71</sonar.apiVersion>
+    <sonar.apiVersion>9.17.0.587</sonar.apiVersion>
     <sonar.apiImplVersion>9.5.0.56709</sonar.apiImplVersion>
     <java.version>11</java.version>
   </properties>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
+      <version>3.13.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.8.6</version>
+      <version>3.9.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -120,7 +120,7 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.21.0.505</version>
+        <version>1.23.0.740</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
@@ -130,7 +130,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.11.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -153,7 +153,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.10</version>
         <executions>
           <execution>
           <id>prepare-agent</id>
