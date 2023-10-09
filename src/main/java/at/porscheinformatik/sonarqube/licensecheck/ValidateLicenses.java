@@ -193,20 +193,7 @@ public class ValidateLicenses
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
         long allowedLicenseCount = foundLicenses.stream().filter(License::getAllowed).count();
-        if (count == allowedLicenseCount)
-        {
-            return true;
-        }
-        else if (foundLicenses.size() == count)
-        {
-            // NOT ALLOWED
-            return false;
-        }
-        else
-        {
-            // NOT FOUND
-            return false;
-        }
+        return count == allowedLicenseCount;
     }
 
     private static void licenseNotAllowedIssue(SensorContext context, Dependency dependency, String notAllowedLicense)

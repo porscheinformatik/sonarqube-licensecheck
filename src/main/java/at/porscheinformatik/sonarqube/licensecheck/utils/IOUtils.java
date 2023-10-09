@@ -13,11 +13,11 @@ public class IOUtils
     {
     }
 
-    public static String readToString(InputStream input) throws IOException 
+    public static String readToString(InputStream input) throws IOException
     {
         Reader in = new InputStreamReader(input, StandardCharsets.UTF_8);
         StringWriter out = new StringWriter();
-        int n = 0;
+        int n;
         char[] buffer = new char[4096];
         while ((n = in.read(buffer)) != -1)
         {
