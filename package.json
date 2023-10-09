@@ -16,7 +16,7 @@
     "concurrently": "8.2.1",
     "css-loader": "6.8.1",
     "http-proxy": "1.18.1",
-    "vue-loader": "15.10.2",
+    "vue-loader": "17.3.0",
     "vue-svgicon": "3.3.2",
     "vue-template-compiler": "2.7.14",
     "webpack": "5.88.2",
