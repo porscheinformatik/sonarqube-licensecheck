@@ -52,11 +52,6 @@ public class License implements Comparable<License>
         this.identifier = identifier;
     }
 
-    public Boolean getForbidden()
-    {
-        return !allowed;
-    }
-
     public Boolean getAllowed()
     {
         return allowed;
