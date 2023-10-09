@@ -23,7 +23,7 @@ public class LicenseMappingService
     private final Configuration configuration;
 
     /** Holding license map on scanner side */
-    private static transient Map<Pattern, String> LICENSE_MAP;
+    private static Map<Pattern, String> LICENSE_MAP;
 
     public LicenseMappingService(Configuration configuration)
     {
