@@ -221,11 +221,11 @@ public class ValidateLicenses
 
     private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
-        String message = String.format("No License found for Dependency %s (license from source: %s)", dependency.getName(), dependency.getLicense());
+        String message = String.format("No License found for Dependency %s (license from source: %s)",
+            dependency.getName(), dependency.getLicense());
         LOGGER.info(message);
 
-        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY,
-            message);
+        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY, message);
     }
 
     private static void createIssue(SensorContext context, Dependency dependency, String rule, String message)
