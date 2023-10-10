@@ -20,12 +20,7 @@ window.registerExtension('licensecheck/configuration', function (options) {
     }
   });
 
-  window.addEventListener('popstate', app.routeListener);
-
-  app.routeListener();
-
   return function () {
-    window.removeEventListener('popstate', app.routeListener);
     app.$destroy();
   };
 
