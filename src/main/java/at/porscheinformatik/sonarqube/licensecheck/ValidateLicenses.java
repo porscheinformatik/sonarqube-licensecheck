@@ -210,6 +210,7 @@ public class ValidateLicenses
     {
         String message = String.format("No License found for Dependency %s (license from source: %s)",
             dependency.getName(), dependency.getLicense());
+
         LOGGER.info(message);
 
         createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY, message);
