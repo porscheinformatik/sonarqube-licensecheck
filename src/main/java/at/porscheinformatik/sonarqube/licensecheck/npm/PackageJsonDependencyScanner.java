@@ -3,7 +3,6 @@ package at.porscheinformatik.sonarqube.licensecheck.npm;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +28,7 @@ import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping
 public class PackageJsonDependencyScanner implements Scanner
 {
     private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
+    private static final String PACKAGE_LICENSE = "license";
 
     private final LicenseMappingService licenseMappingService;
     private final boolean resolveTransitiveDeps;
@@ -47,11 +47,12 @@ public class PackageJsonDependencyScanner implements Scanner
 
         Set<Dependency> allDependencies = new HashSet<>();
 
+        LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
         for (InputFile packageJsonFile : fs.inputFiles(packageJsonPredicate))
         {
             context.markForPublishing(packageJsonFile);
 
-            LOGGER.info("Scanning for NPM dependencies (dir={})", fs.baseDir());
+            LOGGER.info("Scanning package.json: (path={})", packageJsonFile);
             allDependencies.addAll(dependencyParser(fs.baseDir(), packageJsonFile));
         }
 
@@ -78,7 +79,7 @@ public class PackageJsonDependencyScanner implements Scanner
                 });
             }
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             LOGGER.error("Error reading package.json", e);
         }
@@ -112,45 +113,7 @@ public class PackageJsonDependencyScanner implements Scanner
                 JsonObject packageJson = jsonReader.readObject();
                 if (packageJson != null)
                 {
-                    String license = "";
-                    if (packageJson.containsKey("license"))
-                    {
-                        final Object licenceObj = packageJson.get("license");
-                        if (licenceObj instanceof JsonObject)
-                        {
-                            license = ((JsonObject) licenceObj).getString("type", "");
-                        }
-                        else
-                        {
-                            license = packageJson.getString("license", "");
-                        }
-                    }
-                    else if (packageJson.containsKey("licenses"))
-                    {
-                        final JsonArray licenses = packageJson.getJsonArray("licenses");
-                        if (licenses.size() == 1)
-                        {
-                            license = licenses.getJsonObject(0).getString("type", "");
-                        }
-                        else if (licenses.size() > 1)
-                        {
-                            license = "(";
-                            for (JsonValue licenseObj : licenses)
-                            {
-                                if (licenseObj instanceof JsonObject)
-                                {
-                                    String licensePart = licenseObj.asJsonObject().getString("type", "");
-                                    if (!licensePart.trim().isEmpty())
-                                    {
-                                        license += license.length() > 1 ? (" OR " + licensePart) : licensePart;
-                                    }
-                                }
-                            }
-                            license = license.length() == 1 ? "" : (license + ")");
-                        }
-                    }
-
-                    license = licenseMappingService.mapLicense(license);
+                    String license = licenseMappingService.mapLicense(readLicense(packageJson));
 
                     dependencies.add(new Dependency(packageName, packageJson.getString("version", null), license,
                         LicenseCheckRulesDefinition.LANG_JS));
@@ -174,5 +137,46 @@ public class PackageJsonDependencyScanner implements Scanner
                 LOGGER.error("Could not check NPM package " + packageName, e);
             }
         }
+    }
+
+    private String readLicense(JsonObject packageJson)
+    {
+        if (packageJson.containsKey(PACKAGE_LICENSE))
+        {
+            final Object licenceObj = packageJson.get(PACKAGE_LICENSE);
+            if (licenceObj instanceof JsonObject)
+            {
+                return  ((JsonObject) licenceObj).getString("type", "");
+            }
+            else
+            {
+               return packageJson.getString(PACKAGE_LICENSE, "");
+            }
+        }
+        else if (packageJson.containsKey("licenses"))
+        {
+            final JsonArray licenses = packageJson.getJsonArray("licenses");
+            if (licenses.size() == 1)
+            {
+               return licenses.getJsonObject(0).getString("type", "");
+            }
+            else if (licenses.size() > 1)
+            {
+                String license = "(";
+                for (JsonValue licenseObj : licenses)
+                {
+                    if (licenseObj instanceof JsonObject)
+                    {
+                        String licensePart = licenseObj.asJsonObject().getString("type", "");
+                        if (!licensePart.trim().isEmpty())
+                        {
+                            license += license.length() > 1 ? (" OR " + licensePart) : licensePart;
+                        }
+                    }
+                }
+                return license.length() == 1 ? "" : (license + ")");
+            }
+        }
+        return "";
     }
 }

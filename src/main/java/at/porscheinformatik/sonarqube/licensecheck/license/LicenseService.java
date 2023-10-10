@@ -1,23 +1,20 @@
 package at.porscheinformatik.sonarqube.licensecheck.license;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_SET;
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.LICENSE_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ALLOWED;
 import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_ID;
 import static at.porscheinformatik.sonarqube.licensecheck.license.License.FIELD_NAME;
 
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
+import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.server.ServerSide;
-
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
 
 @ServerSide
 @ScannerSide
@@ -50,7 +47,7 @@ public class LicenseService
             {
                 if (license.getIdentifier().equals(projectLicense.getLicense()))
                 {
-                    license.setAllowed(projectLicense.getAllowed()); //override the stati of the globalLicenses
+                    license.setAllowed(projectLicense.getAllowed()); // override the status of the globalLicenses
                 }
             }
         }
@@ -71,13 +68,4 @@ public class LicenseService
             }).collect(Collectors.toList());
     }
 
-    /**
-     * @deprecated use {@link #getLicenses()} instead
-     */
-    @Deprecated
-    public List<License> getLicensesOld()
-    {
-        String licenseString = configuration.get(LICENSE_KEY).orElse(null);
-        return License.fromString(licenseString);
-    }
 }

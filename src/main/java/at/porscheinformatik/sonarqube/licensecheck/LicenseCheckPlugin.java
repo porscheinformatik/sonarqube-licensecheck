@@ -2,17 +2,12 @@ package at.porscheinformatik.sonarqube.licensecheck;
 
 import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
 import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.web.LicenseCheckWebService;
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
@@ -41,14 +36,9 @@ public class LicenseCheckPlugin implements Plugin
             LicenseCheckPageDefinition.class,
             LicenseCheckRulesDefinition.class,
             LicenseService.class,
-            LicenseSettingsService.class,
             DependencyMappingService.class,
-            DependencyMappingSettingsService.class,
             LicenseMappingService.class,
-            LicenseMappingSettingsService.class,
             ProjectLicenseService.class,
-            ProjectLicenseSettingsService.class,
-            LicenseCheckWebService.class,
             PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_SET)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
@@ -112,7 +102,7 @@ public class LicenseCheckPlugin implements Plugin
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("Project Licenses")
-                .description("Allow/disallow licences for specific projects.")
+                .description("Allow/disallow licenses for specific projects.")
                 .fields(
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_PROJECT_KEY)
                         .name("Project key")
@@ -128,22 +118,6 @@ public class LicenseCheckPlugin implements Plugin
                         .type(PropertyType.BOOLEAN).build()
                 )
                 .index(6)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.ALLOWED_DEPENDENCIES_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_REGEX)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
                 .category(LicenseCheckPropertyKeys.CATEGORY)

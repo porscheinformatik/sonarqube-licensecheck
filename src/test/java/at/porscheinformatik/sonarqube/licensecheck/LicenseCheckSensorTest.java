@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputModule;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -60,11 +59,11 @@ public class LicenseCheckSensorTest
         FieldUtils.writeField(sensor, "scanners", scanners, true);
         SensorContext context = mock(SensorContext.class);
         InputProject project = mock(InputProject.class);
-        when(project.key()).thenReturn("myproject");
         InputModule module = mock(InputModule.class);
-        when(module.key()).thenReturn("myproject");
-        when(context.project()).thenReturn(project);
+        when(module.key()).thenReturn("my-project");
         when(context.module()).thenReturn(module);
+        when(project.key()).thenReturn("my-project");
+        when(context.project()).thenReturn(project);
         NewMeasure measure = mock(NewMeasure.class);
         when(measure.forMetric(any())).thenReturn(measure);
         when(measure.withValue(any())).thenReturn(measure);
@@ -76,7 +75,6 @@ public class LicenseCheckSensorTest
         verify(measure, times(7)).save(); // 5 metrics + dependencies + licenses
     }
 
-    @NotNull
     private Configuration createConfiguration()
     {
         Configuration configuration = mock(Configuration.class);

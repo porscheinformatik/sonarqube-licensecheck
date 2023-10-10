@@ -94,7 +94,19 @@ public class ValidateLicensesTest
 
         verify(context, never()).newIssue();
     }
+  
+    @Test
+    public void licenseAllowed_kotlin()
+    {
+        SensorContext context = createContext();
 
+        validateLicenses.validateLicenses(
+            deps(new Dependency("thing", "1.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_KOTLIN),
+                new Dependency("another", "2.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_KOTLIN)),
+            context);
+
+        verify(context, never()).newIssue();
+    }
 
     //  (LGPL OR Apache-2.0) AND (LGPL OR Apache-2.0)    
     @Test
@@ -139,7 +151,7 @@ public class ValidateLicensesTest
         Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND MIT)");
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(
-            deps(new Dependency("another", "2.0", "LGPL"), thing),
+            deps(new Dependency("another", "2.0", "LGPL", LicenseCheckRulesDefinition.LANG_JAVA), thing),
             context);
 
         verify(context).newIssue();
@@ -153,7 +165,7 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)");
+        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)", LicenseCheckRulesDefinition.LANG_KOTLIN);
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(deps(thing), context);
 
@@ -180,7 +192,7 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        Dependency thing = new Dependency("thing", "1.0", null);
+        Dependency thing = new Dependency("thing", "1.0", null, LicenseCheckRulesDefinition.LANG_JS);
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(deps(thing), context);
 

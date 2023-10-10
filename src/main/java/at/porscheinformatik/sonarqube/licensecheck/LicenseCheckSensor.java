@@ -1,10 +1,16 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
-import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static java.util.function.Predicate.not;
+
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -13,11 +19,11 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.*;
+import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
 {
@@ -79,7 +85,7 @@ public class LicenseCheckSensor implements Sensor
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
-            .withValue((int) licenses.stream().filter(License::getAllowed).count())
+            .withValue((int) licenses.stream().filter(not(License::getAllowed)).count())
             .on(sensorContext.project())
             .save();
 
