@@ -4,7 +4,7 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>5.0.0-SNAPSHOT</version>
+  <version>6.0.0-SNAPSHOT</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
@@ -44,8 +44,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonarqube.version>8.9.0.43852</sonarqube.version>
-    <java.version>1.8</java.version>
+    <sonar.apiVersion>9.5.0.71</sonar.apiVersion>
+    <sonar.apiImplVersion>9.5.0.56709</sonar.apiImplVersion>
+    <java.version>11</java.version>
   </properties>
 
   <dependencies>
@@ -73,23 +74,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
+      <groupId>org.sonarsource.api.plugin</groupId>
       <artifactId>sonar-plugin-api</artifactId>
-      <version>${sonarqube.version}</version>
+      <version>${sonar.apiVersion}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-application</artifactId>
-      <version>${sonarqube.version}</version>
-      <scope>system</scope>
-      <systemPath>${project.build.directory}/sonarqube-${sonarqube.version}/lib/sonar-application-${sonarqube.version}.jar</systemPath>
+      <artifactId>sonar-plugin-api-impl</artifactId>
+      <version>${sonar.apiImplVersion}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xpp3</groupId>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.8.3</version>
+      <version>3.8.6</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -118,36 +118,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>clean</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.sonarsource.sonarqube</groupId>
-                  <artifactId>sonar-application</artifactId>
-                  <version>${sonarqube.version}</version>
-                  <type>zip</type>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                  <overWrite>false</overWrite>
-                </artifactItem>
-              </artifactItems>
-              <includes>sonarqube-*/lib/sonar-application*</includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.20.0.405</version>
+        <version>1.21.0.505</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
@@ -157,7 +130,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.10.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -170,7 +143,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.2</version>
+        <version>3.1.2</version>
         <configuration>
           <systemPropertyVariables>
             <maven.home>${maven.home}</maven.home>
@@ -180,7 +153,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
+        <version>0.8.8</version>
         <executions>
           <execution>
           <id>prepare-agent</id>
@@ -199,7 +172,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.12.0</version>
+        <version>1.14.0</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -228,10 +201,34 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v14.17.0</nodeVersion>
-          <npmVersion>6.14.13</npmVersion>
+          <nodeVersion>v18.18.0</nodeVersion>
+          <npmVersion>9.8.1</npmVersion>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+            <execution>
+                <id>copy-resources</id>
+                <phase>install</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${project.basedir}/docker/plugins</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${project.build.directory}</directory>
+                            <includes>
+                                <include>${project.artifactId}-${project.version}.jar</include>
+                            </includes>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
     </plugins>
   </build>
 

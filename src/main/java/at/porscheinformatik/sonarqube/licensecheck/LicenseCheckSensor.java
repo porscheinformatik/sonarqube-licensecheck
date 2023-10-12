@@ -3,12 +3,14 @@ package at.porscheinformatik.sonarqube.licensecheck;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static java.util.function.Predicate.not;
 
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -19,8 +21,8 @@ import org.sonar.api.utils.log.Loggers;
 
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor
@@ -28,15 +30,13 @@ public class LicenseCheckSensor implements Sensor
     private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
     private static final Set<License> AGGREGATED_LICENSES = ConcurrentHashMap.newKeySet();
     private static final Set<Dependency> AGGREGATED_DEPENDENCIES = ConcurrentHashMap.newKeySet();
-    private final FileSystem fs;
     private final Configuration configuration;
     private final ValidateLicenses validateLicenses;
     private final Scanner[] scanners;
 
-    public LicenseCheckSensor(FileSystem fs, Configuration configuration, ValidateLicenses validateLicenses,
+    public LicenseCheckSensor(Configuration configuration, ValidateLicenses validateLicenses,
         LicenseMappingService licenseMappingService)
     {
-        this.fs = fs;
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
         this.scanners = new Scanner[]{
@@ -55,14 +55,14 @@ public class LicenseCheckSensor implements Sensor
             sensorContext.<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.DEPENDENCY)
                 .withValue(Dependency.createString(dependencies))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
 
     private static void saveLicenses(SensorContext sensorContext, Set<License> licenses)
     {
-        LOGGER.debug("Saving licenses for module {}: {}", sensorContext.module(), licenses);
+        LOGGER.debug("Saving licenses for project {}: {}", sensorContext.project(), licenses);
 
         if (!licenses.isEmpty())
         {
@@ -70,7 +70,7 @@ public class LicenseCheckSensor implements Sensor
                 .<String>newMeasure()
                 .forMetric(LicenseCheckMetrics.LICENSE)
                 .withValue(License.createJsonString(licenses))
-                .on(sensorContext.module())
+                .on(sensorContext.project())
                 .save();
         }
     }
@@ -80,41 +80,45 @@ public class LicenseCheckSensor implements Sensor
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES)
             .withValue(licenses.size())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
-            .withValue((int) licenses.stream().filter(License::getAllowed).count())
-            .on(sensorContext.module())
+            .withValue((int) licenses.stream().filter(not(License::getAllowed)).count())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES)
             .withValue(dependencies.size())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_FORBIDDEN_LICENSE)
             .withValue(
                 (int) dependencies.stream().filter(d -> Dependency.Status.Forbidden.equals(d.getStatus())).count())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_DEPENDENCIES_WITH_UNKNOWN_LICENSE)
             .withValue(
                 (int) dependencies.stream().filter(d -> Dependency.Status.Unknown.equals(d.getStatus())).count())
-            .on(sensorContext.module())
+            .on(sensorContext.project())
             .save();
     }
 
     @Override
     public void describe(SensorDescriptor descriptor)
     {
-        descriptor.name("License Check")
-            .createIssuesForRuleRepositories(RULE_REPO_KEY, RULE_REPO_KEY_JS, RULE_REPO_KEY_GROOVY);
+        descriptor.name("License Check").createIssuesForRuleRepositories(
+            RULE_REPO_KEY,
+            RULE_REPO_KEY_JS,
+            RULE_REPO_KEY_TS,
+            RULE_REPO_KEY_GROOVY,
+            RULE_REPO_KEY_KOTLIN);
     }
 
     @Override
@@ -146,12 +150,6 @@ public class LicenseCheckSensor implements Sensor
             saveDependencies(context, AGGREGATED_DEPENDENCIES);
             saveLicenses(context, AGGREGATED_LICENSES);
             saveMeasures(context, AGGREGATED_LICENSES, AGGREGATED_DEPENDENCIES);
-        }
-        else
-        {
-            saveDependencies(context, validatedDependencies);
-            saveLicenses(context, usedLicenses);
-            saveMeasures(context, usedLicenses, validatedDependencies);
         }
     }
 }

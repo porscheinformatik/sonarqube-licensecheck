@@ -1,10 +1,9 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
@@ -15,10 +14,10 @@ import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @ScannerSide
 public class ValidateLicenses
@@ -194,20 +193,7 @@ public class ValidateLicenses
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
         long allowedLicenseCount = foundLicenses.stream().filter(License::getAllowed).count();
-        if (count == allowedLicenseCount)
-        {
-            return true;
-        }
-        else if (foundLicenses.size() == count)
-        {
-            // NOT ALLOWED
-            return false;
-        }
-        else
-        {
-            // NOT FOUND
-            return false;
-        }
+        return count == allowedLicenseCount;
     }
 
     private static void licenseNotAllowedIssue(SensorContext context, Dependency dependency, String notAllowedLicense)
@@ -222,10 +208,12 @@ public class ValidateLicenses
 
     private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
-        LOGGER.info("No License found for Dependency " + dependency.getName());
+        String message = String.format("No License found for Dependency %s (license from source: %s)",
+            dependency.getName(), dependency.getLicense());
 
-        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY,
-            "No License found for Dependency: " + dependency.getName());
+        LOGGER.info(message);
+
+        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY, message);
     }
 
     private static void createIssue(SensorContext context, Dependency dependency, String rule, String message)
@@ -249,8 +237,12 @@ public class ValidateLicenses
         {
             case LicenseCheckRulesDefinition.LANG_JS:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+            case LicenseCheckRulesDefinition.LANG_TS:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
             case LicenseCheckRulesDefinition.LANG_GROOVY:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+            case LicenseCheckRulesDefinition.LANG_KOTLIN:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
             case LicenseCheckRulesDefinition.LANG_JAVA:
             default:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;

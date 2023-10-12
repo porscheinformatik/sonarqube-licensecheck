@@ -1,20 +1,9 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
+import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
@@ -26,10 +15,14 @@ import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.internal.DefaultIssue;
 import org.sonar.api.scanner.fs.InputProject;
 
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class ValidateLicensesTest
 {
@@ -89,6 +82,20 @@ public class ValidateLicensesTest
         verify(context, never()).newIssue();
     }
 
+    @Test
+    public void licenseAllowed_kotlin()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(
+            deps(new Dependency("thing", "1.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_KOTLIN),
+                new Dependency("another", "2.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_KOTLIN)),
+            context);
+
+        verify(context, never()).newIssue();
+    }
+
+
     //  (LGPL OR Apache-2.0) AND (LGPL OR Apache-2.0)    
     @Test
     public void checkSpdxOrCombination()
@@ -132,7 +139,7 @@ public class ValidateLicensesTest
         Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND MIT)");
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(
-            deps(new Dependency("another", "2.0", "LGPL"), thing),
+            deps(new Dependency("another", "2.0", "LGPL", LicenseCheckRulesDefinition.LANG_JAVA), thing),
             context);
 
         verify(context).newIssue();
@@ -146,7 +153,7 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)");
+        Dependency thing = new Dependency("thing", "1.0", "(Apache-2.0 AND Apache-1.1)", LicenseCheckRulesDefinition.LANG_KOTLIN);
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(deps(thing), context);
 
@@ -173,7 +180,7 @@ public class ValidateLicensesTest
         NewIssue issue = new DefaultIssue(mock(DefaultInputProject.class), mock(SensorStorage.class));
         when(context.newIssue()).thenReturn(issue);
 
-        Dependency thing = new Dependency("thing", "1.0", null);
+        Dependency thing = new Dependency("thing", "1.0", null, LicenseCheckRulesDefinition.LANG_JS);
         thing.setInputComponent(context.project());
         validateLicenses.validateLicenses(deps(thing), context);
 

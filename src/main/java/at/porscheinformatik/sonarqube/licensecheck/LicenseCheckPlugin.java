@@ -1,18 +1,13 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import at.porscheinformatik.sonarqube.licensecheck.license.License;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.license.LicenseSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMapping;
 import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.dependencymapping.DependencyMappingSettingsService;
+import at.porscheinformatik.sonarqube.licensecheck.license.License;
+import at.porscheinformatik.sonarqube.licensecheck.license.LicenseService;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMapping;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
-import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingSettingsService;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicense;
 import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseService;
-import at.porscheinformatik.sonarqube.licensecheck.projectlicense.ProjectLicenseSettingsService;
-import at.porscheinformatik.sonarqube.licensecheck.web.LicenseCheckWebService;
 import org.sonar.api.Plugin;
 import org.sonar.api.PropertyType;
 import org.sonar.api.config.PropertyDefinition;
@@ -24,6 +19,7 @@ import java.util.List;
 public class LicenseCheckPlugin implements Plugin
 {
     private static final String LICENSE_ID_DESCRIPTION = "The identifier of the license (e.g. GPL-3.0)";
+    public static final String LICENSE_IDENTIFIER = "License Identifier";
 
     @Override
     public void define(Context context)
@@ -40,14 +36,9 @@ public class LicenseCheckPlugin implements Plugin
             LicenseCheckPageDefinition.class,
             LicenseCheckRulesDefinition.class,
             LicenseService.class,
-            LicenseSettingsService.class,
             DependencyMappingService.class,
-            DependencyMappingSettingsService.class,
             LicenseMappingService.class,
-            LicenseMappingSettingsService.class,
             ProjectLicenseService.class,
-            ProjectLicenseSettingsService.class,
-            LicenseCheckWebService.class,
             PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_SET)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
@@ -67,6 +58,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("If the license is allowed to use")
                         .type(PropertyType.BOOLEAN).build()
                 )
+                .index(3)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.DEPENDENCY_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
@@ -79,7 +71,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("A regular expression to match against the dependency key.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(DependencyMapping.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(DependencyMapping.FIELD_OVERWRITE)
@@ -87,6 +79,7 @@ public class LicenseCheckPlugin implements Plugin
                         .description("Overwrite the license defined by the dependency.")
                         .type(PropertyType.BOOLEAN).build()
                 )
+                .index(5)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
@@ -99,23 +92,24 @@ public class LicenseCheckPlugin implements Plugin
                         .description("A regular expression to match against the license name.")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(LicenseMapping.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build()
                 )
+                .index(4)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_SET)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("Project Licenses")
-                .description("Allow/disallow licences for specific projects.")
+                .description("Allow/disallow licenses for specific projects.")
                 .fields(
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_PROJECT_KEY)
                         .name("Project key")
                         .description("The project key")
                         .type(PropertyType.REGULAR_EXPRESSION).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_LICENSE)
-                        .name("License Identifier")
+                        .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING).build(),
                     PropertyFieldDefinition.build(ProjectLicense.FIELD_ALLOWED)
@@ -123,26 +117,15 @@ public class LicenseCheckPlugin implements Plugin
                         .description("If the license is allowed to use")
                         .type(PropertyType.BOOLEAN).build()
                 )
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.ALLOWED_DEPENDENCIES_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_REGEX)
-                .hidden()
-                .type(PropertyType.TEXT)
-                .build(),
-            PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_KEY)
-                .hidden()
-                .type(PropertyType.TEXT)
+                .index(6)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
+                .name("NPM Transitive Dependencies")
+                .description("Scan transitive dependencies for NPM packages")
                 .type(PropertyType.BOOLEAN)
+                .defaultValue("false")
+                .index(2)
                 .build(),
             PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
@@ -150,6 +133,7 @@ public class LicenseCheckPlugin implements Plugin
                 .description("Activate license check")
                 .type(PropertyType.BOOLEAN)
                 .defaultValue("true")
+                .index(1)
                 .build());
     }
 }

@@ -60,13 +60,19 @@ public class MavenDependencyScanner implements Scanner
 
         for (InputFile pomXml : fs.inputFiles(pomXmlPredicate))
         {
+            context.markForPublishing(pomXml);
+
             LOGGER.info("Scanning for Maven dependencies (POM: {})", pomXml.uri());
             try (Stream<Dependency> dependencies = readDependencyList(new File(pomXml.uri()), settings))
             {
                 dependencies
                     .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
-                    .peek(dependency -> dependency.setInputComponent(pomXml))
-                    .forEach(dependency -> allDependencies.add(dependency));
+                    .forEach(dependency ->
+                    {
+                        dependency.setInputComponent(pomXml);
+                        dependency.setTextRange(pomXml.newRange(1, 0, pomXml.lines(), 0));
+                        allDependencies.add(dependency);
+                    });
             }
         }
 
@@ -274,7 +280,10 @@ public class MavenDependencyScanner implements Scanner
             }
         }
 
-        LOGGER.info("No licenses match found for '{}'", licenseName);
+        dependency.setLicense(licenseName);
+
+        LOGGER.info("No licenses match found for '{}' in dependency '{}:{}'", licenseName,
+            dependency.getName(), dependency.getVersion());
     }
 
     private static MavenSettings getSettingsFromCommandLineArgs()

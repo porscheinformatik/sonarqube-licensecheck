@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  sonarqube:
+    image: sonarqube:10.1.0-community
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - ./target/sonarqube-licensecheck-plugin-6.0.0-SNAPSHOT.jar:/opt/sonarqube/extensions/plugins/sonarqube-licensecheck-plugin-6.0.0-SNAPSHOT.jar
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
