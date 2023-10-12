@@ -7,7 +7,11 @@
         <button id="item-add" @click="showAddDialog()" class="button">Add License</button>
       </div>
     </header>
-    <div class="panel panel-vertical bordered-bottom spacer-bottom">
+    <div class="panel" v-if="items.length === 0">
+      <p>Currently, you have no licenses defined. You can add all licenses from <a href="https://github.com/spdx/license-list-data">SPDX</a>.</p>
+      <button class="button" v-on:click="importSpdx()">Add SPDX list</button>
+    </div>
+    <div class="panel panel-vertical bordered-bottom spacer-bottom" v-if="items.length > 0">
       <div class="search-box">
         <svgicon icon="magnify" width="15" height="16"
                  style="padding-left: 5px; margin-top: 4px; fill: #999;"></svgicon>
@@ -16,7 +20,7 @@
       </div>
     </div>
     <div>
-      <table class="data zebra">
+      <table class="data zebra" v-if="items.length > 0">
         <caption>Add and administer licenses, allow or disallow globally.</caption>
         <thead>
         <tr>
@@ -158,6 +162,20 @@ export default {
     },
     cancelEdit() {
       this.itemToEdit = null;
+    },
+    importSpdx() {
+      fetch('https://raw.githubusercontent.com/spdx/license-list-data/main/json/licenses.json')
+        .then(r => r.json())
+        .then(data => {
+          const licenses = data.licenses.map(l => {
+            return {
+              id: l.licenseId,
+              name: l.name,
+              allowed: false
+            }
+          });
+          this.saveItems(licenses);
+        });
     },
     saveItems(items) {
       saveLicenses(items)
