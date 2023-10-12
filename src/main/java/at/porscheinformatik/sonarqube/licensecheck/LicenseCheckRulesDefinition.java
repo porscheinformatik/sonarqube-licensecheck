@@ -13,12 +13,14 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
     public static final String LANG_TS = "ts";
     public static final String LANG_GROOVY = "grvy";
     public static final String LANG_KOTLIN = "kotlin";
+    public static final String LANG_SCALA = "scala";
 
     public static final String RULE_REPO_KEY = "licensecheck";
     public static final String RULE_REPO_KEY_JS = "licensecheck-js";
     public static final String RULE_REPO_KEY_TS = "licensecheck-ts";
     public static final String RULE_REPO_KEY_GROOVY = "licensecheck-groovy";
     public static final String RULE_REPO_KEY_KOTLIN = "licensecheck-kotlin";
+    public static final String RULE_REPO_KEY_SCALA = "licensecheck-scala";
 
     public static final String RULE_UNLISTED_KEY = "licensecheck.unlisted";
     public static final String RULE_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
@@ -32,6 +34,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
             context.createRepository(RULE_REPO_KEY_TS, LANG_TS),
             context.createRepository(RULE_REPO_KEY_GROOVY, LANG_GROOVY),
             context.createRepository(RULE_REPO_KEY_KOTLIN, LANG_KOTLIN),
+            context.createRepository(RULE_REPO_KEY_SCALA, LANG_SCALA),
         };
 
         for (NewRepository repo : repos)

@@ -193,20 +193,7 @@ public class ValidateLicenses
                 .filter(l -> ValidateLicenses.contains(andLicenses, l.getIdentifier()))
                 .collect(Collectors.toList());
         long allowedLicenseCount = foundLicenses.stream().filter(License::getAllowed).count();
-        if (count == allowedLicenseCount)
-        {
-            return true;
-        }
-        else if (foundLicenses.size() == count)
-        {
-            // NOT ALLOWED
-            return false;
-        }
-        else
-        {
-            // NOT FOUND
-            return false;
-        }
+        return count == allowedLicenseCount;
     }
 
     private static void licenseNotAllowedIssue(SensorContext context, Dependency dependency, String notAllowedLicense)
@@ -221,10 +208,12 @@ public class ValidateLicenses
 
     private static void licenseNotFoundIssue(SensorContext context, Dependency dependency)
     {
-        LOGGER.info("No License found for Dependency " + dependency.getName());
+        String message = String.format("No License found for Dependency %s (license from source: %s)",
+            dependency.getName(), dependency.getLicense());
 
-        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY,
-            "No License found for Dependency: " + dependency.getName());
+        LOGGER.info(message);
+
+        createIssue(context, dependency, LicenseCheckRulesDefinition.RULE_UNLISTED_KEY, message);
     }
 
     private static void createIssue(SensorContext context, Dependency dependency, String rule, String message)
@@ -252,6 +241,8 @@ public class ValidateLicenses
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
             case LicenseCheckRulesDefinition.LANG_GROOVY:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+            case LicenseCheckRulesDefinition.LANG_SCALA:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_SCALA;
             case LicenseCheckRulesDefinition.LANG_KOTLIN:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
             case LicenseCheckRulesDefinition.LANG_JAVA:
