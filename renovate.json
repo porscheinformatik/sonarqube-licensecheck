@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:base", "group:allNonMajor"],
   "labels": ["dependencies"],
   "packageRules": [
@@ -7,6 +8,26 @@
       "packagePatterns": ["^org.sonarsource.sonarqube:"],
       "groupName": "org.sonarsource.sonarqube",
       "enabled": false
-    } 
+    },
+    {
+      "groupName": "Docker",
+      "matchDatasources": ["docker"]
+    },
+    {
+      "groupName": "Maven non-major dependencies",
+      "matchDatasources": ["maven"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    },
+    {
+      "groupName": "NPM non-major dependencies",
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    }
   ]
 }

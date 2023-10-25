@@ -5,6 +5,7 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefin
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static java.util.function.Predicate.not;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -84,7 +85,7 @@ public class LicenseCheckSensor implements Sensor
 
         sensorContext.<Integer>newMeasure()
             .forMetric(LicenseCheckMetrics.NO_LICENSES_FORBIDDEN)
-            .withValue((int) licenses.stream().filter(License::getAllowed).count())
+            .withValue((int) licenses.stream().filter(not(License::getAllowed)).count())
             .on(sensorContext.project())
             .save();
 

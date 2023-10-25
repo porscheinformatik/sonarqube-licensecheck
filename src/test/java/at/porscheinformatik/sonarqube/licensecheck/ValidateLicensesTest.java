@@ -83,6 +83,19 @@ public class ValidateLicensesTest
     }
 
     @Test
+    public void licenseAllowed_scala()
+    {
+        SensorContext context = createContext();
+
+        validateLicenses.validateLicenses(
+            deps(new Dependency("thing", "1.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_SCALA),
+                new Dependency("another", "2.0", "Apache-2.0", LicenseCheckRulesDefinition.LANG_SCALA)),
+            context);
+
+        verify(context, never()).newIssue();
+    }
+  
+    @Test
     public void licenseAllowed_kotlin()
     {
         SensorContext context = createContext();
@@ -94,7 +107,6 @@ public class ValidateLicensesTest
 
         verify(context, never()).newIssue();
     }
-
 
     //  (LGPL OR Apache-2.0) AND (LGPL OR Apache-2.0)    
     @Test
