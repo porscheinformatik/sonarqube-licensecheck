@@ -12,7 +12,7 @@ public class IOUtilsTest
     @Test
     public void testLoadFile() throws IOException
     {
-        String packageJson = IOUtils.readToString(IOUtilsTest.class.getResourceAsStream("/package.json"));
+        String packageJson = IOUtils.readToString(IOUtilsTest.class.getResourceAsStream("/example/package.json"));
         assertThat(packageJson, containsString("\"name\": \"test\""));
     }
 }
