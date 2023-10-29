@@ -1,0 +1,16 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "An example module to illustrate the usage of a package.json",
+  "author": "Your Name <you.name@example.org>",
+  "dependencies": {
+    "angular": "^1.4.3",
+    "angular-ui-router" : "~0.2.18",
+    "angular-ui-bootstrap" : "1.1.2",
+    "arangojs" : "5.6.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  },
+  "license": "MIT"
+}
