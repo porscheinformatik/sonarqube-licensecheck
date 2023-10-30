@@ -18,35 +18,34 @@ import org.sonar.api.server.ServerSide;
 
 @ServerSide
 @ScannerSide
-public class LicenseService
-{
+public class LicenseService {
+
     private final Configuration configuration;
     private final ProjectLicenseService projectLicenseService;
 
-    public LicenseService(Configuration configuration, ProjectLicenseService projectLicenseService)
-    {
+    public LicenseService(
+        Configuration configuration,
+        ProjectLicenseService projectLicenseService
+    ) {
         super();
         this.configuration = configuration;
         this.projectLicenseService = projectLicenseService;
     }
 
-    public List<License> getLicenses(InputProject module)
-    {
+    public List<License> getLicenses(InputProject module) {
         List<License> globalLicenses = getLicenses();
 
-        if (module == null)
-        {
+        if (module == null) {
             return globalLicenses;
         }
 
-        Collection<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList(module.key());
+        Collection<ProjectLicense> projectLicenses = projectLicenseService.getProjectLicenseList(
+            module.key()
+        );
 
-        for (License license : globalLicenses)
-        {
-            for (ProjectLicense projectLicense : projectLicenses)
-            {
-                if (license.getIdentifier().equals(projectLicense.getLicense()))
-                {
+        for (License license : globalLicenses) {
+            for (ProjectLicense projectLicense : projectLicenses) {
+                if (license.getIdentifier().equals(projectLicense.getLicense())) {
                     license.setAllowed(projectLicense.getAllowed()); // override the status of the globalLicenses
                 }
             }
@@ -55,17 +54,20 @@ public class LicenseService
         return globalLicenses;
     }
 
-    public List<License> getLicenses()
-    {
-        return Arrays.stream(configuration.getStringArray(LICENSE_SET))
+    public List<License> getLicenses() {
+        return Arrays
+            .stream(configuration.getStringArray(LICENSE_SET))
             .map(idx -> {
                 String idxProp = "." + idx + ".";
                 String name = configuration.get(LICENSE_SET + idxProp + FIELD_NAME).orElse(null);
-                String identifier = configuration.get(LICENSE_SET + idxProp + FIELD_ID).orElse(null);
-                Boolean allowed = configuration.getBoolean(LICENSE_SET + idxProp + FIELD_ALLOWED)
+                String identifier = configuration
+                    .get(LICENSE_SET + idxProp + FIELD_ID)
+                    .orElse(null);
+                Boolean allowed = configuration
+                    .getBoolean(LICENSE_SET + idxProp + FIELD_ALLOWED)
                     .orElse(Boolean.FALSE);
                 return new License(name, identifier, allowed.toString());
-            }).collect(Collectors.toList());
+            })
+            .collect(Collectors.toList());
     }
-
 }

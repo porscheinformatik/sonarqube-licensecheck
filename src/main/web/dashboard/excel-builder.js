@@ -6,7 +6,7 @@ export default function buildExcel(dependencies, licenses) {
     xmlns:html="http://www.w3.org/TR/REC-html40">`;
   excelFile += buildDependenciesWorksheet(dependencies);
   excelFile += buildLicensesWorksheet(licenses);
-  excelFile += '</Workbook>';
+  excelFile += "</Workbook>";
   return excelFile;
 }
 
@@ -27,7 +27,7 @@ function buildDependenciesWorksheet(dependencies) {
           <Data ss:Type="String">Status</Data>
         </Cell>
       </Row>`;
-  dependencies.forEach(dependency => {
+  dependencies.forEach((dependency) => {
     result += `<Row>
   <Cell><Data ss:Type="String">${dependency.name}</Data></Cell>
   <Cell><Data ss:Type="String">${dependency.version}</Data></Cell>
@@ -35,7 +35,7 @@ function buildDependenciesWorksheet(dependencies) {
   <Cell><Data ss:Type="String">${dependency.status}</Data></Cell>
 </Row>`;
   });
-  return result + '</Table></Worksheet>';
+  return result + "</Table></Worksheet>";
 }
 
 function buildLicensesWorksheet(licenses) {
@@ -52,12 +52,12 @@ function buildLicensesWorksheet(licenses) {
           <Data ss:Type="String">Status</Data>
         </Cell>
       </Row>`;
-  licenses.forEach(license => {
+  licenses.forEach((license) => {
     result += `<Row>
   <Cell><Data ss:Type="String">${license.identifier}</Data></Cell>
   <Cell><Data ss:Type="String">${license.name}</Data></Cell>
-  <Cell><Data ss:Type="String">${license.status === 'true' ? 'Allowed' : 'Forbidden'}</Data></Cell>
+  <Cell><Data ss:Type="String">${license.status === "true" ? "Allowed" : "Forbidden"}</Data></Cell>
 </Row>`;
   });
-  return result + '</Table></Worksheet>';
+  return result + "</Table></Worksheet>";
 }

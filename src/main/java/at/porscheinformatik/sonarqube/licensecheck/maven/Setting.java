@@ -2,24 +2,19 @@ package at.porscheinformatik.sonarqube.licensecheck.maven;
 
 import java.io.File;
 
-class Setting
-{
+class Setting {
 
     private File localRepositoryPath;
 
-    public File getLocalRepositoryPath()
-    {
+    public File getLocalRepositoryPath() {
         return localRepositoryPath;
     }
 
-    public void setLocalRepositoryPath(File localRepositoryPath)
-    {
+    public void setLocalRepositoryPath(File localRepositoryPath) {
         this.localRepositoryPath = localRepositoryPath;
     }
 
-    public void setLocalRepositoryPath(String localRepositoryPath)
-    {
+    public void setLocalRepositoryPath(String localRepositoryPath) {
         this.localRepositoryPath = new File(localRepositoryPath);
     }
-
 }

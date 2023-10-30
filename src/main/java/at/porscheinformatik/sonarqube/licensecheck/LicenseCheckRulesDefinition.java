@@ -6,8 +6,8 @@ import org.sonar.api.server.rule.RulesDefinition;
 /**
  * Repository for the rules used in the plugin
  */
-public final class LicenseCheckRulesDefinition implements RulesDefinition
-{
+public final class LicenseCheckRulesDefinition implements RulesDefinition {
+
     public static final String LANG_JAVA = "java";
     public static final String LANG_JS = "js";
     public static final String LANG_TS = "ts";
@@ -26,9 +26,8 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
     public static final String RULE_NOT_ALLOWED_LICENSE_KEY = "licensecheck.notallowedlicense";
 
     @Override
-    public void define(Context context)
-    {
-        NewRepository[] repos = new NewRepository[]{
+    public void define(Context context) {
+        NewRepository[] repos = new NewRepository[] {
             context.createRepository(RULE_REPO_KEY, LANG_JAVA),
             context.createRepository(RULE_REPO_KEY_JS, LANG_JS),
             context.createRepository(RULE_REPO_KEY_TS, LANG_TS),
@@ -37,8 +36,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
             context.createRepository(RULE_REPO_KEY_SCALA, LANG_SCALA),
         };
 
-        for (NewRepository repo : repos)
-        {
+        for (NewRepository repo : repos) {
             repo.setName("License Check");
 
             repo
@@ -50,7 +48,9 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition
             repo
                 .createRule(RULE_NOT_ALLOWED_LICENSE_KEY)
                 .setName("License is not allowed [license-check]")
-                .setHtmlDescription("Violation because the license of the dependency is not allowed.")
+                .setHtmlDescription(
+                    "Violation because the license of the dependency is not allowed."
+                )
                 .setSeverity(Severity.BLOCKER);
 
             repo.done();

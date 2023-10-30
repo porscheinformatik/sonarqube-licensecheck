@@ -4,21 +4,25 @@ import org.sonar.api.web.page.Context;
 import org.sonar.api.web.page.Page;
 import org.sonar.api.web.page.PageDefinition;
 
-public class LicenseCheckPageDefinition implements PageDefinition
-{
+public class LicenseCheckPageDefinition implements PageDefinition {
+
     @Override
-    public void define(Context context)
-    {
-        context
-            .addPage(Page.builder("licensecheck/configuration")
+    public void define(Context context) {
+        context.addPage(
+            Page
+                .builder("licensecheck/configuration")
                 .setName("License Check")
                 .setAdmin(true)
-                .build());
+                .build()
+        );
 
-        context.addPage(Page.builder("licensecheck/dashboard")
-            .setName("License Check")
-            .setScope(Page.Scope.COMPONENT)
-            .setComponentQualifiers(Page.Qualifier.PROJECT)
-            .build());
+        context.addPage(
+            Page
+                .builder("licensecheck/dashboard")
+                .setName("License Check")
+                .setScope(Page.Scope.COMPONENT)
+                .setComponentQualifiers(Page.Qualifier.PROJECT)
+                .build()
+        );
     }
 }

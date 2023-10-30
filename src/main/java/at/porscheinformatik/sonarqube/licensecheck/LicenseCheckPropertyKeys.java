@@ -1,7 +1,7 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-public class LicenseCheckPropertyKeys
-{
+public class LicenseCheckPropertyKeys {
+
     /**
      * Category for all settings.
      */
@@ -42,7 +42,5 @@ public class LicenseCheckPropertyKeys
      */
     public static final String GRADLE_JSON_REPORT_PATH = "licenseCheck.gradle-json-report-path";
 
-    private LicenseCheckPropertyKeys()
-    {
-    }
+    private LicenseCheckPropertyKeys() {}
 }

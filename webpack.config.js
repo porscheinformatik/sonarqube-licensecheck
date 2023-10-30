@@ -1,41 +1,36 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const path = require('path');
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const path = require("path");
 
 module.exports = {
   entry: {
-    configuration: './src/main/web/configuration.js',
-    dashboard: './src/main/web/dashboard.js'
+    configuration: "./src/main/web/configuration.js",
+    dashboard: "./src/main/web/dashboard.js",
   },
   output: {
-    path: path.resolve(__dirname, 'target/classes/static/'),
-    filename: '[name].js'
+    path: path.resolve(__dirname, "target/classes/static/"),
+    filename: "[name].js",
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      vue$: "vue/dist/vue.esm.js",
     },
-    extensions: ['*', '.js', '.vue', '.json']
+    extensions: ["*", ".js", ".vue", ".json"],
   },
   module: {
     rules: [
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
+        loader: "vue-loader",
       },
       {
         test: /.js$/,
-        loader: 'buble-loader'
+        loader: "buble-loader",
       },
       {
         test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-        ]
-      }
-    ]
+        use: ["vue-style-loader", "css-loader"],
+      },
+    ],
   },
-  plugins: [
-    new VueLoaderPlugin(),
-  ],
+  plugins: [new VueLoaderPlugin()],
 };
