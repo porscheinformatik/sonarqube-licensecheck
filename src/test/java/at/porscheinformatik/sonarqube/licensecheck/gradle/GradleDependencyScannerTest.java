@@ -21,6 +21,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.config.Configuration;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
+import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
 public class GradleDependencyScannerTest
@@ -65,7 +66,7 @@ public class GradleDependencyScannerTest
         String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
         SensorContext context = createContext(new File(absolutePath));
-        when(context.config().get(GradleDependencyScanner.JSON_REPORT_PATH_PROPERTY)).thenReturn(
+        when(context.config().get(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH)).thenReturn(
             Optional.of("build/my-reports/license-details.json"));
         Set<Dependency> dependencies = scanner.scan(context);
         assertEquals(43, dependencies.size());

@@ -134,6 +134,13 @@ public class LicenseCheckPlugin implements Plugin
                 .type(PropertyType.BOOLEAN)
                 .defaultValue("true")
                 .index(1)
-                .build());
+                .build(),
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH)
+                .category(LicenseCheckPropertyKeys.CATEGORY)
+                .name("Gradle report path")
+                .description("Path to search for the license report in gradle scanner")
+                .type(PropertyType.STRING)
+                .index(7)
+                .build());    
     }
 }
