@@ -37,6 +37,10 @@ public class LicenseCheckPropertyKeys
      */
     public static final String NPM_RESOLVE_TRANSITIVE_DEPS = "licensecheck.npm.resolvetransitive";
 
+    /**
+     * Config key to configure the path to look for the license report in the gradle scanner.
+     */
+    public static final String GRADLE_JSON_REPORT_PATH = "licenseCheck.gradle-json-report-path";
 
     private LicenseCheckPropertyKeys()
     {
