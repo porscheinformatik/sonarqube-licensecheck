@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.1.0...v5.1.1) - Unreleased
+
+### BREAKING CHANGES
+
+This version is not compatible with SonarQube < 9.5
+
+### Features
+
+- Compatibility with Sonar 10.x (#375)
+- Support for Scala (#352)
+- Feature to import SPDX license list (fa68e04)
+- Resolve node_modules relative to package.json #380
+
 ## [5.1.1](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.1.0...v5.1.1) - 2022-11-04
 
 ### Bug Fixes
