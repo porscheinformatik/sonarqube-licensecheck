@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack --mode=production",
     "watch": "concurrently --kill-others \"webpack --watch --mode development --devtool inline-source-map\" \"node test-server.js\"",
-    "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons"
+    "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons",
+    "prettier": "prettier --write '**/*.{js,java,html,css,json,md,vue,yml,yaml}'",
+    "prettier-check": "prettier --check '**/*.{js,java,html,css,json,md,vue,yml,yaml}'"
   },
   "author": "Christian Köberl",
   "license": "Apache-2.0",
@@ -16,6 +18,8 @@
     "concurrently": "8.2.2",
     "css-loader": "6.8.1",
     "http-proxy": "1.18.1",
+    "prettier": "3.0.3",
+    "prettier-plugin-java": "2.3.1",
     "vue-loader": "15.11.1",
     "vue-svgicon": "3.3.2",
     "vue-template-compiler": "2.7.15",

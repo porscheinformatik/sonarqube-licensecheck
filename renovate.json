@@ -16,18 +16,12 @@
     {
       "groupName": "Maven non-major dependencies",
       "matchDatasources": ["maven"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ]
+      "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "groupName": "NPM non-major dependencies",
       "matchDatasources": ["npm"],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ]
+      "matchUpdateTypes": ["minor", "patch"]
     }
   ]
 }

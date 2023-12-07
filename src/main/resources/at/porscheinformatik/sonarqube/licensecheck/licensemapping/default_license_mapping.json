@@ -27,5 +27,5 @@
   { "regex": ".*Eclipse.Distribution.License.*.1.0.*", "license": "BSD-3-Clause" },
   { "regex": ".*GPL2.*CPE.*", "license": "GPL-2.0-with-classpath-exception" },
   { "regex": ".*JSON.*License.*", "license": "JSON" },
-  { "regex": ".*W3C.Software.*License.*", "license": "W3C"}
+  { "regex": ".*W3C.Software.*License.*", "license": "W3C" }
 ]

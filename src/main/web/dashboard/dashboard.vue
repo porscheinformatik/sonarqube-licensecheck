@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import Licenses from './licenses.vue';
-import Dependencies from './dependencies.vue';
-import saveAs from 'file-saverjs';
-import buildExcel from './excel-builder';
+import Licenses from "./licenses.vue";
+import Dependencies from "./dependencies.vue";
+import saveAs from "file-saverjs";
+import buildExcel from "./excel-builder";
 
 export default {
   props: ["options"],
@@ -21,46 +21,45 @@ export default {
     return {
       licenses: [],
       dependencies: [],
-      component: this.options.component
-    }
+      component: this.options.component,
+    };
   },
   created() {
     let params = new URLSearchParams(window.location.search);
     let request = {
-
-      component : this.component.key,
-      metricKeys : "licensecheck.license,licensecheck.dependency"
+      component: this.component.key,
+      metricKeys: "licensecheck.license,licensecheck.dependency",
     };
     if (params.has("branch")) {
       request.branch = params.get("branch");
     } else if (params.has("pullRequest")) {
       request.pullRequest = params.get("pullRequest");
     }
-    window.SonarRequest
-      .getJSON("/api/measures/component", request)
-      .then(response => {
-        response.component.measures.forEach(measure => {
-          if (measure.metric === 'licensecheck.license') {
-            this.licenses = JSON.parse(measure.value);
-          } else if (measure.metric === 'licensecheck.dependency') {
-            this.dependencies = JSON.parse(measure.value);
+    window.SonarRequest.getJSON("/api/measures/component", request).then((response) => {
+      response.component.measures.forEach((measure) => {
+        if (measure.metric === "licensecheck.license") {
+          this.licenses = JSON.parse(measure.value);
+        } else if (measure.metric === "licensecheck.dependency") {
+          this.dependencies = JSON.parse(measure.value);
+        }
+      });
+      this.dependencies.forEach((dependency) => {
+        dependency.status = "Unknown";
+        this.licenses.forEach((license) => {
+          if (dependency.license === license.identifier) {
+            dependency.status = license.status === "true" ? "Allowed" : "Forbidden";
           }
         });
-        this.dependencies.forEach(dependency => {
-          dependency.status = 'Unknown';
-          this.licenses.forEach(license => {
-            if (dependency.license === license.identifier) {
-              dependency.status = license.status === 'true' ? 'Allowed' : 'Forbidden';
-            }
-          });
-        });
       });
+    });
   },
   methods: {
     exportExcel() {
-      const blob = new Blob([buildExcel(this.dependencies, this.licenses)], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+      const blob = new Blob([buildExcel(this.dependencies, this.licenses)], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       saveAs(blob, `license-check-${this.component.key}.xls`);
-    }
+    },
   },
   components: { Licenses, Dependencies },
 };

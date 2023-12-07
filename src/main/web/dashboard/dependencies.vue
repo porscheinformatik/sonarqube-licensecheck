@@ -2,25 +2,43 @@
   <div class="boxed-group boxed-group-inner">
     <h3>Dependencies</h3>
     <table class="data zebra">
-      <caption>Here you see all project dependencies from Maven (including transitive) and NPM.</caption>
+      <caption>
+        Here you see all project dependencies from Maven (including transitive) and NPM.
+      </caption>
       <thead>
         <tr>
-          <th v-for="dependency in columns" v-bind:key="dependency" v-on:click="sort(dependency)" scope="col"> {{dependency}} 
-            <div class="arrow" v-if="dependency === sortByDep"
-                 v-bind:class="{ 'arrow_up' : sortDirectionDep === 'asc', 'arrow_down' : sortDirectionDep === 'desc'}"></div>
+          <th
+            v-for="dependency in columns"
+            v-bind:key="dependency"
+            v-on:click="sort(dependency)"
+            scope="col"
+          >
+            {{ dependency }}
+            <div
+              class="arrow"
+              v-if="dependency === sortByDep"
+              v-bind:class="{
+                arrow_up: sortDirectionDep === 'asc',
+                arrow_down: sortDirectionDep === 'desc',
+              }"
+            ></div>
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(dependency) in sortedDependencies" v-bind:key="dependency.name">
-          <td>{{dependency.name}}</td>
-          <td>{{dependency.version}}</td>
-          <td>{{dependency.license}}</td>
+        <tr v-for="dependency in sortedDependencies" v-bind:key="dependency.name">
+          <td>{{ dependency.name }}</td>
+          <td>{{ dependency.version }}</td>
+          <td>{{ dependency.license }}</td>
           <td>
             <span
-              :class="{ 'icon-license-ok': dependency.status === 'Allowed', 'icon-license-nok': dependency.status === 'Forbidden', 'icon-license-unknown': dependency.status === 'Unknown' }"
+              :class="{
+                'icon-license-ok': dependency.status === 'Allowed',
+                'icon-license-nok': dependency.status === 'Forbidden',
+                'icon-license-unknown': dependency.status === 'Unknown',
+              }"
             ></span>
-            {{dependency.status}}
+            {{ dependency.status }}
           </td>
         </tr>
       </tbody>
@@ -28,7 +46,7 @@
   </div>
 </template>
 
-  <script>
+<script>
 export default {
   props: ["dependencies"],
   data() {
@@ -37,10 +55,10 @@ export default {
         name: "",
         version: "",
         license: "",
-        status: ""
+        status: "",
       },
       sortByDep: "status",
-      sortDirectionDep: "desc"
+      sortDirectionDep: "desc",
     };
   },
   computed: {
@@ -53,9 +71,9 @@ export default {
         return 0;
       });
     },
-    "columns": function columns() {
+    columns: function columns() {
       return ["name", "version", "license", "status"];
-    }
+    },
   },
   methods: {
     sort(param) {
@@ -63,8 +81,8 @@ export default {
         this.sortDirectionDep = this.sortDirectionDep === "asc" ? "desc" : "asc";
       }
       this.sortByDep = param;
-    }
-  }
+    },
+  },
 };
 </script>
 

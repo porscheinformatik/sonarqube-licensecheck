@@ -1,22 +1,23 @@
 package at.porscheinformatik.sonarqube.licensecheck.licensemapping;
 
-import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.lessThan;
 
+import at.porscheinformatik.sonarqube.licensecheck.utils.IOUtils;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import org.junit.Test;
+
 public class LicenseMappingTest {
+
     @Test
     public void loadFromJson() throws IOException {
-        String licenseMappingListString =
-            IOUtils.readToString(LicenseMapping.class.getResourceAsStream("default_license_mapping.json"));
+        String licenseMappingListString = IOUtils.readToString(
+            LicenseMapping.class.getResourceAsStream("default_license_mapping.json")
+        );
         List<LicenseMapping> licenseMappings = LicenseMapping.fromString(licenseMappingListString);
 
         assertThat(licenseMappings, hasItem(new LicenseMapping("Apple License", "AML")));

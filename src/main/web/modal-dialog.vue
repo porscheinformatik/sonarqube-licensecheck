@@ -2,7 +2,7 @@
   <div v-if="show">
     <div class="modal in">
       <div class="modal-head">
-        <h2>{{header}}</h2>
+        <h2>{{ header }}</h2>
       </div>
       <div class="modal-body">
         <slot name="body"></slot>
@@ -20,19 +20,19 @@
 export default {
   props: {
     header: String,
-    show: Boolean
+    show: Boolean,
   },
   methods: {
     close() {
-      this.$emit('close');
-    }
+      this.$emit("close");
+    },
   },
   mounted() {
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       if (this.show && e.keyCode == 27) {
         this.close();
       }
     });
-  }
+  },
 };
 </script>

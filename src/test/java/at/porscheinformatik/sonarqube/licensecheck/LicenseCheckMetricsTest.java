@@ -5,11 +5,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 
-public class LicenseCheckMetricsTest
-{
+public class LicenseCheckMetricsTest {
+
     @Test
-    public void getMetrics()
-    {
+    public void getMetrics() {
         assertThat(new LicenseCheckMetrics().getMetrics(), notNullValue());
     }
 }
