@@ -26,8 +26,12 @@ import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.*;
+
 public class GradleDependencyScanner implements Scanner
 {
+    public static final String JSON_REPORT_PATH_DEFAULT = "build" + File.separator + "reports" + File.separator + "dependency-license" + File.separator + "license-details.json";
+
     private static final Logger LOGGER = Loggers.get(GradleDependencyScanner.class);
 
     private final LicenseMappingService licenseMappingService;
@@ -40,13 +44,11 @@ public class GradleDependencyScanner implements Scanner
     @Override
     public Set<Dependency> scan(SensorContext context)
     {
-        File moduleDir = context.fileSystem().baseDir();
-
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
 
-        File licenseDetailsJsonFile = new File(moduleDir, "build" + File.separator + "reports" + File.separator
-            + "dependency-license" + File.separator + "license-details.json");
-
+        String pathDef = context.config().get(GRADLE_JSON_REPORT_PATH).orElse(JSON_REPORT_PATH_DEFAULT);
+        LOGGER.debug("Searching for license file at {}", pathDef);
+        File licenseDetailsJsonFile = context.fileSystem().workDir().toPath().resolve(pathDef).toFile().getAbsoluteFile();
         if (!licenseDetailsJsonFile.exists())
         {
             LOGGER.info("No license-details.json file found in {} - skipping Gradle dependency scan",
