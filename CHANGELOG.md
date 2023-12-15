@@ -20,8 +20,8 @@ This version is not compatible with SonarQube < 9.5
 - Make report path configurable in Gradle scanner (#397)
 
 Other Changes:
-- Use Prettier for code formatting #399
 
+- Use Prettier for code formatting #399
 
 ## [5.1.1](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v5.1.0...v5.1.1) - 2022-11-04
 
