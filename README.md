@@ -55,11 +55,9 @@ The plugin contains a project dashboard showing a list of dependencies with vers
 
 This plugin is compatible:
 
+- 6.x version with 9 LTS (>= 9.5) and 10.x
 - 5.x version with 8.9 LTS and < 10 (9.x is compatible)
 - 4.x version with SonarQube 8.x
-- 3.x version with SonarQube >= 7.9 LTS and < 8.
-- 2.x version with SonarQube >= 6.5 and < 7.
-- 1.x versions with SonarQube >= 5.3 and < 6.
 
 For all changes see [CHANGELOG.md](CHANGELOG.md)
 
