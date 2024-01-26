@@ -237,13 +237,19 @@ public class MavenDependencyScanner implements Scanner {
             }
 
             for (License license : licenses) {
-                licenseMatcher(licenseMap, dependency, license);
+                boolean found = licenseMatcher(licenseMap, dependency, license);
+                if (found) {
+                    break;
+                }
             }
         }
         return dependency;
     }
 
-    private static void licenseMatcher(
+    /**
+     * @return true if license was found in defined license list, false otherwise
+     */
+    private static boolean licenseMatcher(
         Map<Pattern, String> licenseMap,
         Dependency dependency,
         License license
@@ -251,13 +257,13 @@ public class MavenDependencyScanner implements Scanner {
         String licenseName = license.getName();
         if (StringUtils.isBlank(licenseName)) {
             LOGGER.info("Dependency '{}' has an empty license.", dependency.getName());
-            return;
+            return false;
         }
 
         for (Entry<Pattern, String> entry : licenseMap.entrySet()) {
             if (entry.getKey().matcher(licenseName).matches()) {
                 dependency.setLicense(entry.getValue());
-                return;
+                return true;
             }
         }
 
@@ -269,6 +275,8 @@ public class MavenDependencyScanner implements Scanner {
             dependency.getName(),
             dependency.getVersion()
         );
+
+        return false;
     }
 
     private static MavenSettings getSettingsFromCommandLineArgs() {
