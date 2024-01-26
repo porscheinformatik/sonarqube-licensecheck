@@ -76,7 +76,7 @@
             <td>{{ item.key }}</td>
             <td>{{ item.license }} / {{ findLicenseName(item.license) }}</td>
             <td>
-              {{ item.overwrite === "true" ? "Yes" : "No" }}
+              {{ item.overwrite === "false" ? "No" : "Yes" }}
             </td>
             <td class="thin nowrap">
               <a class="button" @click="showEditDialog(item)" title="Edit item">

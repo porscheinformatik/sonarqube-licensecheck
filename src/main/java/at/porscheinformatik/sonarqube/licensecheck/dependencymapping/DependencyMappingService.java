@@ -36,7 +36,7 @@ public class DependencyMappingService {
                     .orElse(null);
                 Boolean overwrite = configuration
                     .getBoolean(DEPENDENCY_MAPPING + idxProp + FIELD_OVERWRITE)
-                    .orElse(Boolean.FALSE);
+                    .orElse(Boolean.TRUE);
                 return new DependencyMapping(key, license, overwrite);
             })
             .collect(Collectors.toList());
