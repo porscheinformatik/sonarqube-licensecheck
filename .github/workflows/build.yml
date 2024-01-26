@@ -14,8 +14,8 @@ jobs:
       - name: Setup java
         uses: actions/setup-java@v4
         with:
-          java-version: 11
-          distribution: adopt
+          java-version: 17
+          distribution: temurin
       - name: Build with SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
