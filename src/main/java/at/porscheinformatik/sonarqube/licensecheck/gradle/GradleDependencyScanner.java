@@ -55,7 +55,7 @@ public class GradleDependencyScanner implements Scanner {
         LOGGER.debug("Searching for license file at {}", pathDef);
         File licenseDetailsJsonFile = context
             .fileSystem()
-            .workDir()
+            .baseDir()
             .toPath()
             .resolve(pathDef)
             .toFile()
