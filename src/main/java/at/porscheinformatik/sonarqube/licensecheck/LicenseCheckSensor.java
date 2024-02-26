@@ -5,6 +5,7 @@ import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefin
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_CS;
 import static java.util.function.Predicate.not;
 
 import at.porscheinformatik.sonarqube.licensecheck.gradle.GradleDependencyScanner;
@@ -22,6 +23,7 @@ import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.fs.InputProject;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import at.porscheinformatik.sonarqube.licensecheck.nugetlicense.NugetLicenseDependencyScanner;
 
 public class LicenseCheckSensor implements Sensor {
 
@@ -49,6 +51,8 @@ public class LicenseCheckSensor implements Sensor {
                 ),
                 new MavenDependencyScanner(licenseMappingService),
                 new GradleDependencyScanner(licenseMappingService),
+                new GradleDependencyScanner(licenseMappingService),
+                new NugetLicenseDependencyScanner(licenseMappingService)
             };
     }
 
@@ -145,7 +149,8 @@ public class LicenseCheckSensor implements Sensor {
                 RULE_REPO_KEY_JS,
                 RULE_REPO_KEY_TS,
                 RULE_REPO_KEY_GROOVY,
-                RULE_REPO_KEY_KOTLIN
+                RULE_REPO_KEY_KOTLIN,
+                RULE_REPO_KEY_CS
             );
     }
 

@@ -3,7 +3,7 @@
     <h3>Dependencies</h3>
     <table class="data zebra">
       <caption>
-        Here you see all project dependencies from Maven (including transitive) and NPM.
+        Here you see all project dependencies from Maven (including transitive), NPM and NuGet.
       </caption>
       <thead>
         <tr>
