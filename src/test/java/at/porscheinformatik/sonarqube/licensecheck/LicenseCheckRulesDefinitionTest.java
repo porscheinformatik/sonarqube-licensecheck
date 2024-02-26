@@ -14,7 +14,7 @@ public class LicenseCheckRulesDefinitionTest {
 
         new LicenseCheckRulesDefinition().define(context);
 
-        assertThat(context.repositories().size(), is(6));
+        assertThat(context.repositories().size(), is(7));
         for (RulesDefinition.Repository repository : context.repositories()) {
             assertThat(repository.rules().size(), is(2));
         }
