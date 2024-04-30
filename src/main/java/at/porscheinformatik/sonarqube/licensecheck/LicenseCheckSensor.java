@@ -51,7 +51,6 @@ public class LicenseCheckSensor implements Sensor {
                 ),
                 new MavenDependencyScanner(licenseMappingService),
                 new GradleDependencyScanner(licenseMappingService),
-                new GradleDependencyScanner(licenseMappingService),
                 new NugetLicenseDependencyScanner(licenseMappingService)
             };
     }
