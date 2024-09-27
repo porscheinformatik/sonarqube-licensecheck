@@ -16,7 +16,7 @@ services:
     ports:
       - "9000:9000"
   db:
-    image: postgres:14-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
