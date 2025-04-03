@@ -1,8 +1,12 @@
 package at.porscheinformatik.sonarqube.licensecheck;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_JS;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_TS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -40,8 +44,15 @@ public class LicenseCheckSensorTest {
 
         sensor.describe(descriptor);
 
-        verify(descriptor).name(anyString());
-        verify(descriptor).createIssuesForRuleRepositories(anyVararg());
+        verify(descriptor).name("License Check");
+        verify(descriptor)
+            .createIssuesForRuleRepositories(
+                RULE_REPO_KEY,
+                RULE_REPO_KEY_JS,
+                RULE_REPO_KEY_TS,
+                RULE_REPO_KEY_GROOVY,
+                RULE_REPO_KEY_KOTLIN
+            );
     }
 
     @Test
