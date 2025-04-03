@@ -1,25 +1,11 @@
-import Vue from "vue";
-import ModalDialog from "./modal-dialog";
-import Configuration from "./configuration/configuration.vue";
-import VueSVGIcon from "vue-svgicon";
-
-Vue.use(VueSVGIcon);
+import { createRoot } from "react-dom/client";
+import Configuration from "./configuration/configuration";
 
 window.registerExtension("licensecheck/configuration", function (options) {
-  Vue.component("modal-dialog", ModalDialog);
-  const app = new Vue({
-    el: options.el,
-    // Cannot use `template`. Eval is blocked by CSP
-    render(createElement) {
-      return createElement(Configuration, {
-        props: {
-          options,
-        },
-      });
-    },
-  });
+  const root = createRoot(options.el);
+  root.render(<Configuration options={options} />);
 
   return function () {
-    app.$destroy();
+    root.unmount();
   };
 });

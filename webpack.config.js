@@ -1,4 +1,3 @@
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const path = require("path");
 
 module.exports = {
@@ -11,26 +10,24 @@ module.exports = {
     filename: "[name].js",
   },
   resolve: {
-    alias: {
-      vue$: "vue/dist/vue.esm.js",
-    },
-    extensions: ["*", ".js", ".vue", ".json"],
+    extensions: ["*", ".js", ".jsx", ".json"],
   },
   module: {
     rules: [
       {
-        test: /\.vue$/,
-        loader: "vue-loader",
-      },
-      {
-        test: /.js$/,
-        loader: "buble-loader",
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"],
+          },
+        },
       },
       {
         test: /\.css$/,
-        use: ["vue-style-loader", "css-loader"],
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
-  plugins: [new VueLoaderPlugin()],
 };
