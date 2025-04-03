@@ -4,7 +4,7 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>6.0.0-SNAPSHOT</version>
+  <version>7.0.0-SNAPSHOT</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
@@ -44,9 +44,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonar.apiVersion>9.5.0.71</sonar.apiVersion>
-    <sonar.apiImplVersion>9.5.0.56709</sonar.apiImplVersion>
-    <java.version>11</java.version>
+    <sonar.apiVersion>11.0.0.2664</sonar.apiVersion>
+    <sonar.apiImplVersion>25.1.0.102122</sonar.apiImplVersion>
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
@@ -75,14 +75,14 @@
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.10.19</version>
+      <artifactId>mockito-core</artifactId>
+      <version>5.16.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
+      <version>3.17.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -105,7 +105,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.8.6</version>
+      <version>3.9.9</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -126,7 +126,7 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.21.0.505</version>
+        <version>1.23.0.740</version>
         <extensions>true</extensions>
         <configuration>
           <pluginKey>licensecheck</pluginKey>
@@ -136,7 +136,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.14.0</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -149,7 +149,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.5.3</version>
         <configuration>
           <systemPropertyVariables>
             <maven.home>${maven.home}</maven.home>
@@ -159,7 +159,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.8</version>
+        <version>0.8.13</version>
         <executions>
           <execution>
           <id>prepare-agent</id>
@@ -178,7 +178,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.14.0</version>
+        <version>1.15.1</version>
         <executions>
           <execution>
             <id>install node and npm</id>
@@ -217,8 +217,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v18.18.0</nodeVersion>
-          <npmVersion>9.8.1</npmVersion>
+          <nodeVersion>v22.14.0</nodeVersion>
+          <npmVersion>10.9.2</npmVersion>
         </configuration>
       </plugin>
       <plugin>
