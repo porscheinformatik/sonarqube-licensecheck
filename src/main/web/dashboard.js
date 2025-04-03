@@ -1,20 +1,11 @@
-import Vue from "vue";
-import Dashboard from "./dashboard/dashboard.vue";
+import { createRoot } from "react-dom/client";
+import Dashboard from "./dashboard/dashboard";
 
 window.registerExtension("licensecheck/dashboard", function (options) {
-  const app = new Vue({
-    el: options.el,
-    // Cannot use `template`. Eval is blocked by CSP
-    render(createElement) {
-      return createElement(Dashboard, {
-        props: {
-          options,
-        },
-      });
-    },
-  });
+  const root = createRoot(options.el);
+  root.render(<Dashboard options={options} />);
 
   return function () {
-    app.$destroy();
+    root.unmount();
   };
 });
