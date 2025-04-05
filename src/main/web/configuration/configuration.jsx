@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "../shared/styles.css";
 import DependencyMappingsPage from "./dependency-mappings-page";
 import LicenseMappingsPage from "./license-mappings-page";
 import LicensesPage from "./licenses-page";
@@ -21,7 +22,7 @@ const Configuration = () => {
   };
 
   return (
-    <div className="licensecheck-config-page">
+    <div className="sqlc-page">
       <ul className="sw-flex sw-items-end sw-gap-8 sw-mt-4">
         <li>
           <a

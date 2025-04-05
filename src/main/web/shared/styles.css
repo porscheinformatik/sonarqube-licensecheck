@@ -1,0 +1,58 @@
+table.sqlc-data {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.sqlc-data th {
+  color: rgb(29, 33, 47);
+  font: var(--echoes-typography-text-default-semi-bold);
+  cursor: pointer;
+}
+
+table.sqlc-data th,
+table.sqlc-data td {
+  border-top: 3px solid rgb(235, 235, 235);
+  padding: 1rem 0.5rem;
+  vertical-align: middle;
+  text-align: left;
+}
+
+table.sqlc-data caption {
+  color: rgb(111, 119, 143);
+  text-align: left;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+}
+
+table.sqlc-data tr:hover td {
+  background-color: rgb(244, 246, 255);
+}
+
+.arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.arrow_up {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid rgb(29, 33, 47);
+}
+
+.arrow_down {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgb(29, 33, 47);
+}
+
+.sqlc-page {
+  box-sizing: border-box;
+  min-width: 1280px;
+  margin: 0px auto;
+  padding-left: 3.75rem;
+  padding-right: 3.75rem;
+  max-width: 1680px;
+}

@@ -7,13 +7,13 @@ import {
   IconEdit,
   IconError,
   IconSearch,
+  IconTriangleDown,
+  IconTriangleUp,
   Label,
   Modal,
   TextInput,
 } from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
-import "../dashboard/icons.css";
-import "./configuration.css";
 import { loadLicenses, saveLicenses } from "./sonar-api";
 
 const LicensesPage = () => {
@@ -145,32 +145,23 @@ const LicensesPage = () => {
           </div>
 
           <div>
-            <table className="data zebra">
+            <table className="sqlc-data">
               <thead>
                 <tr>
                   <th onClick={() => sort("id")} scope="col">
                     Identifier
-                    {sortBy === "id" && (
-                      <div
-                        className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`}
-                      />
-                    )}
+                    {sortBy === "id" &&
+                      (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
                   </th>
                   <th onClick={() => sort("name")} scope="col">
                     Name
-                    {sortBy === "name" && (
-                      <div
-                        className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`}
-                      />
-                    )}
+                    {sortBy === "name" &&
+                      (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
                   </th>
                   <th onClick={() => sort("allowed")} scope="col">
                     Status
-                    {sortBy === "allowed" && (
-                      <div
-                        className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`}
-                      />
-                    )}
+                    {sortBy === "allowed" &&
+                      (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
                   </th>
                   <th scope="col">Actions</th>
                 </tr>

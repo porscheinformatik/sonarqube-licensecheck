@@ -1,5 +1,7 @@
+import { Button } from "@sonarsource/echoes-react";
 import saveAs from "file-saverjs";
 import { useEffect, useState } from "react";
+import "../shared/styles.css";
 import Dependencies from "./dependencies";
 import buildExcel from "./excel-builder";
 import Licenses from "./licenses";
@@ -56,17 +58,26 @@ const Dashboard = ({ options }) => {
   };
 
   return (
-    <div className="page page-limited">
-      <h1>License Check</h1>
-      <div>
-        <a href="#" onClick={exportExcel}>
-          Export to Excel
-        </a>
+    <div className="sqlc-page sw-mt-4">
+      <header className="sw-mb-5">
+        <div className="sw-flex sw-justify-between sw-items-center">
+          <div>
+            <h1 className="sw-text-3xl sw-font-bold sw-mb-4">License Check</h1>
+            <div className="sw-mb-4 sw-text-neutral-600">
+              View and manage project dependencies and their licenses
+            </div>
+          </div>
+          <Button onClick={exportExcel}>Export to Excel</Button>
+        </div>
+      </header>
+
+      <div className="sw-mb-8">
+        <Licenses licenses={licenses} />
       </div>
-      <p>&nbsp;</p>
-      <Licenses licenses={licenses} />
-      <p>&nbsp;</p>
-      <Dependencies dependencies={dependencies} />
+
+      <div className="sw-mb-4">
+        <Dependencies dependencies={dependencies} />
+      </div>
     </div>
   );
 };

@@ -4,13 +4,13 @@ import {
   IconDelete,
   IconEdit,
   IconSearch,
+  IconTriangleDown,
+  IconTriangleUp,
   Label,
   Modal,
   TextInput,
 } from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
-import "../dashboard/icons.css";
-import "./configuration.css";
 import { loadLicenseMappings, loadLicenses, saveLicenseMappings } from "./sonar-api";
 
 const LicenseMappingsPage = () => {
@@ -126,20 +126,18 @@ const LicenseMappingsPage = () => {
       </div>
 
       <div>
-        <table className="data zebra">
+        <table className="sqlc-data">
           <thead>
             <tr>
               <th onClick={() => sort("regex")} scope="col">
                 License Text Regex
-                {sortBy === "regex" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "regex" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th onClick={() => sort("license")} scope="col">
                 License
-                {sortBy === "license" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "license" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th scope="col">Actions</th>
             </tr>
