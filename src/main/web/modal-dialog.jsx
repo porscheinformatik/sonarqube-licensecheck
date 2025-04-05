@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 const ModalDialog = ({ header, show, onClose, children, footer }) => {
   useEffect(() => {
@@ -8,8 +8,8 @@ const ModalDialog = ({ header, show, onClose, children, footer }) => {
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [show, onClose]);
 
   if (!show) return null;
@@ -20,12 +20,12 @@ const ModalDialog = ({ header, show, onClose, children, footer }) => {
         <div className="modal-head">
           <h2>{header}</h2>
         </div>
-        <div className="modal-body">
-          {children}
-        </div>
+        <div className="modal-body">{children}</div>
         <div className="modal-foot">
           {footer}
-          <a href="#" className="button button-link" onClick={onClose}>Cancel</a>
+          <a href="#" className="button button-link" onClick={onClose}>
+            Cancel
+          </a>
         </div>
       </div>
       <div className="modal-overlay in"></div>

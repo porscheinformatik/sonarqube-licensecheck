@@ -1,8 +1,8 @@
-import saveAs from 'file-saverjs';
-import { useEffect, useState } from 'react';
-import Dependencies from './dependencies';
-import buildExcel from './excel-builder';
-import Licenses from './licenses';
+import saveAs from "file-saverjs";
+import { useEffect, useState } from "react";
+import Dependencies from "./dependencies";
+import buildExcel from "./excel-builder";
+import Licenses from "./licenses";
 
 const Dashboard = ({ options }) => {
   const [licenses, setLicenses] = useState([]);
@@ -13,7 +13,7 @@ const Dashboard = ({ options }) => {
     const params = new URLSearchParams(window.location.search);
     const request = {
       component: component.key,
-      metricKeys: "licensecheck.license,licensecheck.dependency"
+      metricKeys: "licensecheck.license,licensecheck.dependency",
     };
 
     if (params.has("branch")) {
@@ -50,7 +50,7 @@ const Dashboard = ({ options }) => {
 
   const exportExcel = () => {
     const blob = new Blob([buildExcel(dependencies, licenses)], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     saveAs(blob, `license-check-${component.key}.xls`);
   };
@@ -58,7 +58,11 @@ const Dashboard = ({ options }) => {
   return (
     <div className="page page-limited">
       <h1>License Check</h1>
-      <div><a href="#" onClick={exportExcel}>Export to Excel</a></div>
+      <div>
+        <a href="#" onClick={exportExcel}>
+          Export to Excel
+        </a>
+      </div>
       <p>&nbsp;</p>
       <Licenses licenses={licenses} />
       <p>&nbsp;</p>

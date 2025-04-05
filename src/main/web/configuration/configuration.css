@@ -1,0 +1,25 @@
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.data th {
+  color: rgb(29, 33, 47);
+  font: var(--echoes-typography-text-default-semi-bold);
+}
+
+table.data th,
+table.data td {
+  border-top: 3px solid rgb(235, 235, 235);
+  padding: 1rem 0.5rem;
+  vertical-align: middle;
+}
+
+.licensecheck-config-page {
+  box-sizing: border-box;
+  min-width: 1280px;
+  margin: 0px auto;
+  padding-left: 3.75rem;
+  padding-right: 3.75rem;
+  max-width: 1680px;
+}

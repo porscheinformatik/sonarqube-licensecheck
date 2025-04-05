@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import './icons.css';
+import { useState } from "react";
+import "./icons.css";
 
 const Dependencies = ({ dependencies }) => {
-  const [sortByDep, setSortByDep] = useState('status');
-  const [sortDirectionDep, setSortDirectionDep] = useState('desc');
+  const [sortByDep, setSortByDep] = useState("status");
+  const [sortDirectionDep, setSortDirectionDep] = useState("desc");
 
   const columns = dependencies.length > 0 ? Object.keys(dependencies[0]) : [];
 
   const sortedDependencies = [...dependencies].sort((a, b) => {
-    const modifier = sortDirectionDep === 'desc' ? -1 : 1;
+    const modifier = sortDirectionDep === "desc" ? -1 : 1;
     if (a[sortByDep] < b[sortByDep]) return -1 * modifier;
     if (a[sortByDep] > b[sortByDep]) return modifier;
     return 0;
@@ -16,7 +16,7 @@ const Dependencies = ({ dependencies }) => {
 
   const sort = (param) => {
     if (param === sortByDep) {
-      setSortDirectionDep(sortDirectionDep === 'asc' ? 'desc' : 'asc');
+      setSortDirectionDep(sortDirectionDep === "asc" ? "desc" : "asc");
     }
     setSortByDep(param);
   };
@@ -34,7 +34,9 @@ const Dependencies = ({ dependencies }) => {
               <th key={dependency} onClick={() => sort(dependency)} scope="col">
                 {dependency}
                 {dependency === sortByDep && (
-                  <div className={`arrow ${sortDirectionDep === 'asc' ? 'arrow_up' : 'arrow_down'}`} />
+                  <div
+                    className={`arrow ${sortDirectionDep === "asc" ? "arrow_up" : "arrow_down"}`}
+                  />
                 )}
               </th>
             ))}
@@ -47,11 +49,15 @@ const Dependencies = ({ dependencies }) => {
               <td>{dependency.version}</td>
               <td>{dependency.license}</td>
               <td>
-                <span className={
-                  dependency.status === 'Allowed' ? 'icon-license-ok' :
-                  dependency.status === 'Forbidden' ? 'icon-license-nok' :
-                  'icon-license-unknown'
-                } />
+                <span
+                  className={
+                    dependency.status === "Allowed"
+                      ? "icon-license-ok"
+                      : dependency.status === "Forbidden"
+                        ? "icon-license-nok"
+                        : "icon-license-unknown"
+                  }
+                />
                 {dependency.status}
               </td>
             </tr>

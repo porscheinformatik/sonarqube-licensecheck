@@ -8,15 +8,19 @@
     "dev": "webpack --mode development --watch",
     "test-server": "node test-server.js",
     "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons",
-    "prettier": "prettier --write '**/*.{js,java,html,css,json,md,vue,yml,yaml}'",
-    "prettier-check": "prettier --check '**/*.{js,java,html,css,json,md,vue,yml,yaml}'"
+    "prettier": "prettier --write '**/*.{js,jsx,java,html,css,json,md,yml,yaml}'",
+    "prettier-check": "prettier --check '**/*.{js,jsx,java,html,css,json,md,yml,yaml}'"
   },
   "author": "Christian Köberl",
   "license": "Apache-2.0",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@sonarsource/echoes-react": "^0.17.0",
     "file-saverjs": "^1.3.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-intl": "^7.1.10",
+    "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
@@ -28,10 +32,11 @@
     "concurrently": "8.2.2",
     "css-loader": "^6.8.1",
     "http-proxy": "1.18.1",
-    "prettier": "3.0.3",
+    "prettier": "3.5.3",
     "prettier-plugin-java": "2.3.1",
     "style-loader": "^3.3.3",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
-  }
+  },
+  "packageManager": "yarn@4.8.1"
 }
