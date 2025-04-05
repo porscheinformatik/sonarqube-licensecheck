@@ -7,13 +7,13 @@ import {
   IconEdit,
   IconError,
   IconSearch,
+  IconTriangleDown,
+  IconTriangleUp,
   Label,
   Modal,
   TextInput,
 } from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
-import "../dashboard/icons.css";
-import "./configuration.css";
 import { loadLicenses, loadProjectLicenses, loadProjects, saveProjectLicenses } from "./sonar-api";
 
 const ProjectLicensesPage = () => {
@@ -137,26 +137,23 @@ const ProjectLicensesPage = () => {
       </div>
 
       <div>
-        <table className="data zebra">
+        <table className="sqlc-data">
           <thead>
             <tr>
               <th onClick={() => sort("projectName")} scope="col">
                 Project
-                {sortBy === "projectName" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "projectName" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th onClick={() => sort("license")} scope="col">
                 License
-                {sortBy === "license" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "license" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th onClick={() => sort("status")} scope="col">
                 Status
-                {sortBy === "status" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "status" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th scope="col">Actions</th>
             </tr>

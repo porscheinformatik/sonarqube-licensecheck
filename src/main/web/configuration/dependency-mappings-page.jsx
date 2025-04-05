@@ -5,13 +5,13 @@ import {
   IconDelete,
   IconEdit,
   IconSearch,
+  IconTriangleDown,
+  IconTriangleUp,
   Label,
   Modal,
   TextInput,
 } from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
-import "../dashboard/icons.css";
-import "./configuration.css";
 import { loadDependencyMappings, loadLicenses, saveDependencyMappings } from "./sonar-api";
 
 const DependencyMappingsPage = () => {
@@ -128,26 +128,23 @@ const DependencyMappingsPage = () => {
       </div>
 
       <div>
-        <table className="data zebra">
+        <table className="sqlc-data">
           <thead>
             <tr>
               <th onClick={() => sort("key")} scope="col">
                 Key Regex
-                {sortBy === "key" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "key" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th onClick={() => sort("license")} scope="col">
                 License
-                {sortBy === "license" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "license" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th onClick={() => sort("overwrite")} scope="col">
                 Overwrite License
-                {sortBy === "overwrite" && (
-                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
-                )}
+                {sortBy === "overwrite" &&
+                  (sortDirection === "asc" ? <IconTriangleUp /> : <IconTriangleDown />)}
               </th>
               <th scope="col">Actions</th>
             </tr>
