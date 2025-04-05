@@ -1,7 +1,19 @@
+import {
+  Button,
+  ButtonIcon,
+  Checkbox,
+  IconCheckCircle,
+  IconDelete,
+  IconEdit,
+  IconError,
+  IconSearch,
+  Label,
+  Modal,
+  TextInput,
+} from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
 import "../dashboard/icons.css";
-import { DeleteIcon, MagnifyIcon, PencilIcon } from "../icons";
-import ModalDialog from "../modal-dialog";
+import "./configuration.css";
 import { loadLicenses, loadProjectLicenses, loadProjects, saveProjectLicenses } from "./sonar-api";
 
 const ProjectLicensesPage = () => {
@@ -107,40 +119,25 @@ const ProjectLicensesPage = () => {
       );
 
   return (
-    <div className="boxed-group boxed-group-inner">
-      <header className="page-header">
-        <h1 className="page-title">License Check - Project Licenses</h1>
-        <div className="page-description">Allow/disallow licences for specific projects.</div>
+    <div>
+      <header className="sw-mb-5">
+        <h1 className="sw-mb-4">License Check - Project Licenses</h1>
+        <div className="sw-mb-4">Allow/disallow licences for specific projects.</div>
         <div className="page-actions">
-          <button className="button" id="license-add" onClick={showAddDialog}>
-            Add License
-          </button>
+          <Button onClick={showAddDialog}>Add Project License</Button>
         </div>
       </header>
 
-      <div className="panel panel-vertical bordered-bottom spacer-bottom">
-        <div className="search-box">
-          <MagnifyIcon
-            width={15}
-            height={16}
-            style={{ paddingLeft: 5, marginTop: 4, fill: "#999" }}
-          />
-          <input
-            style={{ background: "none", width: "100%", border: "none" }}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="search-box-input"
-            type="search"
-            maxLength="100"
-            placeholder="Search"
-            autoComplete="off"
-          />
-        </div>
+      <div className="sw-mb-4">
+        <TextInput
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          prefix={<IconSearch key="IconSearch" />}
+        />
       </div>
 
       <div>
         <table className="data zebra">
-          <caption>This is a list of all project specific licenses</caption>
           <thead>
             <tr>
               <th onClick={() => sort("projectName")} scope="col">
@@ -174,18 +171,27 @@ const ProjectLicensesPage = () => {
                   {item.license} / {findLicenseName(item.license)}
                 </td>
                 <td>
-                  <span
-                    className={item.allowed === "true" ? "icon-license-ok" : "icon-license-nok"}
-                  />
+                  {item.allowed === "true" ? (
+                    <IconCheckCircle style={{ color: "green" }} />
+                  ) : (
+                    <IconError style={{ color: "darkred" }} />
+                  )}
+                  &nbsp;
                   {item.allowed === "true" ? "Allowed" : "Forbidden"}
                 </td>
-                <td className="thin nowrap">
-                  <a className="button" onClick={() => showEditDialog(item)} title="Edit item">
-                    <PencilIcon style={{ fill: "currentcolor" }} />
-                  </a>
-                  <a className="button" onClick={() => showDeleteDialog(item)} title="Delete item">
-                    <DeleteIcon style={{ fill: "rgb(212, 51, 63)" }} />
-                  </a>
+                <td className="sw-whitespace-nowrap">
+                  <ButtonIcon
+                    variety="default-ghost"
+                    ariaLabel="Edit"
+                    Icon={IconEdit}
+                    onClick={() => showEditDialog(item)}
+                  />
+                  <ButtonIcon
+                    variety="default-ghost"
+                    ariaLabel="Delete"
+                    Icon={IconDelete}
+                    onClick={() => showDeleteDialog(item)}
+                  />
                 </td>
               </tr>
             ))}
@@ -198,97 +204,104 @@ const ProjectLicensesPage = () => {
         </table>
       </div>
 
-      <ModalDialog
-        header={editMode === "add" ? "Add License" : "Edit License"}
-        show={!!itemToEdit}
-        onClose={cancelEdit}
-      >
-        {itemToEdit && (
-          <>
-            <div className="modal-field">
-              <label htmlFor="projectSelect">
-                Project<em className="mandatory">*</em>
-              </label>
-              <select
-                required
-                disabled={editMode !== "add"}
-                value={itemToEdit.projectKey || ""}
-                onChange={(e) => setItemToEdit({ ...itemToEdit, projectKey: e.target.value })}
-                id="projectSelect"
-                name="projectSelect"
-              >
-                <option value="">Select a project</option>
-                {projects.map((project) => (
-                  <option key={project.key} value={project.key}>
-                    {project.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="modal-field">
-              <label htmlFor="licenseSelect">
-                License<em className="mandatory">*</em>
-              </label>
-              <select
-                required
-                disabled={editMode !== "add"}
-                value={itemToEdit.license || ""}
-                onChange={(e) => setItemToEdit({ ...itemToEdit, license: e.target.value })}
-                id="licenseSelect"
-                name="licenseSelect"
-              >
-                <option value="">Select a license</option>
-                {licenses.map((license) => (
-                  <option key={license.id} value={license.id}>
-                    {license.id} / {license.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="modal-field">
-              <label>
-                Status<em className="mandatory">*</em>
-              </label>
-              <label htmlFor="itemStatusEdit">
-                <input
-                  type="checkbox"
-                  id="itemStatusEdit"
-                  name="itemStatusEdit"
-                  checked={itemToEdit.allowed === "true"}
-                  onChange={(e) =>
-                    setItemToEdit({
-                      ...itemToEdit,
-                      allowed: e.target.checked ? "true" : "false",
-                    })
-                  }
-                />
-                Allowed
-              </label>
-            </div>
-            <div className="modal-foot">
-              <button className="button" onClick={() => saveItem(itemToEdit)}>
-                Save
-              </button>
-            </div>
-          </>
-        )}
-      </ModalDialog>
-
-      <ModalDialog header="Delete License" show={!!itemToDelete} onClose={cancelDelete}>
-        {itemToDelete && (
-          <>
+      <Modal
+        title={editMode === "add" ? "Add Project License" : "Edit Project License"}
+        isOpen={!!itemToEdit}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            cancelEdit();
+          }
+        }}
+        primaryButton={<Button onClick={() => saveItem(itemToEdit)}>Save</Button>}
+        secondaryButton={
+          <Button variety="default-ghost" onClick={cancelEdit}>
+            Cancel
+          </Button>
+        }
+        content={
+          itemToEdit && (
             <div>
-              Are you sure you want to delete the license mapping "
-              {findProjectName(itemToDelete.projectKey)}" / "{itemToDelete.license}"?
+              <div className="modal-field">
+                <Label htmlFor="projectSelect">
+                  Project<em className="mandatory">*</em>
+                </Label>
+                <select
+                  required
+                  disabled={editMode !== "add"}
+                  value={itemToEdit.projectKey || ""}
+                  onChange={(e) => setItemToEdit({ ...itemToEdit, projectKey: e.target.value })}
+                  id="projectSelect"
+                  name="projectSelect"
+                  className="sw-w-full sw-px-3 sw-py-2 sw-border sw-border-neutral-200 sw-rounded"
+                >
+                  <option value="">Select a project</option>
+                  {projects.map((project) => (
+                    <option key={project.key} value={project.key}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-field">
+                <Label htmlFor="licenseSelect">
+                  License<em className="mandatory">*</em>
+                </Label>
+                <select
+                  required
+                  disabled={editMode !== "add"}
+                  value={itemToEdit.license || ""}
+                  onChange={(e) => setItemToEdit({ ...itemToEdit, license: e.target.value })}
+                  id="licenseSelect"
+                  name="licenseSelect"
+                  className="sw-w-full sw-px-3 sw-py-2 sw-border sw-border-neutral-200 sw-rounded"
+                >
+                  <option value="">Select a license</option>
+                  {licenses.map((license) => (
+                    <option key={license.id} value={license.id}>
+                      {license.id} / {license.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-field">
+                <Label>Status</Label>
+                <div>
+                  <Checkbox
+                    label="Allowed"
+                    name="allowed"
+                    checked={itemToEdit.allowed === "true"}
+                    onCheck={(checked) =>
+                      setItemToEdit({
+                        ...itemToEdit,
+                        allowed: checked ? "true" : "false",
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
-            <div className="modal-foot">
-              <button className="button" onClick={() => deleteItem(itemToDelete)}>
-                Delete
-              </button>
-            </div>
-          </>
-        )}
-      </ModalDialog>
+          )
+        }
+      />
+
+      <Modal
+        title="Delete Project License"
+        isOpen={!!itemToDelete}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            cancelDelete();
+          }
+        }}
+        description={`Are you sure you want to delete the project license "${findProjectName(
+          itemToDelete?.projectKey,
+        )}" / "${itemToDelete?.license}"?`}
+        primaryButton={<Button onClick={() => deleteItem(itemToDelete)}>Delete</Button>}
+        secondaryButton={
+          <Button variety="default-ghost" onClick={cancelDelete}>
+            Cancel
+          </Button>
+        }
+      />
     </div>
   );
 };
