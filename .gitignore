@@ -8,4 +8,5 @@ node/
 .idea/
 *.iml
 .vscode/
+.yarn/
 docker/plugins/*.jar

@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import '../dashboard/icons.css';
-import { DeleteIcon, MagnifyIcon, PencilIcon } from '../icons';
-import ModalDialog from '../modal-dialog';
-import { loadDependencyMappings, loadLicenses, saveDependencyMappings } from './sonar-api';
+import { useEffect, useState } from "react";
+import "../dashboard/icons.css";
+import { DeleteIcon, MagnifyIcon, PencilIcon } from "../icons";
+import ModalDialog from "../modal-dialog";
+import { loadDependencyMappings, loadLicenses, saveDependencyMappings } from "./sonar-api";
 
 const DependencyMappingsPage = () => {
   const [items, setItems] = useState([]);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [itemToEdit, setItemToEdit] = useState(null);
   const [editMode, setEditMode] = useState(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [licenses, setLicenses] = useState([]);
-  const [sortBy, setSortBy] = useState('key');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortBy, setSortBy] = useState("key");
+  const [sortDirection, setSortDirection] = useState("asc");
 
   useEffect(() => {
     load();
@@ -20,24 +20,24 @@ const DependencyMappingsPage = () => {
 
   const load = () => {
     return Promise.all([
-      loadLicenses().then(l => setLicenses(l)),
-      loadDependencyMappings().then(md => setItems(md))
+      loadLicenses().then((l) => setLicenses(l)),
+      loadDependencyMappings().then((md) => setItems(md)),
     ]);
   };
 
   const findLicenseName = (license) => {
-    const licenseItem = licenses.find(l => l.id === license);
-    return licenseItem ? licenseItem.name : '-';
+    const licenseItem = licenses.find((l) => l.id === license);
+    return licenseItem ? licenseItem.name : "-";
   };
 
   const showAddDialog = () => {
     setItemToEdit({});
-    setEditMode('add');
+    setEditMode("add");
   };
 
   const showEditDialog = (item) => {
     setItemToEdit({ ...item, old_key: item.key });
-    setEditMode('edit');
+    setEditMode("edit");
   };
 
   const cancelEdit = () => {
@@ -46,18 +46,18 @@ const DependencyMappingsPage = () => {
 
   const saveItems = (items) => {
     saveDependencyMappings(items).then(() => {
-      loadDependencyMappings().then(md => setItems(md));
+      loadDependencyMappings().then((md) => setItems(md));
       setItemToEdit(null);
       setItemToDelete(null);
     });
   };
 
   const saveItem = (item) => {
-    if (editMode === 'add') {
+    if (editMode === "add") {
       saveItems([...items, item]);
     } else {
       const newItems = [...items];
-      const itemToChange = newItems.find(i => i.key === item.old_key);
+      const itemToChange = newItems.find((i) => i.key === item.old_key);
       itemToChange.key = item.key;
       itemToChange.license = item.license;
       itemToChange.overwrite = item.overwrite;
@@ -74,28 +74,30 @@ const DependencyMappingsPage = () => {
   };
 
   const deleteItem = (item) => {
-    saveItems(items.filter(i => i.key !== item.key));
+    saveItems(items.filter((i) => i.key !== item.key));
   };
 
   const sort = (param) => {
     if (param === sortBy) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     }
     setSortBy(param);
   };
 
   const sortedItems = [...items].sort((a, b) => {
-    const modifier = sortDirection === 'desc' ? -1 : 1;
+    const modifier = sortDirection === "desc" ? -1 : 1;
     if (a[sortBy] < b[sortBy]) return -modifier;
     if (a[sortBy] > b[sortBy]) return modifier;
     return 0;
   });
 
-  const displayedItems = !searchText ? sortedItems :
-    sortedItems.filter(item => 
-      item.key.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.license.toLowerCase().includes(searchText.toLowerCase())
-    );
+  const displayedItems = !searchText
+    ? sortedItems
+    : sortedItems.filter(
+        (item) =>
+          item.key.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.license.toLowerCase().includes(searchText.toLowerCase()),
+      );
 
   return (
     <div className="boxed-group boxed-group-inner">
@@ -111,9 +113,13 @@ const DependencyMappingsPage = () => {
 
       <div className="panel panel-vertical bordered-bottom spacer-bottom">
         <div className="search-box">
-          <MagnifyIcon width={15} height={16} style={{ paddingLeft: 5, marginTop: 4, fill: '#999' }} />
+          <MagnifyIcon
+            width={15}
+            height={16}
+            style={{ paddingLeft: 5, marginTop: 4, fill: "#999" }}
+          />
           <input
-            style={{ background: 'none', width: '100%', border: 'none' }}
+            style={{ background: "none", width: "100%", border: "none" }}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="search-box-input"
@@ -127,47 +133,49 @@ const DependencyMappingsPage = () => {
 
       <div>
         <table className="data zebra">
-          <caption>
-            Dependency mapping - name/key (with regex) to a license
-          </caption>
+          <caption>Dependency mapping - name/key (with regex) to a license</caption>
           <thead>
             <tr>
-              <th onClick={() => sort('key')} scope="col">
+              <th onClick={() => sort("key")} scope="col">
                 Key Regex
-                {sortBy === 'key' && (
-                  <div className={`arrow ${sortDirection === 'asc' ? 'arrow_up' : 'arrow_down'}`} />
+                {sortBy === "key" && (
+                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
                 )}
               </th>
-              <th onClick={() => sort('license')} scope="col">
+              <th onClick={() => sort("license")} scope="col">
                 License
-                {sortBy === 'license' && (
-                  <div className={`arrow ${sortDirection === 'asc' ? 'arrow_up' : 'arrow_down'}`} />
+                {sortBy === "license" && (
+                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
                 )}
               </th>
-              <th onClick={() => sort('overwrite')} scope="col">
+              <th onClick={() => sort("overwrite")} scope="col">
                 Overwrite License
-                {sortBy === 'overwrite' && (
-                  <div className={`arrow ${sortDirection === 'asc' ? 'arrow_up' : 'arrow_down'}`} />
+                {sortBy === "overwrite" && (
+                  <div className={`arrow ${sortDirection === "asc" ? "arrow_up" : "arrow_down"}`} />
                 )}
               </th>
               <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {displayedItems.map(item => (
+            {displayedItems.map((item) => (
               <tr key={item.key}>
                 <td>{item.key}</td>
-                <td>{item.license} / {findLicenseName(item.license)}</td>
                 <td>
-                  {item.overwrite === 'false' ? 'No' : 'Yes'}
+                  {item.license} / {findLicenseName(item.license)}
                 </td>
+                <td>{item.overwrite === "false" ? "No" : "Yes"}</td>
                 <td className="thin nowrap">
                   <a className="button" onClick={() => showEditDialog(item)} title="Edit item">
-                    <PencilIcon style={{ fill: 'currentcolor' }} />
+                    <PencilIcon style={{ fill: "currentcolor" }} />
                   </a>
                   {items.length > 1 && (
-                    <a className="button" onClick={() => showDeleteDialog(item)} title="Delete item">
-                      <DeleteIcon style={{ fill: 'rgb(212, 51, 63)' }} />
+                    <a
+                      className="button"
+                      onClick={() => showDeleteDialog(item)}
+                      title="Delete item"
+                    >
+                      <DeleteIcon style={{ fill: "rgb(212, 51, 63)" }} />
                     </a>
                   )}
                 </td>
@@ -183,7 +191,7 @@ const DependencyMappingsPage = () => {
       </div>
 
       <ModalDialog
-        header={editMode === 'add' ? 'Add Maven Dependency' : 'Edit Maven Dependency'}
+        header={editMode === "add" ? "Add Maven Dependency" : "Edit Maven Dependency"}
         show={!!itemToEdit}
         onClose={cancelEdit}
       >
@@ -196,7 +204,7 @@ const DependencyMappingsPage = () => {
               <input
                 required
                 autoFocus
-                value={itemToEdit.key || ''}
+                value={itemToEdit.key || ""}
                 onChange={(e) => setItemToEdit({ ...itemToEdit, key: e.target.value })}
                 id="keyEdit"
                 name="keyEdit"
@@ -211,12 +219,12 @@ const DependencyMappingsPage = () => {
               </label>
               <select
                 required
-                value={itemToEdit.license || ''}
+                value={itemToEdit.license || ""}
                 onChange={(e) => setItemToEdit({ ...itemToEdit, license: e.target.value })}
                 id="licenseSelect"
                 name="licenseSelect"
               >
-                {licenses.map(license => (
+                {licenses.map((license) => (
                   <option key={license.id} value={license.id}>
                     {license.id} / {license.name}
                   </option>
@@ -230,34 +238,37 @@ const DependencyMappingsPage = () => {
                   type="checkbox"
                   id="overwriteCheckbox"
                   name="overwrite"
-                  checked={itemToEdit.overwrite === 'true'}
-                  onChange={(e) => setItemToEdit({
-                    ...itemToEdit,
-                    overwrite: e.target.checked ? 'true' : 'false'
-                  })}
+                  checked={itemToEdit.overwrite === "true"}
+                  onChange={(e) =>
+                    setItemToEdit({
+                      ...itemToEdit,
+                      overwrite: e.target.checked ? "true" : "false",
+                    })
+                  }
                 />
                 Overwrite
               </label>
             </div>
             <div className="modal-foot">
-              <button className="button" onClick={() => saveItem(itemToEdit)}>Save</button>
+              <button className="button" onClick={() => saveItem(itemToEdit)}>
+                Save
+              </button>
             </div>
           </>
         )}
       </ModalDialog>
 
-      <ModalDialog
-        header="Delete Maven Dependency"
-        show={!!itemToDelete}
-        onClose={cancelDelete}
-      >
+      <ModalDialog header="Delete Maven Dependency" show={!!itemToDelete} onClose={cancelDelete}>
         {itemToDelete && (
           <>
             <div>
-              Are you sure you want to delete the Maven dependency mapping "{itemToDelete.key}" / "{itemToDelete.license}"?
+              Are you sure you want to delete the Maven dependency mapping "{itemToDelete.key}" / "
+              {itemToDelete.license}"?
             </div>
             <div className="modal-foot">
-              <button className="button" onClick={() => deleteItem(itemToDelete)}>Delete</button>
+              <button className="button" onClick={() => deleteItem(itemToDelete)}>
+                Delete
+              </button>
             </div>
           </>
         )}

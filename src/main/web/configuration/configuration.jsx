@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import DependencyMappingsPage from './dependency-mappings-page';
-import LicenseMappingsPage from './license-mappings-page';
-import LicensesPage from './licenses-page';
-import ProjectLicensesPage from './project-licenses-page';
+import { useEffect, useState } from "react";
+import DependencyMappingsPage from "./dependency-mappings-page";
+import LicenseMappingsPage from "./license-mappings-page";
+import LicensesPage from "./licenses-page";
+import ProjectLicensesPage from "./project-licenses-page";
 
 const Configuration = () => {
-  const [currentRoute, setCurrentRoute] = useState('licenses');
+  const [currentRoute, setCurrentRoute] = useState("licenses");
 
   useEffect(() => {
     const result = window.location.search.match(/category=([^&=]*)/);
@@ -21,13 +21,14 @@ const Configuration = () => {
   };
 
   return (
-    <div className="page page-limited">
-      <ul className="tabs">
+    <div className="licensecheck-config-page">
+      <ul className="sw-flex sw-items-end sw-gap-8 sw-mt-4">
         <li>
           <a
             href="?category=licenses"
-            className={currentRoute === 'licenses' ? 'selected' : ''}
-            onClick={(e) => activateCategory(e, 'licenses')}
+            className="sw-flex sw-items-center"
+            style={currentRoute === "licenses" ? { borderBottomColor: "rgb(123, 135, 217)" } : {}}
+            onClick={(e) => activateCategory(e, "licenses")}
           >
             Licenses
           </a>
@@ -35,8 +36,8 @@ const Configuration = () => {
         <li>
           <a
             href="?category=license-mappings"
-            className={currentRoute === 'license-mappings' ? 'selected' : ''}
-            onClick={(e) => activateCategory(e, 'license-mappings')}
+            className={currentRoute === "license-mappings" ? "selected" : ""}
+            onClick={(e) => activateCategory(e, "license-mappings")}
           >
             License Mappings
           </a>
@@ -44,8 +45,8 @@ const Configuration = () => {
         <li>
           <a
             href="?category=dependency-mappings"
-            className={currentRoute === 'dependency-mappings' ? 'selected' : ''}
-            onClick={(e) => activateCategory(e, 'dependency-mappings')}
+            className={currentRoute === "dependency-mappings" ? "selected" : ""}
+            onClick={(e) => activateCategory(e, "dependency-mappings")}
           >
             Dependency Mappings
           </a>
@@ -53,18 +54,18 @@ const Configuration = () => {
         <li>
           <a
             href="?category=project-licenses"
-            className={currentRoute === 'project-licenses' ? 'selected' : ''}
-            onClick={(e) => activateCategory(e, 'project-licenses')}
+            className={currentRoute === "project-licenses" ? "selected" : ""}
+            onClick={(e) => activateCategory(e, "project-licenses")}
           >
             Project Licenses
           </a>
         </li>
       </ul>
       <br />
-      {currentRoute === 'licenses' && <LicensesPage />}
-      {currentRoute === 'dependency-mappings' && <DependencyMappingsPage />}
-      {currentRoute === 'license-mappings' && <LicenseMappingsPage />}
-      {currentRoute === 'project-licenses' && <ProjectLicensesPage />}
+      {currentRoute === "licenses" && <LicensesPage />}
+      {currentRoute === "dependency-mappings" && <DependencyMappingsPage />}
+      {currentRoute === "license-mappings" && <LicenseMappingsPage />}
+      {currentRoute === "project-licenses" && <ProjectLicensesPage />}
     </div>
   );
 };

@@ -10,7 +10,7 @@ module.exports = {
     filename: "[name].js",
   },
   resolve: {
-    extensions: ["*", ".js", ".jsx", ".json"],
+    extensions: [".js", ".jsx", ".json"],
   },
   module: {
     rules: [

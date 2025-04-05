@@ -2,6 +2,12 @@ const http = require("http"),
   httpProxy = require("http-proxy"),
   fs = require("fs");
 const proxy = httpProxy.createProxyServer({});
+
+// Setup proxy to remove content-security-policy header from responses
+proxy.on("proxyRes", function (proxyRes, req, res) {
+  delete proxyRes.headers["content-security-policy"];
+});
+
 const server = http.createServer(function (req, res) {
   let match = req.url.match(/\/static\/licensecheck\/(\w+).js/);
   if (match) {

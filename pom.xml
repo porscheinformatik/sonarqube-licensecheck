@@ -181,44 +181,44 @@
         <version>1.15.1</version>
         <executions>
           <execution>
-            <id>install node and npm</id>
+            <id>install-node-and-corepack</id>
             <goals>
-              <goal>install-node-and-npm</goal>
+              <goal>install-node-and-corepack</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
           <execution>
-            <id>npm install</id>
+            <id>yarn install</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>ci</arguments>
+              <arguments>yarn install</arguments>
             </configuration>
           </execution>
           <execution>
-            <id>npm run prettier-check</id>
+            <id>yarn run prettier-check</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>run prettier-check</arguments>
+              <arguments>yarn run prettier-check</arguments>
             </configuration>
             <phase>test</phase>
           </execution>
           <execution>
-            <id>npm run build</id>
+            <id>yarn run build</id>
             <goals>
-              <goal>npm</goal>
+              <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>yarn run build</arguments>
             </configuration>
           </execution>
         </executions>
         <configuration>
           <nodeVersion>v22.14.0</nodeVersion>
-          <npmVersion>10.9.2</npmVersion>
+          <yarnVersion>v1.22.22</yarnVersion>
         </configuration>
       </plugin>
       <plugin>
