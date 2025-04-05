@@ -1,7 +1,17 @@
+import {
+  Button,
+  ButtonIcon,
+  Checkbox,
+  IconDelete,
+  IconEdit,
+  IconSearch,
+  Label,
+  Modal,
+  TextInput,
+} from "@sonarsource/echoes-react";
 import { useEffect, useState } from "react";
 import "../dashboard/icons.css";
-import { DeleteIcon, MagnifyIcon, PencilIcon } from "../icons";
-import ModalDialog from "../modal-dialog";
+import "./configuration.css";
 import { loadDependencyMappings, loadLicenses, saveDependencyMappings } from "./sonar-api";
 
 const DependencyMappingsPage = () => {
@@ -100,40 +110,25 @@ const DependencyMappingsPage = () => {
       );
 
   return (
-    <div className="boxed-group boxed-group-inner">
-      <header className="page-header">
-        <h1 className="page-title">License Check - Dependency Mappings</h1>
-        <div className="page-description">Maps a dependency name/key (with regex) to a license</div>
+    <div>
+      <header className="sw-mb-5">
+        <h1 className="sw-mb-4">License Check - Dependency Mappings</h1>
+        <div className="sw-mb-4">Maps a dependency name/key (with regex) to a license</div>
         <div className="page-actions">
-          <button className="button" id="license-add" onClick={showAddDialog}>
-            Add Dependency Mapping
-          </button>
+          <Button onClick={showAddDialog}>Add Dependency Mapping</Button>
         </div>
       </header>
 
-      <div className="panel panel-vertical bordered-bottom spacer-bottom">
-        <div className="search-box">
-          <MagnifyIcon
-            width={15}
-            height={16}
-            style={{ paddingLeft: 5, marginTop: 4, fill: "#999" }}
-          />
-          <input
-            style={{ background: "none", width: "100%", border: "none" }}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="search-box-input"
-            type="search"
-            maxLength="100"
-            placeholder="Search"
-            autoComplete="off"
-          />
-        </div>
+      <div className="sw-mb-4">
+        <TextInput
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          prefix={<IconSearch key="IconSearch" />}
+        />
       </div>
 
       <div>
         <table className="data zebra">
-          <caption>Dependency mapping - name/key (with regex) to a license</caption>
           <thead>
             <tr>
               <th onClick={() => sort("key")} scope="col">
@@ -160,23 +155,25 @@ const DependencyMappingsPage = () => {
           <tbody>
             {displayedItems.map((item) => (
               <tr key={item.key}>
-                <td>{item.key}</td>
-                <td>
+                <td className="sw-truncate">{item.key}</td>
+                <td className="sw-truncate">
                   {item.license} / {findLicenseName(item.license)}
                 </td>
-                <td>{item.overwrite === "false" ? "No" : "Yes"}</td>
-                <td className="thin nowrap">
-                  <a className="button" onClick={() => showEditDialog(item)} title="Edit item">
-                    <PencilIcon style={{ fill: "currentcolor" }} />
-                  </a>
+                <td>{item.overwrite === "true" ? "Yes" : "No"}</td>
+                <td className="sw-whitespace-nowrap">
+                  <ButtonIcon
+                    variety="default-ghost"
+                    ariaLabel="Edit"
+                    Icon={IconEdit}
+                    onClick={() => showEditDialog(item)}
+                  />
                   {items.length > 1 && (
-                    <a
-                      className="button"
+                    <ButtonIcon
+                      variety="default-ghost"
+                      ariaLabel="Delete"
+                      Icon={IconDelete}
                       onClick={() => showDeleteDialog(item)}
-                      title="Delete item"
-                    >
-                      <DeleteIcon style={{ fill: "rgb(212, 51, 63)" }} />
-                    </a>
+                    />
                   )}
                 </td>
               </tr>
@@ -190,89 +187,94 @@ const DependencyMappingsPage = () => {
         </table>
       </div>
 
-      <ModalDialog
-        header={editMode === "add" ? "Add Maven Dependency" : "Edit Maven Dependency"}
-        show={!!itemToEdit}
-        onClose={cancelEdit}
-      >
-        {itemToEdit && (
-          <>
-            <div className="modal-field">
-              <label htmlFor="keyEdit">
-                Key Regex<em className="mandatory">*</em>
-              </label>
-              <input
-                required
-                autoFocus
-                value={itemToEdit.key || ""}
-                onChange={(e) => setItemToEdit({ ...itemToEdit, key: e.target.value })}
-                id="keyEdit"
-                name="keyEdit"
-                type="text"
-                size="50"
-                maxLength="255"
-              />
-            </div>
-            <div className="modal-field">
-              <label htmlFor="licenseSelect">
-                License<em className="mandatory">*</em>
-              </label>
-              <select
-                required
-                value={itemToEdit.license || ""}
-                onChange={(e) => setItemToEdit({ ...itemToEdit, license: e.target.value })}
-                id="licenseSelect"
-                name="licenseSelect"
-              >
-                {licenses.map((license) => (
-                  <option key={license.id} value={license.id}>
-                    {license.id} / {license.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="modal-field">
-              <label>Overwrite License</label>
-              <label htmlFor="overwriteCheckbox">
-                <input
-                  type="checkbox"
-                  id="overwriteCheckbox"
-                  name="overwrite"
-                  checked={itemToEdit.overwrite === "true"}
-                  onChange={(e) =>
-                    setItemToEdit({
-                      ...itemToEdit,
-                      overwrite: e.target.checked ? "true" : "false",
-                    })
-                  }
-                />
-                Overwrite
-              </label>
-            </div>
-            <div className="modal-foot">
-              <button className="button" onClick={() => saveItem(itemToEdit)}>
-                Save
-              </button>
-            </div>
-          </>
-        )}
-      </ModalDialog>
-
-      <ModalDialog header="Delete Maven Dependency" show={!!itemToDelete} onClose={cancelDelete}>
-        {itemToDelete && (
-          <>
+      <Modal
+        title={editMode === "add" ? "Add Maven Dependency" : "Edit Maven Dependency"}
+        isOpen={!!itemToEdit}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            cancelEdit();
+          }
+        }}
+        primaryButton={<Button onClick={() => saveItem(itemToEdit)}>Save</Button>}
+        secondaryButton={
+          <Button variety="default-ghost" onClick={cancelEdit}>
+            Cancel
+          </Button>
+        }
+        content={
+          itemToEdit && (
             <div>
-              Are you sure you want to delete the Maven dependency mapping "{itemToDelete.key}" / "
-              {itemToDelete.license}"?
+              <div className="modal-field">
+                <Label htmlFor="keyEdit">
+                  Key Regex<em className="mandatory">*</em>
+                </Label>
+                <TextInput
+                  required
+                  autoFocus={true}
+                  value={itemToEdit.key || ""}
+                  onChange={(e) => setItemToEdit({ ...itemToEdit, key: e.target.value })}
+                  id="keyEdit"
+                  name="keyEdit"
+                  maxLength="255"
+                />
+              </div>
+              <div className="modal-field">
+                <Label htmlFor="licenseSelect">
+                  License<em className="mandatory">*</em>
+                </Label>
+                <select
+                  required
+                  value={itemToEdit.license || ""}
+                  onChange={(e) => setItemToEdit({ ...itemToEdit, license: e.target.value })}
+                  id="licenseSelect"
+                  name="licenseSelect"
+                  className="sw-w-full sw-px-3 sw-py-2 sw-border sw-border-neutral-200 sw-rounded"
+                >
+                  <option value="">Select a license</option>
+                  {licenses.map((license) => (
+                    <option key={license.id} value={license.id}>
+                      {license.id} / {license.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="modal-field">
+                <Label>Overwrite License</Label>
+                <div>
+                  <Checkbox
+                    label="Overwrite"
+                    name="overwrite"
+                    checked={itemToEdit.overwrite === "true"}
+                    onCheck={(checked) =>
+                      setItemToEdit({
+                        ...itemToEdit,
+                        overwrite: checked ? "true" : "false",
+                      })
+                    }
+                  />
+                </div>
+              </div>
             </div>
-            <div className="modal-foot">
-              <button className="button" onClick={() => deleteItem(itemToDelete)}>
-                Delete
-              </button>
-            </div>
-          </>
-        )}
-      </ModalDialog>
+          )
+        }
+      />
+
+      <Modal
+        title="Delete Maven Dependency"
+        isOpen={!!itemToDelete}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            cancelDelete();
+          }
+        }}
+        description={`Are you sure you want to delete the Maven dependency mapping "${itemToDelete?.key}" / "${itemToDelete?.license}"?`}
+        primaryButton={<Button onClick={() => deleteItem(itemToDelete)}>Delete</Button>}
+        secondaryButton={
+          <Button variety="default-ghost" onClick={cancelDelete}>
+            Cancel
+          </Button>
+        }
+      />
     </div>
   );
 };
