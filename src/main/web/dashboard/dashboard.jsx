@@ -1,4 +1,4 @@
-import { Button } from "@sonarsource/echoes-react";
+import { Button, IconDownload } from "@sonarsource/echoes-react";
 import saveAs from "file-saverjs";
 import { useEffect, useState } from "react";
 import "../shared/styles.css";
@@ -67,7 +67,9 @@ const Dashboard = ({ options }) => {
               View and manage project dependencies and their licenses
             </div>
           </div>
-          <Button onClick={exportExcel}>Export to Excel</Button>
+          <Button prefix={<IconDownload />} onClick={exportExcel}>
+            Export to Excel
+          </Button>
         </div>
       </header>
 
