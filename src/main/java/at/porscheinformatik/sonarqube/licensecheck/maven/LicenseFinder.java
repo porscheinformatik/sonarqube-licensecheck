@@ -10,12 +10,12 @@ import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class LicenseFinder {
 
-    private static final Logger LOGGER = Loggers.get(LicenseFinder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseFinder.class);
 
     private LicenseFinder() {}
 

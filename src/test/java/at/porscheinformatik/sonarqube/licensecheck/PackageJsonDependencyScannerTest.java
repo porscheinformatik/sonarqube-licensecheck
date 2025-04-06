@@ -16,18 +16,20 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class PackageJsonDependencyScannerTest {
 
     private static final Path RESOURCE_FOLDER = Path.of("src/test/resources");
 
-    private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScannerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        PackageJsonDependencyScannerTest.class
+    );
 
     private SensorContext createContext(Path moduleBaseDir) {
         SensorContext context = mock(SensorContext.class);

@@ -15,16 +15,18 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class PackageJsonDependencyScanner implements Scanner {
 
-    private static final Logger LOGGER = Loggers.get(PackageJsonDependencyScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        PackageJsonDependencyScanner.class
+    );
     private static final String PACKAGE_LICENSE = "license";
 
     private final LicenseMappingService licenseMappingService;

@@ -9,19 +9,19 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.fs.InputProject;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 @ScannerSide
 public class ValidateLicenses {
 
-    private static final Logger LOGGER = Loggers.get(ValidateLicenses.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateLicenses.class);
 
     private final LicenseService licenseService;
     private final DependencyMappingService dependencyMappingService;
