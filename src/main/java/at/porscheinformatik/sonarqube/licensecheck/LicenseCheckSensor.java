@@ -15,17 +15,17 @@ import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScan
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.scanner.fs.InputProject;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class LicenseCheckSensor implements Sensor {
 
-    private static final Logger LOGGER = Loggers.get(LicenseCheckSensor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LicenseCheckSensor.class);
     private static final Set<License> AGGREGATED_LICENSES = ConcurrentHashMap.newKeySet();
     private static final Set<Dependency> AGGREGATED_DEPENDENCIES = ConcurrentHashMap.newKeySet();
     private final Configuration configuration;

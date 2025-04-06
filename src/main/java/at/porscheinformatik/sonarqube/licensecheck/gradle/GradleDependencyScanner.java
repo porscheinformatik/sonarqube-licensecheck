@@ -1,6 +1,6 @@
 package at.porscheinformatik.sonarqube.licensecheck.gradle;
 
-import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.*;
+import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
@@ -21,9 +21,9 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class GradleDependencyScanner implements Scanner {
 
@@ -36,7 +36,7 @@ public class GradleDependencyScanner implements Scanner {
         File.separator +
         "license-details.json";
 
-    private static final Logger LOGGER = Loggers.get(GradleDependencyScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GradleDependencyScanner.class);
 
     private final LicenseMappingService licenseMappingService;
 

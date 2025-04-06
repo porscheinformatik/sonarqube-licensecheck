@@ -27,16 +27,16 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 public class MavenDependencyScanner implements Scanner {
 
-    private static final Logger LOGGER = Loggers.get(MavenDependencyScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDependencyScanner.class);
     private static final String MAVEN_REPO_LOCAL = "maven.repo.local";
 
     private final LicenseMappingService licenseMappingService;
