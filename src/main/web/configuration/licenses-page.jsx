@@ -74,9 +74,11 @@ const LicensesPage = () => {
     } else {
       const newItems = [...items];
       const itemToChange = newItems.find((i) => i.id === item.id);
-      itemToChange.name = item.name;
-      itemToChange.allowed = item.allowed;
-      saveItems(newItems);
+      if (itemToChange) {
+        itemToChange.name = item.name;
+        itemToChange.allowed = item.allowed;
+        saveItems(newItems);
+      }
     }
   };
 
