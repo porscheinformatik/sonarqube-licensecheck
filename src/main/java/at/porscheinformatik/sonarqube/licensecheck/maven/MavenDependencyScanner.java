@@ -4,8 +4,10 @@ import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
 import at.porscheinformatik.sonarqube.licensecheck.Scanner;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -86,6 +88,7 @@ public class MavenDependencyScanner implements Scanner {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setRecursive(false);
         request.setPomFile(pomXml);
+        request.setBaseDirectory(pomXml.getParentFile());
         request.setGoals(Collections.singletonList("dependency:list"));
         if (settings.userSettings != null) {
             request.setUserSettingsFile(new File(settings.userSettings));
@@ -111,7 +114,19 @@ public class MavenDependencyScanner implements Scanner {
         try {
             StringBuilder mavenExecutionErrors = new StringBuilder();
             Invoker invoker = new DefaultInvoker();
-            invoker.setOutputHandler(line -> {
+            if (System.getProperty("maven.home") != null) {
+                invoker.setMavenHome(new File(System.getProperty("maven.home")));
+            } else if (System.getenv("MAVEN_HOME") != null) {
+                invoker.setMavenHome(new File(System.getenv("MAVEN_HOME")));
+            } else {
+                String mvnPath = getMvnPath();
+                if (mvnPath != null) {
+                    invoker.setMavenHome(new File(mvnPath).getParentFile().getParentFile());
+                } else {
+                    LOGGER.warn("Could not find mvn in path");
+                }
+            }
+            request.setOutputHandler(line -> {
                 if (line.startsWith("[ERROR] ")) {
                     mavenExecutionErrors.append(line.substring(8)).append(System.lineSeparator());
                 }
@@ -135,6 +150,26 @@ public class MavenDependencyScanner implements Scanner {
             LOGGER.warn("Error reading file", e);
         }
         return Stream.empty();
+    }
+
+    private static String getMvnPath() {
+        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+        String locateCommand = isWindows ? "where" : "which";
+        String mvnCommand = isWindows ? "mvn.cmd" : "mvn";
+        ProcessBuilder processBuilder = new ProcessBuilder(locateCommand, mvnCommand);
+
+        try {
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream())
+            );
+            String line = reader.readLine();
+            reader.close();
+            return line;
+        } catch (IOException e) {
+            LOGGER.warn("Could not find mvn in path: {}", e.getMessage());
+            return null;
+        }
     }
 
     private static Path createTempFile() {
