@@ -1491,9 +1491,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/core@patch:@mantine/core@7.12.2#./config/patches/@mantine-core-npm-7.12.2-7aad505c0f.patch::locator=%40sonarsource%2Fechoes-react%40npm%3A0.17.0":
+"@mantine/core@patch:@mantine/core@7.12.2#./config/patches/@mantine-core-npm-7.12.2-7aad505c0f.patch::locator=%40sonarsource%2Fechoes-react%40npm%3A0.17.1":
   version: 7.12.2
-  resolution: "@mantine/core@patch:@mantine/core@npm%3A7.12.2#./config/patches/@mantine-core-npm-7.12.2-7aad505c0f.patch::version=7.12.2&hash=cab555&locator=%40sonarsource%2Fechoes-react%40npm%3A0.17.0"
+  resolution: "@mantine/core@patch:@mantine/core@npm%3A7.12.2#./config/patches/@mantine-core-npm-7.12.2-7aad505c0f.patch::version=7.12.2&hash=cab555&locator=%40sonarsource%2Fechoes-react%40npm%3A0.17.1"
   dependencies:
     "@floating-ui/react": "npm:^0.26.9"
     clsx: "npm:^2.1.1"
@@ -2302,9 +2302,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sonarsource/echoes-react@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@sonarsource/echoes-react@npm:0.17.0"
+"@sonarsource/echoes-react@npm:^0.17.1":
+  version: 0.17.1
+  resolution: "@sonarsource/echoes-react@npm:0.17.1"
   dependencies:
     "@mantine/core": "patch:@mantine/core@7.12.2#./config/patches/@mantine-core-npm-7.12.2-7aad505c0f.patch"
     "@mantine/hooks": "npm:7.12.2"
@@ -2327,7 +2327,7 @@ __metadata:
     react-dom: ^18.0.0
     react-intl: ^6.0.0
     react-router-dom: ^6.0.0
-  checksum: 10c0/30fc4d34bcbbfb9688c88d5b047121522719cb0f93c8be04cff43a9bf2f3981606e7ca45a45b9e5677f94f69f8224f5bf1708c91c5db5273448587aff0863cfd
+  checksum: 10c0/0dd6ed5d3e0e2d7c7e6549e3e015aadb82db3d23018a353e12dba5a8e1f36be4790201a32fcc591dcac17908d5ba0917e571a7e5233205d49b4ed42e4320f740
   languageName: node
   linkType: hard
 
@@ -4449,7 +4449,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.26.9"
     "@babel/preset-react": "npm:^7.26.3"
     "@emotion/react": "npm:^11.14.0"
-    "@sonarsource/echoes-react": "npm:^0.17.0"
+    "@sonarsource/echoes-react": "npm:^0.17.1"
     babel-loader: "npm:^9.2.1"
     buble: "npm:0.20.0"
     buble-loader: "npm:0.5.1"
@@ -4464,7 +4464,7 @@ __metadata:
     react-intl: "npm:^7.1.10"
     react-router-dom: "npm:^7.5.0"
     style-loader: "npm:^3.3.4"
-    webpack: "npm:^5.99.3"
+    webpack: "npm:^5.99.4"
     webpack-cli: "npm:^5.1.4"
   languageName: unknown
   linkType: soft
@@ -4876,9 +4876,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.99.3":
-  version: 5.99.3
-  resolution: "webpack@npm:5.99.3"
+"webpack@npm:^5.99.4":
+  version: 5.99.4
+  resolution: "webpack@npm:5.99.4"
   dependencies:
     "@types/eslint-scope": "npm:^3.7.7"
     "@types/estree": "npm:^1.0.6"
@@ -4908,7 +4908,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10c0/3d4f258755fa94835614ec1609d6c41c260b614c34d9bc9d96af9908dbecc0a9d0ee8437248b1d729fa3f73a646c11c93cdb1af081b0603389653ccbb0e70c69
+  checksum: 10c0/4751c3020a426da363ae77759455af8f8b45933376a476a60d144061a6a26abe14e1f8c2d08b4032862171e95a108efb8fd3a2749d031c2bf3cc376f05844332
   languageName: node
   linkType: hard
 
