@@ -29,7 +29,7 @@
     "babel-loader": "^9.2.1",
     "buble": "0.20.0",
     "buble-loader": "0.5.1",
-    "concurrently": "8.2.2",
+    "concurrently": "9.1.2",
     "css-loader": "^6.8.1",
     "http-proxy": "1.18.1",
     "prettier": "3.5.3",
