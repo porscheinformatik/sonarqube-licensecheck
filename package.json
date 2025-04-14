@@ -30,7 +30,7 @@
     "buble": "0.20.0",
     "buble-loader": "0.5.1",
     "concurrently": "9.1.2",
-    "css-loader": "^6.11.0",
+    "css-loader": "^7.0.0",
     "http-proxy": "1.18.1",
     "prettier": "3.5.3",
     "prettier-plugin-java": "2.3.1",
