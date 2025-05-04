@@ -34,7 +34,7 @@
     "http-proxy": "1.18.1",
     "prettier": "3.5.3",
     "prettier-plugin-java": "2.3.1",
-    "style-loader": "^3.3.4",
+    "style-loader": "^4.0.0",
     "webpack": "^5.99.4",
     "webpack-cli": "^5.1.4"
   },
