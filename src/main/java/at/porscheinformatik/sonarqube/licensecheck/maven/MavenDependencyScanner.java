@@ -126,6 +126,9 @@ public class MavenDependencyScanner implements Scanner {
                     LOGGER.warn("Could not find mvn in path");
                 }
             }
+            if (System.getenv("MAVEN_OPTS") != null) {
+                request.setMavenOpts(System.getenv("MAVEN_OPTS"));
+            }
             request.setOutputHandler(line -> {
                 if (line.startsWith("[ERROR] ")) {
                     mavenExecutionErrors.append(line.substring(8)).append(System.lineSeparator());
