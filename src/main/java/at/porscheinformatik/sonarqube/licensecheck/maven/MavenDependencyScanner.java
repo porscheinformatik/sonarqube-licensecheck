@@ -105,6 +105,10 @@ public class MavenDependencyScanner implements Scanner {
         if (System.getProperty(MAVEN_REPO_LOCAL) != null) {
             properties.setProperty(MAVEN_REPO_LOCAL, System.getProperty(MAVEN_REPO_LOCAL));
         }
+        if (System.getenv("MAVEN_OPTS") != null) {
+            request.setMavenOpts(System.getenv("MAVEN_OPTS"));
+        }
+        request.setBatchMode(true);
         request.setProperties(properties);
 
         return invokeMaven(request, tempFile);
@@ -125,9 +129,6 @@ public class MavenDependencyScanner implements Scanner {
                 } else {
                     LOGGER.warn("Could not find mvn in path");
                 }
-            }
-            if (System.getenv("MAVEN_OPTS") != null) {
-                request.setMavenOpts(System.getenv("MAVEN_OPTS"));
             }
             request.setOutputHandler(line -> {
                 if (line.startsWith("[ERROR] ")) {
