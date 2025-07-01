@@ -46,7 +46,7 @@
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>
       https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonar.apiVersion>11.0.0.2664</sonar.apiVersion>
+    <sonar.apiVersion>13.0.0.3026</sonar.apiVersion>
     <sonar.apiImplVersion>25.1.0.102122</sonar.apiImplVersion>
     <java.version>17</java.version>
   </properties>
