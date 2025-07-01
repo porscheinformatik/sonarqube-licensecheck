@@ -1,4 +1,4 @@
-package at.porscheinformatik.sonarqube.licensecheck.python;
+package at.porscheinformatik.sonarqube.licensecheck.dotnet;
 
 import at.porscheinformatik.sonarqube.licensecheck.Dependency;
 import at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition;
@@ -22,12 +22,12 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-public class PythonDependencyScanner implements Scanner {
+public class DotnetDependencyScanner implements Scanner {
 
-    private static final Logger LOGGER = Loggers.get(PythonDependencyScanner.class);
+    private static final Logger LOGGER = Loggers.get(DotnetDependencyScanner.class);
     private final LicenseMappingService licenseMappingService;
 
-    public PythonDependencyScanner(LicenseMappingService licenseMappingService) {
+    public DotnetDependencyScanner(LicenseMappingService licenseMappingService) {
         this.licenseMappingService = licenseMappingService;
     }
 
@@ -37,11 +37,11 @@ public class PythonDependencyScanner implements Scanner {
         Map<Pattern, String> defaultLicenseMap = licenseMappingService.getLicenseMap();
         File licenseDetailsJsonFile = new File(
             moduleDir,
-            "tests" + File.separator + "reports" + File.separator + "python-licenses.json"
+            "tests" + File.separator + "reports" + File.separator + "dotnet-licenses.json"
         );
         if (!licenseDetailsJsonFile.exists()) {
             LOGGER.info(
-                "No license-details.json file found in {} - skipping Python dependency scan",
+                "No dotnet-licenses.json file found in {} - skipping .NET dependency scan",
                 licenseDetailsJsonFile.getPath()
             );
             return Collections.emptySet();
@@ -59,15 +59,12 @@ public class PythonDependencyScanner implements Scanner {
             InputStream fis = new FileInputStream(licenseDetailsJsonFile);
             JsonReader jsonReader = Json.createReader(fis)
         ) {
-            JsonObject jo = jsonReader.readObject();
-            JsonArray arr = jo.getJsonArray("packages");
-            if (arr != null) {
-                prepareDependencySet(dependencySet, arr);
-            }
+            JsonArray arr = jsonReader.readArray();
+            prepareDependencySet(dependencySet, arr);
             return dependencySet;
         } catch (Exception e) {
             LOGGER.error(
-                "Problems reading Python license file {}: {}",
+                "Problems reading .NET license file {}: {}",
                 licenseDetailsJsonFile.getPath(),
                 e.getMessage()
             );
@@ -78,15 +75,15 @@ public class PythonDependencyScanner implements Scanner {
     private void prepareDependencySet(Set<Dependency> dependencySet, JsonArray arr) {
         for (javax.json.JsonValue entry : arr) {
             JsonObject jsonDepObj = entry.asJsonObject();
-            String license = jsonDepObj.getString("license", null);
-            String name = jsonDepObj.getString("name", null);
-            String version = jsonDepObj.getString("version", null);
-            String url = jsonDepObj.getString("homePage", null);
+            String license = jsonDepObj.getString("LicenseType", null);
+            String name = jsonDepObj.getString("PackageName", null);
+            String version = jsonDepObj.getString("PackageVersion", null);
+            String url = jsonDepObj.getString("PackageUrl", null);
             Dependency dep = new Dependency(
                 name,
                 version,
                 license,
-                LicenseCheckRulesDefinition.LANG_PYTHON
+                LicenseCheckRulesDefinition.LANG_DOTNET
             );
             dep.setPomPath(url);
             dependencySet.add(dep);

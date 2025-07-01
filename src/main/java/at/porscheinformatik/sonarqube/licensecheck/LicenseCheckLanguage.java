@@ -8,6 +8,7 @@ public enum LicenseCheckLanguage {
     JAVA("java"),
     JAVASCRIPT("javascript"),
     SWIFT("swift"),
+    DOTNET("dotnet"),
     PYTHON("python");
 
     private String language;

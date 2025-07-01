@@ -26,6 +26,7 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
   - [NPM](#npm)
   - [Gradle](#gradle)
 - [Configuration via Sonar API](#configuration-via-sonar-api)
+- [License Check Integration (Python & .NET)](#license-check-integration-python--net)
 <!-- TOC -->
 
 ## Features
@@ -304,3 +305,11 @@ curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?k
   ```
   curl -X POST -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/set?key=licensecheck.npm.resolvetransitive&value=false"
   ```
+
+## License Check Integration (Python & .NET)
+
+See [docs/licensecheck_integration_guide.md](docs/licensecheck_integration_guide.md) for instructions on integrating license checks for Python and .NET projects.
+
+- Python: Use pip-license-check to generate `tests/reports/python-licenses.json`.
+- .NET: Use dotnet-project-licenses to generate `tests/reports/dotnet-licenses.json`.
+- Ensure output files are in the correct format and location for automatic detection by the plugin.

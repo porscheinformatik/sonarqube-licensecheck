@@ -259,6 +259,8 @@ public class ValidateLicenses {
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;
             case LicenseCheckRulesDefinition.LANG_PYTHON:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_PYTHON;
+            case LicenseCheckRulesDefinition.LANG_DOTNET:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_DOTNET;
             default:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;
         }

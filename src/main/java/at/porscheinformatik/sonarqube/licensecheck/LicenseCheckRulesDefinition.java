@@ -14,6 +14,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition {
     public static final String LANG_GROOVY = "grvy";
     public static final String LANG_KOTLIN = "kotlin";
     public static final String LANG_SCALA = "scala";
+    public static final String LANG_DOTNET = "dotnet";
     public static final String LANG_PYTHON = "python";
 
     public static final String RULE_REPO_KEY = "licensecheck";
@@ -22,6 +23,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition {
     public static final String RULE_REPO_KEY_GROOVY = "licensecheck-groovy";
     public static final String RULE_REPO_KEY_KOTLIN = "licensecheck-kotlin";
     public static final String RULE_REPO_KEY_SCALA = "licensecheck-scala";
+    public static final String RULE_REPO_KEY_DOTNET = "licensecheck-dotnet";
     public static final String RULE_REPO_KEY_PYTHON = "licensecheck-python";
 
     public static final String RULE_UNLISTED_KEY = "licensecheck.unlisted";
@@ -37,6 +39,7 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition {
             context.createRepository(RULE_REPO_KEY_KOTLIN, LANG_KOTLIN),
             context.createRepository(RULE_REPO_KEY_SCALA, LANG_SCALA),
             context.createRepository(RULE_REPO_KEY_PYTHON, LANG_PYTHON),
+            context.createRepository(RULE_REPO_KEY_DOTNET, LANG_DOTNET),
         };
 
         for (NewRepository repo : repos) {
