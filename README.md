@@ -308,8 +308,10 @@ curl -X GET -v -u USERNAME:PASSWORD "http://localhost:9000/api/settings/values?k
 
 ## License Check Integration (Python & .NET)
 
-See [docs/licensecheck_integration_guide.md](docs/licensecheck_integration_guide.md) for instructions on integrating license checks for Python and .NET projects.
-
-- Python: Use pip-license-check to generate `tests/reports/python-licenses.json`.
+- Python: Use `licensecheck` (2025.1.0+) to generate `tests/reports/python-licenses.json`:
+  ```bash
+  pip install licensecheck
+  licensecheck --output tests/reports/python-licenses.json
+  ```
 - .NET: Use dotnet-project-licenses to generate `tests/reports/dotnet-licenses.json`.
 - Ensure output files are in the correct format and location for automatic detection by the plugin.
