@@ -51,7 +51,8 @@ public class LicenseCheckSensorTest {
                 RULE_REPO_KEY_JS,
                 RULE_REPO_KEY_TS,
                 RULE_REPO_KEY_GROOVY,
-                RULE_REPO_KEY_KOTLIN
+                RULE_REPO_KEY_KOTLIN,
+                LicenseCheckRulesDefinition.RULE_REPO_KEY_PYTHON
             );
     }
 

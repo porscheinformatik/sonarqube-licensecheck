@@ -12,6 +12,7 @@ import at.porscheinformatik.sonarqube.licensecheck.license.License;
 import at.porscheinformatik.sonarqube.licensecheck.licensemapping.LicenseMappingService;
 import at.porscheinformatik.sonarqube.licensecheck.maven.MavenDependencyScanner;
 import at.porscheinformatik.sonarqube.licensecheck.npm.PackageJsonDependencyScanner;
+import at.porscheinformatik.sonarqube.licensecheck.python.PythonDependencyScanner;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +50,7 @@ public class LicenseCheckSensor implements Sensor {
                 ),
                 new MavenDependencyScanner(licenseMappingService),
                 new GradleDependencyScanner(licenseMappingService),
+                new PythonDependencyScanner(licenseMappingService),
             };
     }
 
@@ -145,7 +147,8 @@ public class LicenseCheckSensor implements Sensor {
                 RULE_REPO_KEY_JS,
                 RULE_REPO_KEY_TS,
                 RULE_REPO_KEY_GROOVY,
-                RULE_REPO_KEY_KOTLIN
+                RULE_REPO_KEY_KOTLIN,
+                LicenseCheckRulesDefinition.RULE_REPO_KEY_PYTHON
             );
     }
 

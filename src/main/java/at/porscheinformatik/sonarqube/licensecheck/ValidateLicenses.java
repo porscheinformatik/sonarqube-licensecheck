@@ -62,9 +62,11 @@ public class ValidateLicenses {
         Set<License> usedLicenseList = new TreeSet<>();
 
         for (Dependency dependency : dependencies) {
-            for (License license : licenses) {
-                if (license.getIdentifier().equals(dependency.getLicense())) {
-                    usedLicenseList.add(license);
+            if (licenses != null && !licenses.isEmpty()) {
+                for (License license : licenses) {
+                    if (license.getIdentifier().equals(dependency.getLicense())) {
+                        usedLicenseList.add(license);
+                    }
                 }
             }
         }
@@ -254,6 +256,9 @@ public class ValidateLicenses {
             case LicenseCheckRulesDefinition.LANG_KOTLIN:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY_KOTLIN;
             case LicenseCheckRulesDefinition.LANG_JAVA:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY;
+            case LicenseCheckRulesDefinition.LANG_PYTHON:
+                return LicenseCheckRulesDefinition.RULE_REPO_KEY_PYTHON;
             default:
                 return LicenseCheckRulesDefinition.RULE_REPO_KEY;
         }
