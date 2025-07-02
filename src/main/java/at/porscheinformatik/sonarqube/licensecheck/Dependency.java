@@ -145,7 +145,10 @@ public class Dependency implements Comparable<Dependency> {
             String license = dependency.getLicense();
             generator.writeStartObject();
             generator.write("name", dependency.getName());
-            generator.write("version", dependency.getVersion());
+            generator.write(
+                "version",
+                dependency.getVersion() != null ? dependency.getVersion() : "unknown-version"
+            );
             generator.write("license", license != null ? license : " ");
             generator.write("lang", dependency.getLang());
             generator.writeEnd();

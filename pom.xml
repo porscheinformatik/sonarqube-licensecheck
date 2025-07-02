@@ -5,14 +5,14 @@
 
   <groupId>at.porscheinformatik.sonarqube.licensecheck</groupId>
   <artifactId>sonarqube-licensecheck-plugin</artifactId>
-  <version>7.0.0-SNAPSHOT</version>
+  <version>7.0.3-AVEPOINT</version>
   <name>SonarQube License Check Plugin</name>
   <packaging>sonar-plugin</packaging>
 
   <description>Checks Maven and NPM dependencies against a defined set of allowed licenses and reports any unknown or
     not allowed licenses as an issue.
   </description>
-  <url>https://github.com/porscheinformatik/sonarqube-licensecheck</url>
+  <url>https://github.com/hagan-tran-avepoint/sonarqube-licensecheck</url>
 
   <organization>
     <name>Porsche Informatik</name>
@@ -27,11 +27,16 @@
     <developer>
       <name>Stephanie Kaschnitz</name>
     </developer>
+    <developer>
+      <id>hagan-tran-avepoint</id>
+      <name>Hagan Tran</name>
+      <email>hagan.tran@avepoint.com</email>
+    </developer>
   </developers>
 
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/porscheinformatik/sonarqube-licensecheck/issues</url>
+    <url>https://github.com/hagan-tran-avepoint/sonarqube-licensecheck/issues</url>
   </issueManagement>
 
   <licenses>
@@ -117,9 +122,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:git:https://github.com/porscheinformatik/sonarqube-licensecheck.git</connection>
-    <developerConnection>https://github.com/porscheinformatik/sonarqube-licensecheck.git</developerConnection>
-    <url>https://github.com/porscheinformatik/sonarqube-licensecheck</url>
+    <connection>scm:git:https://github.com/hagan-tran-avepoint/sonarqube-licensecheck.git</connection>
+    <developerConnection>https://github.com/hagan-tran-avepoint/sonarqube-licensecheck.git</developerConnection>
+    <url>https://github.com/hagan-tran-avepoint/sonarqube-licensecheck</url>
     <tag>HEAD</tag>
   </scm>
 

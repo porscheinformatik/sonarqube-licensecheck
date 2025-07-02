@@ -103,6 +103,10 @@ public class GradleDependencyScanner implements Scanner {
             if (arrModuleUrls != null) {
                 moduleLicenseUrl = arrModuleUrls.getString(0, null);
             }
+            // Fallback: if moduleLicense is null/empty, use moduleLicenseUrl
+            if (moduleLicense == null || moduleLicense.isEmpty()) {
+                moduleLicense = moduleLicenseUrl;
+            }
             Dependency dep = new Dependency(
                 jsonDepObj.getString("moduleName", null),
                 jsonDepObj.getString("moduleVersion", null),
