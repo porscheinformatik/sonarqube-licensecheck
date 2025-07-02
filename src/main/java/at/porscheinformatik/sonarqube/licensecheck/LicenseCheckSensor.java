@@ -1,4 +1,4 @@
-npx prettier --write .package at.porscheinformatik.sonarqube.licensecheck;
+package at.porscheinformatik.sonarqube.licensecheck;
 
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY;
 import static at.porscheinformatik.sonarqube.licensecheck.LicenseCheckRulesDefinition.RULE_REPO_KEY_GROOVY;

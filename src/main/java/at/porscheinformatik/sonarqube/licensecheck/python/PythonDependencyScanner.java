@@ -82,6 +82,13 @@ public class PythonDependencyScanner implements Scanner {
             String name = jsonDepObj.getString("name", null);
             String version = jsonDepObj.getString("version", null);
             String url = jsonDepObj.getString("homePage", null);
+            // If license is null or empty, fallback to homePage, then url
+            if (license == null || license.isEmpty()) {
+                license = url;
+                if ((license == null || license.isEmpty()) && jsonDepObj.containsKey("url")) {
+                    license = jsonDepObj.getString("url", null);
+                }
+            }
             Dependency dep = new Dependency(
                 name,
                 version,

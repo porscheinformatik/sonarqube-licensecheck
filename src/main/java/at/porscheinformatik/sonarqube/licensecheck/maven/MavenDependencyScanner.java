@@ -294,27 +294,27 @@ public class MavenDependencyScanner implements Scanner {
         License license
     ) {
         String licenseName = license.getName();
+        // Fallback: if licenseName is blank, use license.getUrl()
         if (StringUtils.isBlank(licenseName)) {
-            LOGGER.info("Dependency '{}' has an empty license.", dependency.getName());
-            return false;
+            licenseName = license.getUrl();
+            if (StringUtils.isBlank(licenseName)) {
+                LOGGER.info("Dependency '{}' has an empty license and url.", dependency.getName());
+                return false;
+            }
         }
-
         for (Entry<Pattern, String> entry : licenseMap.entrySet()) {
             if (entry.getKey().matcher(licenseName).matches()) {
                 dependency.setLicense(entry.getValue());
                 return true;
             }
         }
-
         dependency.setLicense(licenseName);
-
         LOGGER.info(
             "No licenses match found for '{}' in dependency '{}:{}'",
             licenseName,
             dependency.getName(),
             dependency.getVersion()
         );
-
         return false;
     }
 
