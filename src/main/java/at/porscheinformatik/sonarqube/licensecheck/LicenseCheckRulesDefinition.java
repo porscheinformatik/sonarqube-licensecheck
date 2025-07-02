@@ -14,8 +14,8 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition {
     public static final String LANG_GROOVY = "grvy";
     public static final String LANG_KOTLIN = "kotlin";
     public static final String LANG_SCALA = "scala";
-    public static final String LANG_DOTNET = "dotnet";
-    public static final String LANG_PYTHON = "python";
+    public static final String LANG_DOTNET = "cs";
+    public static final String LANG_PYTHON = "py";
 
     public static final String RULE_REPO_KEY = "licensecheck";
     public static final String RULE_REPO_KEY_JS = "licensecheck-js";

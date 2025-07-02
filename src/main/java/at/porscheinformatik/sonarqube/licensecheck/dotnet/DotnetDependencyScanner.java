@@ -76,15 +76,13 @@ public class DotnetDependencyScanner implements Scanner {
         for (javax.json.JsonValue entry : arr) {
             JsonObject jsonDepObj = entry.asJsonObject();
             String license = jsonDepObj.getString("LicenseType", null);
+            if (license == null || license.isEmpty()) {
+                license = jsonDepObj.getString("LicenseUrl", null);
+            }
             String name = jsonDepObj.getString("PackageName", null);
             String version = jsonDepObj.getString("PackageVersion", null);
             String url = jsonDepObj.getString("PackageUrl", null);
-            Dependency dep = new Dependency(
-                name,
-                version,
-                license,
-                LicenseCheckRulesDefinition.LANG_DOTNET
-            );
+            Dependency dep = new Dependency(name, version, license, LicenseCheckRulesDefinition.LANG_DOTNET);
             dep.setPomPath(url);
             dependencySet.add(dep);
         }
