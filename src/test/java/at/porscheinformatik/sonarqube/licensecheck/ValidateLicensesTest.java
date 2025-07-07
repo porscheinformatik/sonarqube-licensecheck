@@ -36,14 +36,13 @@ public class ValidateLicensesTest {
         module = mock(InputProject.class);
         when(module.key()).thenReturn("at.porscheinformatik.demo:demo");
         final LicenseService licenseService = mock(LicenseService.class);
-        when(licenseService.getLicenses(module))
-            .thenReturn(
-                Arrays.asList(
-                    new License("MIT", "MIT", "false"),
-                    new License("LGPL is fantastic", "LGPL", "true"),
-                    APACHE_LICENSE
-                )
-            );
+        when(licenseService.getLicenses(module)).thenReturn(
+            Arrays.asList(
+                new License("MIT", "MIT", "false"),
+                new License("LGPL is fantastic", "LGPL", "true"),
+                APACHE_LICENSE
+            )
+        );
         dependencyMappingService = mock(DependencyMappingService.class);
         validateLicenses = new ValidateLicenses(licenseService, dependencyMappingService);
     }
@@ -300,12 +299,11 @@ public class ValidateLicensesTest {
 
     @Test
     public void dependencyMapping() {
-        when(dependencyMappingService.getDependencyMappings())
-            .thenReturn(
-                Collections.singletonList(
-                    new DependencyMapping("^thing$", APACHE_LICENSE.getIdentifier(), false)
-                )
-            );
+        when(dependencyMappingService.getDependencyMappings()).thenReturn(
+            Collections.singletonList(
+                new DependencyMapping("^thing$", APACHE_LICENSE.getIdentifier(), false)
+            )
+        );
 
         Set<Dependency> deps = validateLicenses.validateLicenses(
             deps(new Dependency("thing", "1.0", null)),

@@ -57,9 +57,9 @@ class DirectoryFinder {
             mavenConfFile = new File(userSettings);
         }
         if (mavenConfFile.exists() && mavenConfFile.isFile()) {
-            File localRepositoryPath = SettingsXmlParser
-                .parseXmlFile(mavenConfFile)
-                .getLocalRepositoryPath();
+            File localRepositoryPath = SettingsXmlParser.parseXmlFile(
+                mavenConfFile
+            ).getLocalRepositoryPath();
             if (localRepositoryPath != null) {
                 return localRepositoryPath;
             }
@@ -70,9 +70,9 @@ class DirectoryFinder {
             mavenConfFile = new File(globalSettings);
         }
         if (mavenConfFile.exists() && mavenConfFile.isFile()) {
-            File localRepositoryPath = SettingsXmlParser
-                .parseXmlFile(mavenConfFile)
-                .getLocalRepositoryPath();
+            File localRepositoryPath = SettingsXmlParser.parseXmlFile(
+                mavenConfFile
+            ).getLocalRepositoryPath();
             if (localRepositoryPath != null) {
                 return localRepositoryPath;
             }

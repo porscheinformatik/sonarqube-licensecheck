@@ -39,7 +39,6 @@ Currently, supported formats are:
 - Maven POM files - all dependencies with scope "compile" and "runtime" are checked
 - Gradle projects which use JK1 plugin
 - NPM package.json files - all dependencies (except "devDependencies") are checked
-
   - Note that transitive dependencies are _not_ scanned unless `licensecheck.npm.resolvetransitive` is set to `true`.
 
     ![Transitive](docs/Administration_General_Settings_License_Check_2.png)
@@ -74,7 +73,6 @@ After booting the SonarQube Server with the License-Check Plugin be found in the
 
 - Within the <b>General Settings</b> and <b>License Check</b> you find the settings for the plugin.
 - Within the general settings the plugin can be manually enabled or disabled. By default, it is enabled.
-
   - Under "Dependency Mapping" you can map a dependency name/key (with regex) to a license, e.g. `^asm:asm$` to "BSD-3-Clause"
   - Under "License Mapping" you can map a license name (with regex) to a license, e.g. `.*Apache.*2.*` to "Apache-2.0".
 

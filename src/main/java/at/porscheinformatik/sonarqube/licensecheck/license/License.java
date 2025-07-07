@@ -69,7 +69,7 @@ public class License implements Comparable<License> {
             try (
                 JsonReader jsonReader = Json.createReader(
                     new StringReader(serializedLicensesString)
-                )
+                );
             ) {
                 JsonArray licensesJson = jsonReader.readArray();
                 for (JsonObject licenseJson : licensesJson.getValuesAs(JsonObject.class)) {
@@ -124,7 +124,7 @@ public class License implements Comparable<License> {
         List<License> licenses = new ArrayList<>();
 
         try (
-            JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString))
+            JsonReader jsonReader = Json.createReader(new StringReader(serializedLicensesString));
         ) {
             JsonObject licensesJson = jsonReader.readObject();
             for (Map.Entry<String, JsonValue> licenseJson : licensesJson.entrySet()) {

@@ -37,14 +37,18 @@ public class LicenseMappingServiceTest {
     private LicenseMappingService createService() {
         Configuration configuration = mock(Configuration.class);
         when(configuration.getStringArray(LICENSE_MAPPING)).thenReturn(new String[] { "1", "2" });
-        when(configuration.get(LICENSE_MAPPING + ".1." + FIELD_REGEX))
-            .thenReturn(Optional.of("MIT"));
-        when(configuration.get(LICENSE_MAPPING + ".1." + FIELD_LICENSE))
-            .thenReturn(Optional.of("MIT"));
-        when(configuration.get(LICENSE_MAPPING + ".2." + FIELD_REGEX))
-            .thenReturn(Optional.of("^Apache.*2.*$"));
-        when(configuration.get(LICENSE_MAPPING + ".2." + FIELD_LICENSE))
-            .thenReturn(Optional.of("ASL2"));
+        when(configuration.get(LICENSE_MAPPING + ".1." + FIELD_REGEX)).thenReturn(
+            Optional.of("MIT")
+        );
+        when(configuration.get(LICENSE_MAPPING + ".1." + FIELD_LICENSE)).thenReturn(
+            Optional.of("MIT")
+        );
+        when(configuration.get(LICENSE_MAPPING + ".2." + FIELD_REGEX)).thenReturn(
+            Optional.of("^Apache.*2.*$")
+        );
+        when(configuration.get(LICENSE_MAPPING + ".2." + FIELD_LICENSE)).thenReturn(
+            Optional.of("ASL2")
+        );
         return new LicenseMappingService(configuration);
     }
 }

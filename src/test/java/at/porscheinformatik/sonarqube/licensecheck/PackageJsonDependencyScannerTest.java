@@ -36,9 +36,7 @@ public class PackageJsonDependencyScannerTest {
         DefaultFileSystem fileSystem = new DefaultFileSystem(moduleBaseDir);
         try {
             // Provide all **source** files in the moduleBaseDir
-            Files
-                .walk(moduleBaseDir)
-                .forEach(path -> {
+            Files.walk(moduleBaseDir).forEach(path -> {
                     try {
                         if (Files.isDirectory(path)) {
                             return;
@@ -51,8 +49,11 @@ public class PackageJsonDependencyScannerTest {
                             return;
                         }
                         var lines = Files.readAllLines(path);
-                        InputFile inputFile = TestInputFileBuilder
-                            .create("test", moduleBaseDir.toFile(), path.toFile())
+                        InputFile inputFile = TestInputFileBuilder.create(
+                            "test",
+                            moduleBaseDir.toFile(),
+                            path.toFile()
+                        )
                             // Required to get correct metadata
                             .setContents(lines.stream().collect(Collectors.joining("\n")))
                             // Otherwise .inputStream() will throw a NPE
@@ -73,8 +74,9 @@ public class PackageJsonDependencyScannerTest {
 
     @Test
     public void testHappyPath() {
-        Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("example")));
+        Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("example"))
+        );
 
         assertThat(dependencies, hasSize(2));
         assertThat(
@@ -88,8 +90,9 @@ public class PackageJsonDependencyScannerTest {
 
     @Test
     public void testTransitive() {
-        Set<Dependency> dependencies = createScanner(true)
-            .scan(createContext(RESOURCE_FOLDER.resolve("example")));
+        Set<Dependency> dependencies = createScanner(true).scan(
+            createContext(RESOURCE_FOLDER.resolve("example"))
+        );
 
         assertThat(dependencies, hasSize(4));
         assertThat(
@@ -105,8 +108,9 @@ public class PackageJsonDependencyScannerTest {
 
     @Test
     public void testPackageJsonNotInBaseDir() throws Exception {
-        Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("example_nested")));
+        Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("example_nested"))
+        );
         assertThat(
             dependencies,
             containsInAnyOrder(
@@ -118,24 +122,27 @@ public class PackageJsonDependencyScannerTest {
 
     @Test
     public void testNoPackageJson() {
-        Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("no_package_json")));
+        Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("no_package_json"))
+        );
 
         assertThat(dependencies, hasSize(0));
     }
 
     @Test
     public void testNoNodeModules() {
-        Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("example/node_modules/arangojs")));
+        Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("example/node_modules/arangojs"))
+        );
 
         assertThat(dependencies, hasSize(0));
     }
 
     @Test
     public void testLicenseInDeprecatedLicenseFormat() {
-        final Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("deprecated_project")));
+        final Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("deprecated_project"))
+        );
 
         assertEquals(1, dependencies.size());
 
@@ -145,8 +152,9 @@ public class PackageJsonDependencyScannerTest {
 
     @Test
     public void testLicenseInDeprecatedLicensesFormat() {
-        final Set<Dependency> dependencies = createScanner()
-            .scan(createContext(RESOURCE_FOLDER.resolve("deprecated_multilicense_project")));
+        final Set<Dependency> dependencies = createScanner().scan(
+            createContext(RESOURCE_FOLDER.resolve("deprecated_multilicense_project"))
+        );
 
         assertEquals(1, dependencies.size());
 

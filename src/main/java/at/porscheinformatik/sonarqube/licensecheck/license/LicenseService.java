@@ -55,8 +55,7 @@ public class LicenseService {
     }
 
     public List<License> getLicenses() {
-        return Arrays
-            .stream(configuration.getStringArray(LICENSE_SET))
+        return Arrays.stream(configuration.getStringArray(LICENSE_SET))
             .map(idx -> {
                 String idxProp = "." + idx + ".";
                 String name = configuration.get(LICENSE_SET + idxProp + FIELD_NAME).orElse(null);

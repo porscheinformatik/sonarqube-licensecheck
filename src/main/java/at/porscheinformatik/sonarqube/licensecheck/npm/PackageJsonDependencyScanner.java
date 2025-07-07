@@ -63,7 +63,7 @@ public class PackageJsonDependencyScanner implements Scanner {
 
         try (
             InputStream fis = packageJsonFile.inputStream();
-            JsonReader jsonReader = Json.createReader(fis)
+            JsonReader jsonReader = Json.createReader(fis);
         ) {
             JsonObject packageJson = jsonReader.readObject();
 
@@ -116,7 +116,7 @@ public class PackageJsonDependencyScanner implements Scanner {
 
             try (
                 InputStream fis = new FileInputStream(packageJsonFile);
-                JsonReader jsonReader = Json.createReader(fis)
+                JsonReader jsonReader = Json.createReader(fis);
             ) {
                 JsonObject packageJson = jsonReader.readObject();
                 if (packageJson != null) {

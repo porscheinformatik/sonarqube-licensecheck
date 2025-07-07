@@ -64,7 +64,7 @@ public class MavenDependencyScanner implements Scanner {
                 Stream<Dependency> dependencies = readDependencyList(
                     new File(pomXml.uri()),
                     settings
-                )
+                );
             ) {
                 dependencies
                     .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
@@ -143,8 +143,7 @@ public class MavenDependencyScanner implements Scanner {
                 );
                 LOGGER.warn(mavenExecutionErrors.toString());
             }
-            return Files
-                .lines(mavenOutputFile)
+            return Files.lines(mavenOutputFile)
                 .filter(StringUtils::isNotBlank)
                 .map(MavenDependencyScanner::findDependency)
                 .filter(Objects::nonNull);

@@ -37,29 +37,25 @@ public class LicenseCheckPlugin implements Plugin {
             DependencyMappingService.class,
             LicenseMappingService.class,
             ProjectLicenseService.class,
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.LICENSE_SET)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_SET)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("Licenses")
                 .description("List of known licenses with allowed status")
                 .fields(
-                    PropertyFieldDefinition
-                        .build(License.FIELD_ID)
+                    PropertyFieldDefinition.build(License.FIELD_ID)
                         .name("Identifier")
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(License.FIELD_NAME)
+                    PropertyFieldDefinition.build(License.FIELD_NAME)
                         .name("Name")
                         .description(
                             "The name of the license (e.g. GNU General Public License v3.0 only)."
                         )
                         .type(PropertyType.STRING)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(License.FIELD_ALLOWED)
+                    PropertyFieldDefinition.build(License.FIELD_ALLOWED)
                         .name("Allowed")
                         .description("If the license is allowed to use")
                         .type(PropertyType.BOOLEAN)
@@ -67,27 +63,23 @@ public class LicenseCheckPlugin implements Plugin {
                 )
                 .index(3)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.DEPENDENCY_MAPPING)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.DEPENDENCY_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("Dependency Mapping")
                 .description("Maps a dependency name/key (with regex) to a license")
                 .fields(
-                    PropertyFieldDefinition
-                        .build(DependencyMapping.FIELD_KEY)
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_KEY)
                         .name("Dependency")
                         .description("A regular expression to match against the dependency key.")
                         .type(PropertyType.REGULAR_EXPRESSION)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(DependencyMapping.FIELD_LICENSE)
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_LICENSE)
                         .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(DependencyMapping.FIELD_OVERWRITE)
+                    PropertyFieldDefinition.build(DependencyMapping.FIELD_OVERWRITE)
                         .name("Overwrite License")
                         .description("Overwrite the license defined by the dependency.")
                         .type(PropertyType.BOOLEAN)
@@ -95,21 +87,18 @@ public class LicenseCheckPlugin implements Plugin {
                 )
                 .index(5)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.LICENSE_MAPPING)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.LICENSE_MAPPING)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("License Mapping")
                 .description("Maps a license name (with regex) to a license")
                 .fields(
-                    PropertyFieldDefinition
-                        .build(LicenseMapping.FIELD_REGEX)
+                    PropertyFieldDefinition.build(LicenseMapping.FIELD_REGEX)
                         .name("License name")
                         .description("A regular expression to match against the license name.")
                         .type(PropertyType.REGULAR_EXPRESSION)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(LicenseMapping.FIELD_LICENSE)
+                    PropertyFieldDefinition.build(LicenseMapping.FIELD_LICENSE)
                         .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING)
@@ -117,27 +106,23 @@ public class LicenseCheckPlugin implements Plugin {
                 )
                 .index(4)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_SET)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.PROJECT_LICENSE_SET)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .type(PropertyType.PROPERTY_SET)
                 .name("Project Licenses")
                 .description("Allow/disallow licenses for specific projects.")
                 .fields(
-                    PropertyFieldDefinition
-                        .build(ProjectLicense.FIELD_PROJECT_KEY)
+                    PropertyFieldDefinition.build(ProjectLicense.FIELD_PROJECT_KEY)
                         .name("Project key")
                         .description("The project key")
                         .type(PropertyType.REGULAR_EXPRESSION)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(ProjectLicense.FIELD_LICENSE)
+                    PropertyFieldDefinition.build(ProjectLicense.FIELD_LICENSE)
                         .name(LICENSE_IDENTIFIER)
                         .description(LICENSE_ID_DESCRIPTION)
                         .type(PropertyType.STRING)
                         .build(),
-                    PropertyFieldDefinition
-                        .build(ProjectLicense.FIELD_ALLOWED)
+                    PropertyFieldDefinition.build(ProjectLicense.FIELD_ALLOWED)
                         .name("Allowed")
                         .description("If the license is allowed to use")
                         .type(PropertyType.BOOLEAN)
@@ -145,8 +130,7 @@ public class LicenseCheckPlugin implements Plugin {
                 )
                 .index(6)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .name("NPM Transitive Dependencies")
                 .description("Scan transitive dependencies for NPM packages")
@@ -154,8 +138,7 @@ public class LicenseCheckPlugin implements Plugin {
                 .defaultValue("false")
                 .index(2)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.ACTIVATION_KEY)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .name("Activate")
                 .description("Activate license check")
@@ -163,8 +146,7 @@ public class LicenseCheckPlugin implements Plugin {
                 .defaultValue("true")
                 .index(1)
                 .build(),
-            PropertyDefinition
-                .builder(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH)
+            PropertyDefinition.builder(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH)
                 .category(LicenseCheckPropertyKeys.CATEGORY)
                 .name("Gradle report path")
                 .description("Path to search for the license report in gradle scanner")

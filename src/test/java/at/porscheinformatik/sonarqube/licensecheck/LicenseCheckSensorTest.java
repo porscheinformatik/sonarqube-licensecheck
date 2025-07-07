@@ -45,14 +45,13 @@ public class LicenseCheckSensorTest {
         sensor.describe(descriptor);
 
         verify(descriptor).name("License Check");
-        verify(descriptor)
-            .createIssuesForRuleRepositories(
-                RULE_REPO_KEY,
-                RULE_REPO_KEY_JS,
-                RULE_REPO_KEY_TS,
-                RULE_REPO_KEY_GROOVY,
-                RULE_REPO_KEY_KOTLIN
-            );
+        verify(descriptor).createIssuesForRuleRepositories(
+            RULE_REPO_KEY,
+            RULE_REPO_KEY_JS,
+            RULE_REPO_KEY_TS,
+            RULE_REPO_KEY_GROOVY,
+            RULE_REPO_KEY_KOTLIN
+        );
     }
 
     @Test
@@ -91,10 +90,12 @@ public class LicenseCheckSensorTest {
 
     private Configuration createConfiguration() {
         Configuration configuration = mock(Configuration.class);
-        when(configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS))
-            .thenReturn(Optional.empty());
-        when(configuration.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY))
-            .thenReturn(Optional.of(true));
+        when(
+            configuration.getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
+        ).thenReturn(Optional.empty());
+        when(configuration.getBoolean(LicenseCheckPropertyKeys.ACTIVATION_KEY)).thenReturn(
+            Optional.of(true)
+        );
         return configuration;
     }
 }
