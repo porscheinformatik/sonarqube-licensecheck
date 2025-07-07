@@ -27,7 +27,7 @@
     "@babel/preset-env": "^7.28.0",
     "@babel/preset-react": "^7.27.1",
     "@types/react": "18",
-    "babel-loader": "^9.2.1",
+    "babel-loader": "^10.0.0",
     "buble": "0.20.0",
     "buble-loader": "0.5.1",
     "concurrently": "9.2.0",
