@@ -26,8 +26,7 @@ public class ProjectLicenseService {
     }
 
     public List<ProjectLicense> getProjectLicenseList() {
-        return Arrays
-            .stream(configuration.getStringArray(PROJECT_LICENSE_SET))
+        return Arrays.stream(configuration.getStringArray(PROJECT_LICENSE_SET))
             .map(idx -> {
                 String idxProp = "." + idx + ".";
                 String projectKey = configuration

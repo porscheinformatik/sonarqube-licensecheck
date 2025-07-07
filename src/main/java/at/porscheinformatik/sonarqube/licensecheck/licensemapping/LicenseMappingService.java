@@ -30,8 +30,7 @@ public class LicenseMappingService {
     }
 
     public List<LicenseMapping> getLicenseMappingList() {
-        return Arrays
-            .stream(configuration.getStringArray(LICENSE_MAPPING))
+        return Arrays.stream(configuration.getStringArray(LICENSE_MAPPING))
             .map(idx -> {
                 String idxProp = "." + idx + ".";
                 String licenseRegex = configuration

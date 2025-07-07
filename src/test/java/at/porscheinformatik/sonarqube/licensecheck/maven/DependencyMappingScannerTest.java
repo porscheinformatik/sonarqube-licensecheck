@@ -114,8 +114,9 @@ public class DependencyMappingScannerTest {
         when(pomXml.relativePath()).thenReturn("/pom.xml");
         when(pomXml.type()).thenReturn(InputFile.Type.MAIN);
         try {
-            when(pomXml.inputStream())
-                .thenAnswer(i -> new FileInputStream(new File(moduleDir, "pom.xml")));
+            when(pomXml.inputStream()).thenAnswer(i ->
+                new FileInputStream(new File(moduleDir, "pom.xml"))
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

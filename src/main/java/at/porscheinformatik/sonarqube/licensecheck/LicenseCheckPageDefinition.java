@@ -9,16 +9,14 @@ public class LicenseCheckPageDefinition implements PageDefinition {
     @Override
     public void define(Context context) {
         context.addPage(
-            Page
-                .builder("licensecheck/configuration")
+            Page.builder("licensecheck/configuration")
                 .setName("License Check")
                 .setAdmin(true)
                 .build()
         );
 
         context.addPage(
-            Page
-                .builder("licensecheck/dashboard")
+            Page.builder("licensecheck/dashboard")
                 .setName("License Check")
                 .setScope(Page.Scope.COMPONENT)
                 .setComponentQualifiers(Page.Qualifier.PROJECT)

@@ -20,16 +20,20 @@ public class DependencyMappingServiceTest {
     @Test
     public void loadConfiguration() {
         Configuration configuration = mock(Configuration.class);
-        when(configuration.getStringArray(DEPENDENCY_MAPPING))
-            .thenReturn(new String[] { "1", "2" });
+        when(configuration.getStringArray(DEPENDENCY_MAPPING)).thenReturn(
+            new String[] { "1", "2" }
+        );
         when(configuration.get(any())).thenReturn(Optional.empty());
         when(configuration.getBoolean(any())).thenReturn(Optional.empty());
-        when(configuration.get(DEPENDENCY_MAPPING + ".1." + FIELD_KEY))
-            .thenReturn(Optional.of("kee"));
-        when(configuration.get(DEPENDENCY_MAPPING + ".1." + FIELD_LICENSE))
-            .thenReturn(Optional.of("MIT"));
-        when(configuration.getBoolean(DEPENDENCY_MAPPING + ".1." + FIELD_OVERWRITE))
-            .thenReturn(Optional.of(true));
+        when(configuration.get(DEPENDENCY_MAPPING + ".1." + FIELD_KEY)).thenReturn(
+            Optional.of("kee")
+        );
+        when(configuration.get(DEPENDENCY_MAPPING + ".1." + FIELD_LICENSE)).thenReturn(
+            Optional.of("MIT")
+        );
+        when(configuration.getBoolean(DEPENDENCY_MAPPING + ".1." + FIELD_OVERWRITE)).thenReturn(
+            Optional.of(true)
+        );
 
         DependencyMappingService dependencyMappingService = new DependencyMappingService(
             configuration

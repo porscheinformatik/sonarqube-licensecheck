@@ -19,16 +19,16 @@ public class ProjectLicenseTest {
 
     @Test
     public void getAllProjectLicenses() {
-        List<ProjectLicense> projectLicenseList = createProjectLicenseService()
-            .getProjectLicenseList();
+        List<ProjectLicense> projectLicenseList =
+            createProjectLicenseService().getProjectLicenseList();
 
         assertThat(projectLicenseList.size(), is(2));
     }
 
     @Test
     public void getSpecificProjectLicenses() {
-        Collection<ProjectLicense> projectLicenseList = createProjectLicenseService()
-            .getProjectLicenseList("proj1");
+        Collection<ProjectLicense> projectLicenseList =
+            createProjectLicenseService().getProjectLicenseList("proj1");
 
         assertThat(projectLicenseList.size(), is(1));
         assertThat(projectLicenseList.iterator().next().getLicense(), is("MIT"));
@@ -36,20 +36,27 @@ public class ProjectLicenseTest {
 
     private ProjectLicenseService createProjectLicenseService() {
         Configuration configuration = mock(Configuration.class);
-        when(configuration.getStringArray(PROJECT_LICENSE_SET))
-            .thenReturn(new String[] { "1", "2" });
-        when(configuration.get(PROJECT_LICENSE_SET + ".1." + FIELD_PROJECT_KEY))
-            .thenReturn(Optional.of("proj1"));
-        when(configuration.get(PROJECT_LICENSE_SET + ".2." + FIELD_PROJECT_KEY))
-            .thenReturn(Optional.of("proj2"));
-        when(configuration.get(PROJECT_LICENSE_SET + ".1." + FIELD_LICENSE))
-            .thenReturn(Optional.of("MIT"));
-        when(configuration.get(PROJECT_LICENSE_SET + ".2." + FIELD_LICENSE))
-            .thenReturn(Optional.of("BSD"));
-        when(configuration.getBoolean(PROJECT_LICENSE_SET + ".1." + FIELD_ALLOWED))
-            .thenReturn(Optional.of(false));
-        when(configuration.getBoolean(PROJECT_LICENSE_SET + ".2." + FIELD_ALLOWED))
-            .thenReturn(Optional.of(true));
+        when(configuration.getStringArray(PROJECT_LICENSE_SET)).thenReturn(
+            new String[] { "1", "2" }
+        );
+        when(configuration.get(PROJECT_LICENSE_SET + ".1." + FIELD_PROJECT_KEY)).thenReturn(
+            Optional.of("proj1")
+        );
+        when(configuration.get(PROJECT_LICENSE_SET + ".2." + FIELD_PROJECT_KEY)).thenReturn(
+            Optional.of("proj2")
+        );
+        when(configuration.get(PROJECT_LICENSE_SET + ".1." + FIELD_LICENSE)).thenReturn(
+            Optional.of("MIT")
+        );
+        when(configuration.get(PROJECT_LICENSE_SET + ".2." + FIELD_LICENSE)).thenReturn(
+            Optional.of("BSD")
+        );
+        when(configuration.getBoolean(PROJECT_LICENSE_SET + ".1." + FIELD_ALLOWED)).thenReturn(
+            Optional.of(false)
+        );
+        when(configuration.getBoolean(PROJECT_LICENSE_SET + ".2." + FIELD_ALLOWED)).thenReturn(
+            Optional.of(true)
+        );
         return new ProjectLicenseService(configuration);
     }
 }

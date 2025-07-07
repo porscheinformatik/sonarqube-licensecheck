@@ -60,8 +60,9 @@ public class GradleDependencyScannerTest {
         String absolutePath = resourceDirectory.toFile().getAbsolutePath();
 
         SensorContext context = createContext(new File(absolutePath));
-        when(context.config().get(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH))
-            .thenReturn(Optional.of("build/my-reports/license-details.json"));
+        when(context.config().get(LicenseCheckPropertyKeys.GRADLE_JSON_REPORT_PATH)).thenReturn(
+            Optional.of("build/my-reports/license-details.json")
+        );
         Set<Dependency> dependencies = scanner.scan(context);
         assertEquals(43, dependencies.size());
     }

@@ -39,17 +39,16 @@ public class LicenseCheckSensor implements Sensor {
     ) {
         this.configuration = configuration;
         this.validateLicenses = validateLicenses;
-        this.scanners =
-            new Scanner[] {
-                new PackageJsonDependencyScanner(
-                    licenseMappingService,
-                    configuration
-                        .getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
-                        .orElse(false)
-                ),
-                new MavenDependencyScanner(licenseMappingService),
-                new GradleDependencyScanner(licenseMappingService),
-            };
+        this.scanners = new Scanner[] {
+            new PackageJsonDependencyScanner(
+                licenseMappingService,
+                configuration
+                    .getBoolean(LicenseCheckPropertyKeys.NPM_RESOLVE_TRANSITIVE_DEPS)
+                    .orElse(false)
+            ),
+            new MavenDependencyScanner(licenseMappingService),
+            new GradleDependencyScanner(licenseMappingService),
+        };
     }
 
     private static void saveDependencies(

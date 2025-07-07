@@ -24,8 +24,7 @@ public class DependencyMappingService {
     }
 
     public List<DependencyMapping> getDependencyMappings() {
-        return Arrays
-            .stream(configuration.getStringArray(DEPENDENCY_MAPPING))
+        return Arrays.stream(configuration.getStringArray(DEPENDENCY_MAPPING))
             .map(idx -> {
                 String idxProp = "." + idx + ".";
                 String key = configuration

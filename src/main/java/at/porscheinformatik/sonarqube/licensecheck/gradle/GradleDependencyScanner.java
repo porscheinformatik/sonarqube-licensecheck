@@ -79,7 +79,7 @@ public class GradleDependencyScanner implements Scanner {
         Set<Dependency> dependencySet = new HashSet<>();
         try (
             InputStream fis = new FileInputStream(licenseDetailsJsonFile);
-            JsonReader jsonReader = Json.createReader(fis)
+            JsonReader jsonReader = Json.createReader(fis);
         ) {
             JsonArray arr = jsonReader.readObject().getJsonArray("dependencies");
             prepareDependencySet(dependencySet, arr);

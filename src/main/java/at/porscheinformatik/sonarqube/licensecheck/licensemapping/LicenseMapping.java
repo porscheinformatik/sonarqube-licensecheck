@@ -49,7 +49,7 @@ public class LicenseMapping implements Comparable<LicenseMapping> {
 
         if (licenseMappingString != null && licenseMappingString.startsWith("[")) {
             try (
-                JsonReader jsonReader = Json.createReader(new StringReader(licenseMappingString))
+                JsonReader jsonReader = Json.createReader(new StringReader(licenseMappingString));
             ) {
                 JsonArray licensesJson = jsonReader.readArray();
                 for (int i = 0; i < licensesJson.size(); i++) {
