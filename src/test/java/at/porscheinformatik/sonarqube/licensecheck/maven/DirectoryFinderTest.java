@@ -11,7 +11,7 @@ public class DirectoryFinderTest {
     public void checkMavenRepoLocal() {
         String mavenRepoLocalOld = System.getProperty("maven.repo.local");
         System.setProperty("maven.repo.local", "/tmp/maven-repo");
-        File repoDir = DirectoryFinder.getMavenRepsitoryDir(null, null);
+        File repoDir = DirectoryFinder.getMavenRepositoryDir(null, null);
         if (mavenRepoLocalOld != null) {
             System.setProperty("maven.repo.local", mavenRepoLocalOld);
         } else {

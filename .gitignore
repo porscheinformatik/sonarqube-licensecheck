@@ -10,3 +10,4 @@ node/
 .vscode/
 .yarn/
 docker/plugins/*.jar
+.env

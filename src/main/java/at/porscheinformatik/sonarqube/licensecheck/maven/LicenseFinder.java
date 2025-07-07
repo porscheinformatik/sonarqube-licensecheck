@@ -41,7 +41,7 @@ class LicenseFinder {
                     return getLicenses(
                         DirectoryFinder.getPomPath(
                             dependency,
-                            DirectoryFinder.getMavenRepsitoryDir(userSettings, globalSettings)
+                            DirectoryFinder.getMavenRepositoryDir(userSettings, globalSettings)
                         ),
                         userSettings,
                         globalSettings

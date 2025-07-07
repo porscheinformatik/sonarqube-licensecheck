@@ -32,7 +32,7 @@ class DirectoryFinder {
         return new File(mavenRepositoryDir, tmp);
     }
 
-    public static File getMavenRepsitoryDir(String userSettings, String globalSettings) {
+    public static File getMavenRepositoryDir(String userSettings, String globalSettings) {
         if (System.getProperty("maven.repo.local") != null) {
             return new File(System.getProperty("maven.repo.local"));
         }
