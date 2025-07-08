@@ -203,6 +203,10 @@ public class MavenDependencyScanner implements Scanner {
         }
 
         if (classifier != null) {
+            if ("data".equals(classifier)) {
+                // skip data classifier
+                return null;
+            }
             path = path.replace("-" + classifier, "");
         }
         int lastDotIndex = path.lastIndexOf('.');
