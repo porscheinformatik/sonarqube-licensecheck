@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.3](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v7.0.2...v7.0.3) - 2025-07-09
+
+### Bug Fixes
+
+- fix: skip artifacts with "data" classifier (#456, #457)  
+  Some Maven dependencies have an additional artifact with "data" classifiers which leads to the issue that in some cases the license cannot be found correctly.
+
+### Other Changes
+
+- chore: fix dependencies for echoes-react and bump minor versions in package.json
+
 ## [7.0.2](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v7.0.1...v7.0.2) - 2025-06-23
 
 ### Bug Fixes
