@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Other Changes
 
-- chore: fix dependencies for echoes-react and bump minor versions in package.json
+- chore: fix dependencies for echoes-react and bump minor versions in package.json (#455)
 
 ## [7.0.2](https://github.com/porscheinformatik/sonarqube-licensecheck/compare/v7.0.1...v7.0.2) - 2025-06-23
 
