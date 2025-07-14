@@ -37,7 +37,7 @@
     "prettier-plugin-java": "2.7.1",
     "style-loader": "^3.3.4",
     "webpack": "^5.99.9",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^6.0.0"
   },
   "packageManager": "yarn@4.8.1"
 }
