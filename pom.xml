@@ -46,7 +46,7 @@
     <sonar.sources>src/main,pom.xml,package.json</sonar.sources>
     <sonar.pluginTermsConditionsUrl>
       https://github.com/porscheinformatik/sonarqube-licensecheck/blob/master/LICENSE</sonar.pluginTermsConditionsUrl>
-    <sonar.apiVersion>11.0.0.2664</sonar.apiVersion>
+    <sonar.apiVersion>11.4.0.2922</sonar.apiVersion>
     <sonar.apiImplVersion>25.1.0.102122</sonar.apiImplVersion>
     <java.version>17</java.version>
   </properties>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.17.0</version>
+      <version>5.18.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.9.9</version>
+      <version>3.9.11</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -128,7 +128,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
