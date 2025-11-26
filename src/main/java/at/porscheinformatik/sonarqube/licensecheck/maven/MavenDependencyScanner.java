@@ -61,18 +61,18 @@ public class MavenDependencyScanner implements Scanner {
 
             LOGGER.info("Scanning for Maven dependencies (POM: {})", pomXml.uri());
             try (
-                    Stream<Dependency> dependencies = readDependencyList(
-                            new File(pomXml.uri()),
-                            settings
-                            );
-                    ) {
+                Stream<Dependency> dependencies = readDependencyList(
+                    new File(pomXml.uri()),
+                    settings
+                );
+            ) {
                 dependencies
-                .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
-                .forEach(dependency -> {
-                    dependency.setInputComponent(pomXml);
-                    dependency.setTextRange(pomXml.newRange(1, 0, pomXml.lines(), 0));
-                    allDependencies.add(dependency);
-                });
+                    .map(this.loadLicenseFromPom(licenseMappingService.getLicenseMap(), settings))
+                    .forEach(dependency -> {
+                        dependency.setInputComponent(pomXml);
+                        dependency.setTextRange(pomXml.newRange(1, 0, pomXml.lines(), 0));
+                        allDependencies.add(dependency);
+                    });
             }
         }
 
@@ -145,14 +145,14 @@ public class MavenDependencyScanner implements Scanner {
             InvocationResult result = invoker.execute(request);
             if (result.getExitCode() != 0) {
                 LOGGER.warn(
-                        "Could not get dependency list via maven",
-                        result.getExecutionException()
-                        );
+                    "Could not get dependency list via maven",
+                    result.getExecutionException()
+                );
             }
             return Files.lines(mavenOutputFile)
-                    .filter(StringUtils::isNotBlank)
-                    .map(MavenDependencyScanner::findDependency)
-                    .filter(Objects::nonNull);
+                .filter(StringUtils::isNotBlank)
+                .map(MavenDependencyScanner::findDependency)
+                .filter(Objects::nonNull);
         } catch (MavenInvocationException e) {
             LOGGER.warn("Could not get dependency list via maven", e);
         } catch (Exception e) {
@@ -170,8 +170,8 @@ public class MavenDependencyScanner implements Scanner {
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
-                    );
+                new InputStreamReader(process.getInputStream())
+            );
             String line = reader.readLine();
             reader.close();
             return line;
@@ -221,11 +221,11 @@ public class MavenDependencyScanner implements Scanner {
         }
 
         Dependency dependency = new Dependency(
-                groupId + ":" + artifactId,
-                version,
-                null,
-                LicenseCheckRulesDefinition.LANG_JAVA
-                );
+            groupId + ":" + artifactId,
+            version,
+            null,
+            LicenseCheckRulesDefinition.LANG_JAVA
+        );
         if (new File(path).exists()) {
             dependency.setPomPath(path);
         }
@@ -253,13 +253,13 @@ public class MavenDependencyScanner implements Scanner {
     }
 
     private Function<Dependency, Dependency> loadLicenseFromPom(
-            Map<Pattern, String> licenseMap,
-            MavenSettings settings
-            ) {
+        Map<Pattern, String> licenseMap,
+        MavenSettings settings
+    ) {
         return (Dependency dependency) -> {
             if (
-                    StringUtils.isNotBlank(dependency.getLicense()) || dependency.getPomPath() == null
-                    ) {
+                StringUtils.isNotBlank(dependency.getLicense()) || dependency.getPomPath() == null
+            ) {
                 return dependency;
             }
 
@@ -268,17 +268,17 @@ public class MavenDependencyScanner implements Scanner {
     }
 
     private static Dependency loadLicense(
-            Map<Pattern, String> licenseMap,
-            MavenSettings settings,
-            Dependency dependency
-            ) {
+        Map<Pattern, String> licenseMap,
+        MavenSettings settings,
+        Dependency dependency
+    ) {
         String pomPath = dependency.getPomPath();
         if (pomPath != null) {
             List<License> licenses = LicenseFinder.getLicenses(
-                    new File(pomPath),
-                    settings.userSettings,
-                    settings.globalSettings
-                    );
+                new File(pomPath),
+                settings.userSettings,
+                settings.globalSettings
+            );
             if (licenses.isEmpty()) {
                 LOGGER.info("No licenses found in dependency {}", dependency.getName());
                 return dependency;
@@ -298,10 +298,10 @@ public class MavenDependencyScanner implements Scanner {
      * @return true if license was found in defined license list, false otherwise
      */
     private static boolean licenseMatcher(
-            Map<Pattern, String> licenseMap,
-            Dependency dependency,
-            License license
-            ) {
+        Map<Pattern, String> licenseMap,
+        Dependency dependency,
+        License license
+    ) {
         String licenseName = license.getName();
         if (StringUtils.isBlank(licenseName)) {
             LOGGER.info("Dependency '{}' has an empty license.", dependency.getName());
@@ -318,11 +318,11 @@ public class MavenDependencyScanner implements Scanner {
         dependency.setLicense(licenseName);
 
         LOGGER.info(
-                "No licenses match found for '{}' in dependency '{}:{}'",
-                licenseName,
-                dependency.getName(),
-                dependency.getVersion()
-                );
+            "No licenses match found for '{}' in dependency '{}:{}'",
+            licenseName,
+            dependency.getName(),
+            dependency.getVersion()
+        );
 
         return false;
     }
