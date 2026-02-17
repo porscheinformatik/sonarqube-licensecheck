@@ -65,8 +65,8 @@ public class DependencyMappingScannerTest {
         String jarFilePath = new File("src/test/resources/test.jar").getAbsolutePath();
         Dependency dependency = MavenDependencyScanner.findDependency(
             "at.porscheinformatik.test:test:jar:1.2.3:compile:" +
-            jarFilePath +
-            " -- module test (auto)"
+                jarFilePath +
+                " -- module test (auto)"
         );
 
         assertThat(dependency.getName(), is("at.porscheinformatik.test:test"));
@@ -79,8 +79,8 @@ public class DependencyMappingScannerTest {
         String jarFilePath = new File("src/test/resources/test-sources.jar").getAbsolutePath();
         Dependency dependency = MavenDependencyScanner.findDependency(
             "at.porscheinformatik.test:test:jar:sources:2.2:compile:" +
-            jarFilePath +
-            " -- module test (auto)"
+                jarFilePath +
+                " -- module test (auto)"
         );
 
         assertThat(dependency.getName(), is("at.porscheinformatik.test:test"));
