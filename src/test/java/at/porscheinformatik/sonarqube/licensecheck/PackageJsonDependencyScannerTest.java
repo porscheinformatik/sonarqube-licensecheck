@@ -37,34 +37,34 @@ public class PackageJsonDependencyScannerTest {
         try {
             // Provide all **source** files in the moduleBaseDir
             Files.walk(moduleBaseDir).forEach(path -> {
-                    try {
-                        if (Files.isDirectory(path)) {
-                            return;
-                        }
-                        if (path.toString().contains("/node_modules/")) {
-                            LOGGER.info(
-                                "Ignoring file {}, because it is in a node_modules folder",
-                                path
-                            );
-                            return;
-                        }
-                        var lines = Files.readAllLines(path);
-                        InputFile inputFile = TestInputFileBuilder.create(
-                            "test",
-                            moduleBaseDir.toFile(),
-                            path.toFile()
-                        )
-                            // Required to get correct metadata
-                            .setContents(lines.stream().collect(Collectors.joining("\n")))
-                            // Otherwise .inputStream() will throw a NPE
-                            .setCharset(Charset.forName("UTF-8"))
-                            .build();
-                        LOGGER.info("Added {} to the fs", path);
-                        fileSystem.add(inputFile);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                try {
+                    if (Files.isDirectory(path)) {
+                        return;
                     }
-                });
+                    if (path.toString().contains("/node_modules/")) {
+                        LOGGER.info(
+                            "Ignoring file {}, because it is in a node_modules folder",
+                            path
+                        );
+                        return;
+                    }
+                    var lines = Files.readAllLines(path);
+                    InputFile inputFile = TestInputFileBuilder.create(
+                        "test",
+                        moduleBaseDir.toFile(),
+                        path.toFile()
+                    )
+                        // Required to get correct metadata
+                        .setContents(lines.stream().collect(Collectors.joining("\n")))
+                        // Otherwise .inputStream() will throw a NPE
+                        .setCharset(Charset.forName("UTF-8"))
+                        .build();
+                    LOGGER.info("Added {} to the fs", path);
+                    fileSystem.add(inputFile);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

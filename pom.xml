@@ -210,37 +210,36 @@
             <phase>generate-resources</phase>
           </execution>
           <execution>
-            <id>yarn install</id>
+            <id>pnpm install</id>
             <goals>
               <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>yarn install</arguments>
+              <arguments>pnpm install</arguments>
             </configuration>
           </execution>
           <execution>
-            <id>yarn run prettier-check</id>
+            <id>pnpm run prettier-check</id>
             <goals>
               <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>yarn run prettier-check</arguments>
+              <arguments>pnpm run prettier-check</arguments>
             </configuration>
             <phase>test</phase>
           </execution>
           <execution>
-            <id>yarn run build</id>
+            <id>pnpm run build</id>
             <goals>
               <goal>corepack</goal>
             </goals>
             <configuration>
-              <arguments>yarn run build</arguments>
+              <arguments>pnpm run build</arguments>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v22.14.0</nodeVersion>
-          <yarnVersion>v1.22.22</yarnVersion>
+          <nodeVersion>v24.13.1</nodeVersion>
         </configuration>
       </plugin>
       <plugin>

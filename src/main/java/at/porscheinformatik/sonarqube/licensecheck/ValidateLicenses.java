@@ -195,9 +195,9 @@ public class ValidateLicenses {
     ) {
         LOGGER.info(
             "Dependency " +
-            dependency.getName() +
-            " uses a not allowed license " +
-            notAllowedLicense
+                dependency.getName() +
+                " uses a not allowed license " +
+                notAllowedLicense
         );
 
         dependency.setStatus(Dependency.Status.Forbidden);
@@ -207,9 +207,9 @@ public class ValidateLicenses {
             dependency,
             LicenseCheckRulesDefinition.RULE_NOT_ALLOWED_LICENSE_KEY,
             "Dependency " +
-            dependency.getName() +
-            " uses a not allowed license " +
-            dependency.getLicense()
+                dependency.getName() +
+                " uses a not allowed license " +
+                dependency.getLicense()
         );
     }
 
