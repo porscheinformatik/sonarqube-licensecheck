@@ -58,8 +58,8 @@ const Dashboard = ({ options }) => {
   };
 
   return (
-    <div className="sqlc-page sw-mt-4">
-      <header className="sw-mb-5">
+    <main className="sqlc-page">
+      <header className="sw-mb-5 sw-mt-4">
         <div className="sw-flex sw-justify-between sw-items-center">
           <div>
             <h1 className="sw-text-3xl sw-font-bold sw-mb-4">License Check</h1>
@@ -80,7 +80,7 @@ const Dashboard = ({ options }) => {
       <div className="sw-mb-4">
         <Dependencies dependencies={dependencies} />
       </div>
-    </div>
+    </main>
   );
 };
 
