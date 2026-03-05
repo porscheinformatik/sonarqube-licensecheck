@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: arc-cta-sandbox
     strategy:
       matrix:
         java: [17, 21]
