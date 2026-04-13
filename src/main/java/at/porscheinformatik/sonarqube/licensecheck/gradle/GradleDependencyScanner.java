@@ -117,7 +117,7 @@ public class GradleDependencyScanner implements Scanner {
     private String getModuleLicenseFromJsonObject(JsonObject jsonDepObj) {
         String moduleLicense = null;
         JsonArray arrModuleLicenses = jsonDepObj.getJsonArray("moduleLicenses");
-        if (arrModuleLicenses != null) {
+        if (arrModuleLicenses != null && !arrModuleLicenses.isEmpty()) {
             moduleLicense = getModuleLicense(arrModuleLicenses);
         }
         return moduleLicense;
