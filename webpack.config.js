@@ -1,5 +1,11 @@
 const path = require("path");
 
+// Resolve the actual react-dom cjs file path (bypasses the exports map restriction)
+const reactDomCjs = path.join(
+  path.dirname(require.resolve("react-dom/package.json")),
+  "cjs/react-dom.production.js",
+);
+
 module.exports = {
   entry: {
     configuration: "./src/main/web/configuration.js",
@@ -11,6 +17,10 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".jsx", ".json"],
+    alias: {
+      "react-dom$": path.resolve(__dirname, "src/main/web/react-dom-compat.js"),
+      "react-dom-cjs-production": reactDomCjs,
+    },
   },
   module: {
     rules: [
