@@ -13,7 +13,7 @@ importers:
         version: 11.14.0(@types/react@19.2.14)(react@18.3.1)
       '@sonarsource/echoes-react':
         specifier: ^1.12.0
-        version: 1.12.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react-dom@18.3.1(react@18.3.1))(react-intl@6.8.9(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 1.12.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react-dom@18.3.1(react@18.3.1))(react-intl@10.1.5(@types/react@19.2.14)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       file-saverjs:
         specifier: ^1.3.6
         version: 1.3.6
@@ -24,8 +24,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-intl:
-        specifier: ^6.8.9
-        version: 6.8.9(react@18.3.1)
+        specifier: ^10.0.0
+        version: 10.1.5(@types/react@19.2.14)(react@18.3.1)
       react-router-dom:
         specifier: ^6.30.1
         version: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -697,34 +697,17 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@formatjs/ecma402-abstract@2.2.4':
-    resolution: {integrity: sha512-lFyiQDVvSbQOpU+WFd//ILolGj4UgA/qXrKeZxdV14uKiAUiPAtX6XAn7WBCRi7Mx6I7EybM9E5yYn4BIpZWYg==}
+  '@formatjs/fast-memoize@3.1.4':
+    resolution: {integrity: sha512-Lbke1aOrsygKKR09Ux0NrZgbTqpDmiwXOgzyDOJ8Owr1zd5qOKTauf62hH+Seeku3ju77rHWH9I5SfX2CN0vuA==}
 
-  '@formatjs/fast-memoize@2.2.3':
-    resolution: {integrity: sha512-3jeJ+HyOfu8osl3GNSL4vVHUuWFXR03Iz9jjgI7RwjG6ysu/Ymdr0JRCPHfF5yGbTE6JCrd63EpvX1/WybYRbA==}
+  '@formatjs/icu-messageformat-parser@3.5.7':
+    resolution: {integrity: sha512-wJxRZ+SiUCIMTL86bQlZU9bEKDQqqvgk2ezQ1BySUdWRfHqOzj4IKUVFeUZKS9w58M4e7wMSG0Sl86LAPb7Qww==}
 
-  '@formatjs/icu-messageformat-parser@2.9.4':
-    resolution: {integrity: sha512-Tbvp5a9IWuxUcpWNIW6GlMQYEc4rwNHR259uUFoKWNN1jM9obf9Ul0e+7r7MvFOBNcN+13K7NuKCKqQiAn1QEg==}
+  '@formatjs/icu-skeleton-parser@2.1.7':
+    resolution: {integrity: sha512-cIw1SFP0bi0CUBiJ2jzp99ws3OJNQDfStcHq9Z0iHWzItmiIikihFO+npR8C80yDlp7ZuBCLXCcKjgWjHicksA==}
 
-  '@formatjs/icu-skeleton-parser@1.8.8':
-    resolution: {integrity: sha512-vHwK3piXwamFcx5YQdCdJxUQ1WdTl6ANclt5xba5zLGDv5Bsur7qz8AD7BevaKxITwpgDeU0u8My3AIibW9ywA==}
-
-  '@formatjs/intl-displaynames@6.8.5':
-    resolution: {integrity: sha512-85b+GdAKCsleS6cqVxf/Aw/uBd+20EM0wDpgaxzHo3RIR3bxF4xCJqH/Grbzx8CXurTgDDZHPdPdwJC+May41w==}
-
-  '@formatjs/intl-listformat@7.7.5':
-    resolution: {integrity: sha512-Wzes10SMNeYgnxYiKsda4rnHP3Q3II4XT2tZyOgnH5fWuHDtIkceuWlRQNsvrI3uiwP4hLqp2XdQTCsfkhXulg==}
-
-  '@formatjs/intl-localematcher@0.5.8':
-    resolution: {integrity: sha512-I+WDNWWJFZie+jkfkiK5Mp4hEDyRSEvmyfYadflOno/mmKJKcB17fEpEH0oJu/OWhhCJ8kJBDz2YMd/6cDl7Mg==}
-
-  '@formatjs/intl@2.10.15':
-    resolution: {integrity: sha512-i6+xVqT+6KCz7nBfk4ybMXmbKO36tKvbMKtgFz9KV+8idYFyFbfwKooYk8kGjyA5+T5f1kEPQM5IDLXucTAQ9g==}
-    peerDependencies:
-      typescript: ^4.7 || 5
-    peerDependenciesMeta:
-      typescript:
-        optional: true
+  '@formatjs/intl@4.1.9':
+    resolution: {integrity: sha512-Pulbo0Z14FLESaMWsCFNyITMAGmuC+JZN5/IRnDDH+tcEr8YJJMzW2+PnLfr+FYiwlC7883W7xrhM89gTz/q8A==}
 
   '@gilbarbara/deep-equal@0.1.2':
     resolution: {integrity: sha512-jk+qzItoEb0D0xSSmrKDDzf9sheQj/BAPxlgNxgmOaA3mxpUa6ndJLYGZKsJnIVEQSD8zcTbyILz7I0HcnBCRA==}
@@ -1223,11 +1206,6 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
-  '@types/hoist-non-react-statics@3.3.7':
-    resolution: {integrity: sha512-PQTyIulDkIDro8P+IHbKCsw7U2xxBYflVzW/FgWdCAePD9xGSidgA76/GeJ6lBKoblyhf9pBY763gbrN+1dI8g==}
-    peerDependencies:
-      '@types/react': '*'
-
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1236,12 +1214,6 @@ packages:
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
-
-  '@types/prop-types@15.7.15':
-    resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
-
-  '@types/react@18.3.28':
-    resolution: {integrity: sha512-z9VXpC7MWrhfWipitjNdgCauoMLRdIILQsAEV+ZesIzBq/oUlxk0m3ApZuMFCXdnS4U7KrI+l3WRUEGQ8K1QKw==}
 
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
@@ -1722,8 +1694,8 @@ packages:
     resolution: {integrity: sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==}
     engines: {node: '>=10.13.0'}
 
-  intl-messageformat@10.7.7:
-    resolution: {integrity: sha512-F134jIoeYMro/3I0h08D0Yt4N9o9pjddU/4IIxMMURqbAtI2wu70X8hvG1V48W49zXHXv3RKSF/po+0fDfsGjA==}
+  intl-messageformat@11.2.4:
+    resolution: {integrity: sha512-iKP6+uJXn+XcfRgYfGPE3+mqCoODV2vATrXDLo/YkYgIdelJHJPBEbc0GZThipAYPuk+8QJFiPgOfblU085ABg==}
 
   is-arrayish@0.2.1:
     resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
@@ -1994,14 +1966,11 @@ packages:
       '@types/react': '>=0.0.0 <=99'
       react: '>=0.0.0 <=99'
 
-  react-intl@6.8.9:
-    resolution: {integrity: sha512-TUfj5E7lyUDvz/GtovC9OMh441kBr08rtIbgh3p0R8iF3hVY+V2W9Am7rb8BpJ/29BH1utJOqOOhmvEVh3GfZg==}
+  react-intl@10.1.5:
+    resolution: {integrity: sha512-G0R8LZ6bsD6cB2MQiSsdOQX5NuW2tJn613bCVqjvCpyFQLe7pZB38+6/wvGNNr8nLVk0lLNNvnc301GMx/nNcQ==}
     peerDependencies:
-      react: ^16.6.0 || 17 || 18
-      typescript: ^4.7 || 5
-    peerDependenciesMeta:
-      typescript:
-        optional: true
+      '@types/react': '19'
+      react: '19'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -3227,52 +3196,19 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@formatjs/ecma402-abstract@2.2.4':
-    dependencies:
-      '@formatjs/fast-memoize': 2.2.3
-      '@formatjs/intl-localematcher': 0.5.8
-      tslib: 2.8.1
+  '@formatjs/fast-memoize@3.1.4': {}
 
-  '@formatjs/fast-memoize@2.2.3':
+  '@formatjs/icu-messageformat-parser@3.5.7':
     dependencies:
-      tslib: 2.8.1
+      '@formatjs/icu-skeleton-parser': 2.1.7
 
-  '@formatjs/icu-messageformat-parser@2.9.4':
-    dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/icu-skeleton-parser': 1.8.8
-      tslib: 2.8.1
+  '@formatjs/icu-skeleton-parser@2.1.7': {}
 
-  '@formatjs/icu-skeleton-parser@1.8.8':
+  '@formatjs/intl@4.1.9':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      tslib: 2.8.1
-
-  '@formatjs/intl-displaynames@6.8.5':
-    dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/intl-localematcher': 0.5.8
-      tslib: 2.8.1
-
-  '@formatjs/intl-listformat@7.7.5':
-    dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/intl-localematcher': 0.5.8
-      tslib: 2.8.1
-
-  '@formatjs/intl-localematcher@0.5.8':
-    dependencies:
-      tslib: 2.8.1
-
-  '@formatjs/intl@2.10.15':
-    dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/fast-memoize': 2.2.3
-      '@formatjs/icu-messageformat-parser': 2.9.4
-      '@formatjs/intl-displaynames': 6.8.5
-      '@formatjs/intl-listformat': 7.7.5
-      intl-messageformat: 10.7.7
-      tslib: 2.8.1
+      '@formatjs/fast-memoize': 3.1.4
+      '@formatjs/icu-messageformat-parser': 3.5.7
+      intl-messageformat: 11.2.4
 
   '@gilbarbara/deep-equal@0.1.2': {}
 
@@ -3728,7 +3664,7 @@ snapshots:
 
   '@remix-run/router@1.23.2': {}
 
-  '@sonarsource/echoes-react@1.12.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react-dom@18.3.1(react@18.3.1))(react-intl@6.8.9(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@sonarsource/echoes-react@1.12.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react-dom@18.3.1(react@18.3.1))(react-intl@10.1.5(@types/react@19.2.14)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.2.14)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@18.3.1))(@types/react@19.2.14)(react@18.3.1)
@@ -3749,7 +3685,7 @@ snapshots:
       classnames: 2.5.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      react-intl: 6.8.9(react@18.3.1)
+      react-intl: 10.1.5(@types/react@19.2.14)(react@18.3.1)
       react-joyride: 2.9.3(@types/react@19.2.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router-dom: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sonner: 2.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3769,11 +3705,6 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
-  '@types/hoist-non-react-statics@3.3.7(@types/react@18.3.28)':
-    dependencies:
-      '@types/react': 18.3.28
-      hoist-non-react-statics: 3.3.2
-
   '@types/json-schema@7.0.15': {}
 
   '@types/node@25.2.3':
@@ -3781,13 +3712,6 @@ snapshots:
       undici-types: 7.16.0
 
   '@types/parse-json@4.0.2': {}
-
-  '@types/prop-types@15.7.15': {}
-
-  '@types/react@18.3.28':
-    dependencies:
-      '@types/prop-types': 15.7.15
-      csstype: 3.2.3
 
   '@types/react@19.2.14':
     dependencies:
@@ -4245,12 +4169,10 @@ snapshots:
 
   interpret@3.1.1: {}
 
-  intl-messageformat@10.7.7:
+  intl-messageformat@11.2.4:
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/fast-memoize': 2.2.3
-      '@formatjs/icu-messageformat-parser': 2.9.4
-      tslib: 2.8.1
+      '@formatjs/fast-memoize': 3.1.4
+      '@formatjs/icu-messageformat-parser': 3.5.7
 
   is-arrayish@0.2.1: {}
 
@@ -4483,19 +4405,13 @@ snapshots:
       '@types/react': 19.2.14
       react: 18.3.1
 
-  react-intl@6.8.9(react@18.3.1):
+  react-intl@10.1.5(@types/react@19.2.14)(react@18.3.1):
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.4
-      '@formatjs/icu-messageformat-parser': 2.9.4
-      '@formatjs/intl': 2.10.15
-      '@formatjs/intl-displaynames': 6.8.5
-      '@formatjs/intl-listformat': 7.7.5
-      '@types/hoist-non-react-statics': 3.3.7(@types/react@18.3.28)
-      '@types/react': 18.3.28
-      hoist-non-react-statics: 3.3.2
-      intl-messageformat: 10.7.7
+      '@formatjs/icu-messageformat-parser': 3.5.7
+      '@formatjs/intl': 4.1.9
+      '@types/react': 19.2.14
+      intl-messageformat: 11.2.4
       react: 18.3.1
-      tslib: 2.8.1
 
   react-is@16.13.1: {}
 
