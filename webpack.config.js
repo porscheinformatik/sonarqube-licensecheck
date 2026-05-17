@@ -1,13 +1,15 @@
 const path = require("path");
 
-// Resolve the actual react-dom CJS file path (bypasses the exports map restriction).
-// Select dev vs prod build based on webpack mode for proper error messages during development.
-const reactDomPkgDir = path.dirname(require.resolve("react-dom/package.json"));
-const reactDomCjs = (mode) =>
-  path.join(
-    reactDomPkgDir,
-    mode === "development" ? "cjs/react-dom.development.js" : "cjs/react-dom.production.js",
-  );
+// Shim directory: each shim checks for SonarQube's host React/ReactDOM globals
+// at runtime. If present (SQ 25.x with React 18 globals), the host version is
+// used. Otherwise (SQ 26.x where React 19 is internal), the bundled React 19
+// from node_modules is used as a fallback.
+const shims = path.resolve(__dirname, "src/main/web/shims");
+
+// Resolve paths to the real React packages for the bundled fallback.
+// These bypass the shim aliases so the full React 19 code is available.
+const reactDir = path.dirname(require.resolve("react/package.json"));
+const reactDomDir = path.dirname(require.resolve("react-dom/package.json"));
 
 module.exports = (env, argv) => ({
   entry: {
@@ -21,8 +23,17 @@ module.exports = (env, argv) => ({
   resolve: {
     extensions: [".js", ".jsx", ".json"],
     alias: {
-      "react-dom$": path.resolve(__dirname, "src/main/web/react-dom-compat.js"),
-      "react-dom-cjs": reactDomCjs(argv.mode),
+      // Shims (intercept normal imports)
+      react$: path.join(shims, "react-shim.js"),
+      "react-dom$": path.join(shims, "react-dom-shim.js"),
+      "react-dom/client": path.join(shims, "react-dom-client-shim.js"),
+      "react/jsx-runtime": path.join(shims, "jsx-runtime-shim.js"),
+      "react/jsx-dev-runtime": path.join(shims, "jsx-runtime-shim.js"),
+      // Bundled fallback paths (used by shims when globals are not available)
+      "react-bundled$": path.join(reactDir, "index.js"),
+      "react-dom-bundled$": path.join(reactDomDir, "index.js"),
+      "react-dom-client-bundled$": path.join(reactDomDir, "client.js"),
+      "react-jsx-runtime-bundled$": path.join(reactDir, "jsx-runtime.js"),
     },
   },
   module: {
