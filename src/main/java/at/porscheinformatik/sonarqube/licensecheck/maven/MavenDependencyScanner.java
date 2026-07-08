@@ -86,6 +86,8 @@ public class MavenDependencyScanner implements Scanner {
         }
 
         InvocationRequest request = new DefaultInvocationRequest();
+        request.setOffline(settings.offline);
+        request.setDebug(settings.debug);
         request.setRecursive(false);
         request.setPomFile(pomXml);
         request.setBaseDirectory(pomXml.getParentFile());
@@ -116,7 +118,6 @@ public class MavenDependencyScanner implements Scanner {
 
     private static Stream<Dependency> invokeMaven(InvocationRequest request, Path mavenOutputFile) {
         try {
-            StringBuilder mavenExecutionErrors = new StringBuilder();
             Invoker invoker = new DefaultInvoker();
             if (System.getProperty("maven.home") != null) {
                 invoker.setMavenHome(new File(System.getProperty("maven.home")));
@@ -132,16 +133,21 @@ public class MavenDependencyScanner implements Scanner {
             }
             request.setOutputHandler(line -> {
                 if (line.startsWith("[ERROR] ")) {
-                    mavenExecutionErrors.append(line.substring(8)).append(System.lineSeparator());
+                    LOGGER.error(line);
+                } else {
+                    LOGGER.debug(line);
                 }
             });
+            request.setErrorHandler(line -> {
+                LOGGER.error(line);
+            });
+            invoker.setLogger(new Slf4jInvokerLogger(LOGGER));
             InvocationResult result = invoker.execute(request);
             if (result.getExitCode() != 0) {
                 LOGGER.warn(
                     "Could not get dependency list via maven",
                     result.getExecutionException()
                 );
-                LOGGER.warn(mavenExecutionErrors.toString());
             }
             return Files.lines(mavenOutputFile)
                 .filter(StringUtils::isNotBlank)
@@ -324,6 +330,8 @@ public class MavenDependencyScanner implements Scanner {
     private static MavenSettings getSettingsFromCommandLineArgs() {
         String globalSettings = null;
         String userSettings = null;
+        boolean offline = false;
+        boolean debug = false;
         String commandArgs = System.getProperty("sun.java.command");
         try (java.util.Scanner scanner = new java.util.Scanner(commandArgs)) {
             while (scanner.hasNext()) {
@@ -332,12 +340,16 @@ public class MavenDependencyScanner implements Scanner {
                     globalSettings = scanner.next();
                 } else if (part.equals("-s") || part.equals("--settings")) {
                     userSettings = scanner.next();
+                } else if (part.equals("-o") || part.equals("--offline")) {
+                    offline = true;
+                } else if (part.equals("-X") || part.equals("--debug")) {
+                    debug = true;
                 }
             }
         } catch (Exception e) {
             LOGGER.debug("Ignore unparsable command line", e);
         }
-        return new MavenSettings(globalSettings, userSettings);
+        return new MavenSettings(globalSettings, userSettings, offline, debug);
     }
 }
 
@@ -345,9 +357,13 @@ class MavenSettings {
 
     final String globalSettings;
     final String userSettings;
+    final boolean offline;
+    final boolean debug;
 
-    MavenSettings(String globalSettings, String userSetttings) {
+    MavenSettings(String globalSettings, String userSetttings, boolean offline, boolean debug) {
         this.globalSettings = globalSettings;
         this.userSettings = userSetttings;
+        this.offline = offline;
+        this.debug = debug;
     }
 }
