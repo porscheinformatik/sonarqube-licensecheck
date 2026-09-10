@@ -30,14 +30,14 @@
     "babel-loader": "^9.2.1",
     "buble": "0.20.0",
     "buble-loader": "0.5.1",
-    "concurrently": "9.2.1",
+    "concurrently": "9.2.4",
     "css-loader": "^7.1.4",
     "http-proxy": "1.18.1",
-    "prettier": "3.8.1",
-    "prettier-plugin-java": "2.8.1",
+    "prettier": "3.9.6",
+    "prettier-plugin-java": "2.10.3",
     "style-loader": "^4.0.0",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1"
   },
-  "packageManager": "pnpm@10.29.3"
+  "packageManager": "pnpm@10.34.5"
 }
