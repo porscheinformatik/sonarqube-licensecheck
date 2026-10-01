@@ -151,13 +151,13 @@ You have to activate the new rules in a (new) quality profile, for each supporte
 
 ## Execution
 
-When a project is analyzed using the `mvn sonar:sonar` in command line the extension is started automatically.
+When a project is analyzed using the `mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar` in command line the extension is started automatically.
 
 Please make sure to have all dependencies installed before launching the SonarQube analysis. So your complete build
 should look something like this:
 
     mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
-    mvn -B sonar:sonar
+    mvn -B org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
 
 ## Supported Languages
 

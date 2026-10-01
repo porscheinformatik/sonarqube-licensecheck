@@ -23,4 +23,4 @@ jobs:
         run: |
           mvn -B clean
           mvn -B jacoco:prepare-agent install jacoco:report
-          mvn -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik sonar:sonar
+          mvn -B -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=porscheinformatik org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
