@@ -14,6 +14,13 @@ module.exports = {
   },
   module: {
     rules: [
+      // Echoes bundles an unreachable React 15 fallback that imports APIs removed in React 19.
+      {
+        test: /@sonarsource[\\/]echoes-react[\\/]dist[\\/]index\.js$/,
+        parser: {
+          importExportsPresence: false,
+        },
+      },
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,

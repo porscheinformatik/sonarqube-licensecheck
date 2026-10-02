@@ -39,14 +39,12 @@ public final class LicenseCheckRulesDefinition implements RulesDefinition {
         for (NewRepository repo : repos) {
             repo.setName("License Check");
 
-            repo
-                .createRule(RULE_UNLISTED_KEY)
+            repo.createRule(RULE_UNLISTED_KEY)
                 .setName("Dependency has unknown license [license-check]")
                 .setHtmlDescription("The dependencies license could not be determined!")
                 .setSeverity(Severity.BLOCKER);
 
-            repo
-                .createRule(RULE_NOT_ALLOWED_LICENSE_KEY)
+            repo.createRule(RULE_NOT_ALLOWED_LICENSE_KEY)
                 .setName("License is not allowed [license-check]")
                 .setHtmlDescription(
                     "Violation because the license of the dependency is not allowed."

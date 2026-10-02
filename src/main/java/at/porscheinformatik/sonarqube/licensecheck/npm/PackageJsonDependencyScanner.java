@@ -170,11 +170,11 @@ public class PackageJsonDependencyScanner implements Scanner {
                     if (licenseObj instanceof JsonObject) {
                         String licensePart = licenseObj.asJsonObject().getString("type", "");
                         if (!licensePart.trim().isEmpty()) {
-                            license += license.length() > 1 ? (" OR " + licensePart) : licensePart;
+                            license += license.length() > 1 ? " OR " + licensePart : licensePart;
                         }
                     }
                 }
-                return license.length() == 1 ? "" : (license + ")");
+                return license.length() == 1 ? "" : license + ")";
             }
         }
         return "";
