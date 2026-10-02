@@ -5,6 +5,9 @@ import Configuration from "./configuration/configuration";
 
 window.registerExtension("licensecheck/configuration", function (options) {
   const root = createRoot(options.el);
+  options.el.style.overflowY = "auto";
+  options.el.style.overflowX = "hidden";
+  options.el.style.gridArea = "page";
   root.render(
     <IntlProvider locale="en">
       <TooltipProvider>

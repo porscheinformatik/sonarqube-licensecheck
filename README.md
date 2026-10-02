@@ -26,6 +26,7 @@ This software is licensed under the [Apache Software License, Version 2.0](http:
   - [NPM](#npm)
   - [Gradle](#gradle)
 - [Configuration via Sonar API](#configuration-via-sonar-api)
+
 <!-- TOC -->
 
 ## Features
