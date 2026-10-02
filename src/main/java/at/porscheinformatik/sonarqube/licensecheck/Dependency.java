@@ -126,7 +126,7 @@ public class Dependency implements Comparable<Dependency> {
 
     @Override
     public int compareTo(Dependency o) {
-        if ((o == null) || (o.name == null)) {
+        if (o == null || o.name == null) {
             return 1;
         } else if (this.name == null) {
             return -1;

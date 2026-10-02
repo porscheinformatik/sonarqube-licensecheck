@@ -2,7 +2,7 @@ version: "3"
 
 services:
   sonarqube:
-    image: sonarqube:25.3.0.104237-community
+    image: sonarqube:26.5.0.122743-community
     depends_on:
       - db
     environment:
@@ -11,7 +11,7 @@ services:
       SONAR_JDBC_PASSWORD: sonar
     volumes:
       - sonarqube_data:/opt/sonarqube/data
-      - ./target/sonarqube-licensecheck-plugin-7.0.0-SNAPSHOT.jar:/opt/sonarqube/extensions/plugins/sonarqube-licensecheck-plugin-7.0.0-SNAPSHOT.jar
+      - ./target/sonarqube-licensecheck-plugin-8.0.0-SNAPSHOT.jar:/opt/sonarqube/extensions/plugins/sonarqube-licensecheck-plugin.jar
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
       - "9100:9000"
@@ -22,10 +22,8 @@ services:
       POSTGRES_PASSWORD: sonar
     volumes:
       - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
 
 volumes:
   sonarqube_data:
   sonarqube_logs:
   postgresql:
-  postgresql_data:

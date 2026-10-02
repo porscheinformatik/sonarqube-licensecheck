@@ -36,9 +36,10 @@ public class ProjectLicenseTest {
 
     private ProjectLicenseService createProjectLicenseService() {
         Configuration configuration = mock(Configuration.class);
-        when(configuration.getStringArray(PROJECT_LICENSE_SET)).thenReturn(
-            new String[] { "1", "2" }
-        );
+        when(configuration.getStringArray(PROJECT_LICENSE_SET)).thenReturn(new String[] {
+            "1",
+            "2",
+        });
         when(configuration.get(PROJECT_LICENSE_SET + ".1." + FIELD_PROJECT_KEY)).thenReturn(
             Optional.of("proj1")
         );
