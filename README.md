@@ -55,7 +55,8 @@ The plugin contains a project dashboard showing a list of dependencies with vers
 
 This plugin is compatible:
 
-- 7.x is compatible with SonarQube 25.x / 2025 LTS and 26.x / 2026 LTS version
+- 8.x is compatible with SonarQube >= 2026.4 and 2026.5 LTA
+- 7.x is compatible with SonarQube 25.x / 2025 LTA and 26.1 / 2026.1 LTA
 - 6.x is compatible with SonarQube 9 LTS (>= 9.5) and 10.x
 - 5.x is compatible with SonarQube 8.9 LTS and < 10 (9.x is compatible)
 - 4.x is compatible with SonarQube 8.x
