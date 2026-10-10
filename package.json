@@ -31,11 +31,11 @@
     "concurrently": "^10.0.5",
     "css-loader": "^7.1.5",
     "http-proxy": "1.18.1",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "prettier-plugin-java": "2.11.0",
     "style-loader": "^4.0.0",
     "webpack": "^5.111.1",
     "webpack-cli": "^6.0.1"
   },
-  "packageManager": "pnpm@10.29.3"
+  "packageManager": "pnpm@10.34.6"
 }
