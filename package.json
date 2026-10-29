@@ -23,9 +23,9 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
-    "@babel/preset-react": "^7.29.7",
+    "@babel/core": "^8.0.0",
+    "@babel/preset-env": "^8.0.0",
+    "@babel/preset-react": "^8.0.0",
     "@types/react": "^19.3.0",
     "babel-loader": "^9.2.1",
     "concurrently": "^10.0.5",
